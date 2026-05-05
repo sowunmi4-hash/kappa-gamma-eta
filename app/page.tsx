@@ -116,7 +116,7 @@ export default function Home() {
 
   return (
     <main style={{ background: "var(--black)", minHeight: "100vh" }}>
-      <canvas ref={canvasRef} style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:1 }} />
+      <canvas ref={canvasRef} style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:40 }} />
 
       {/* ── NAV ── */}
       <nav style={{
