@@ -21,11 +21,11 @@ const PILLARS = [
   },
   {
     greek: "Η",
-    sub: "Members Only",
-    title: "The Portal",
-    desc: "The private space for sisters of Kappa Gamma Eta",
-    cta: "Enter Portal →",
-    href: "/login",
+    sub: "Unity · Respect · Empowerment",
+    title: "Our Emblems",
+    desc: "The Golden Chalice, Forget-Me-Not, and the Peruvian Opal — symbols of who we are",
+    cta: "Explore Our Symbols →",
+    href: "/about#emblems",
   },
 ];
 
@@ -129,7 +129,7 @@ export default function Home() {
       }}>
         <span className="font-cinzel-deco text-kge-gradient" style={{ fontSize:"1.2rem", letterSpacing:"0.1em" }}>ΚΓΗ</span>
         <ul style={{ display:"flex", gap:"2.2rem", listStyle:"none" }}>
-          {[["Home","#"],["Our Story","/about"],["Sisters","/sisters"],["Portal","/login"]].map(([label,href]) => (
+          {[["Home","#"],["Our Story","/about"],["Sisters","/sisters"],].map(([label,href]) => (
             <li key={label}>
               <a href={href} className="font-cinzel" style={{
                 fontSize:"0.68rem", letterSpacing:"0.2em", textTransform:"uppercase",
