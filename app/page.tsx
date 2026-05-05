@@ -179,18 +179,29 @@ export default function Home() {
           <div style={{ width:"20px", height:"7px", background:"#D4AF37", marginTop:"2px" }} />
         </div>
 
-        {/* Crest */}
-        <div className="animate-fadeIn animate-floatY" style={{
+        {/* Crest — secret entrance to portal */}
+        <a href="/login" className="animate-fadeIn animate-floatY" style={{
           marginBottom:"1.8rem",
           width:"160px", height:"160px", borderRadius:"50%",
           border:"1.5px solid rgba(212,175,55,0.6)",
           display:"flex", alignItems:"center", justifyContent:"center",
           position:"relative",
           boxShadow:"0 0 50px rgba(255,107,170,0.2), 0 0 100px rgba(212,175,55,0.08)",
-        }}>
+          textDecoration:"none", cursor:"pointer",
+          transition:"box-shadow 0.4s, border-color 0.4s",
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 70px rgba(255,107,170,0.35), 0 0 130px rgba(212,175,55,0.18)";
+          (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(212,175,55,0.9)";
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 50px rgba(255,107,170,0.2), 0 0 100px rgba(212,175,55,0.08)";
+          (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(212,175,55,0.6)";
+        }}
+        >
           <div style={{ position:"absolute", inset:"6px", borderRadius:"50%", border:"1px solid rgba(212,175,55,0.25)" }} />
           <Image src="/crest.png" alt="Kappa Gamma Eta Crest" width={130} height={130} style={{ borderRadius:"50%", objectFit:"cover" }} priority />
-        </div>
+        </a>
 
         {/* Name */}
         <h1 className="font-cinzel-deco animate-fadeUp delay-1" style={{
