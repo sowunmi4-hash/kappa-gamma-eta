@@ -29,6 +29,35 @@ const PILLARS = [
   },
 ];
 
+function drawForgetMeNot(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, angle: number, opacity: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.globalAlpha = opacity;
+
+  const petalColors = ["#7BA7D4", "#6B9FD4", "#89B8E8", "#5B8DB8", "#9EC5EA"];
+  const color = petalColors[Math.floor(Math.abs(x * y) % petalColors.length)];
+
+  // 5 petals
+  for (let i = 0; i < 5; i++) {
+    ctx.save();
+    ctx.rotate((i * Math.PI * 2) / 5);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(0, -size * 0.7, size * 0.38, size * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // centre dot — warm yellow
+  ctx.fillStyle = "#FFE066";
+  ctx.beginPath();
+  ctx.arc(0, 0, size * 0.28, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -37,37 +66,49 @@ export default function Home() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    canvas.width = window.innerWidth;
+
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const petals: { x:number; y:number; size:number; speed:number; angle:number; spin:number; opacity:number; color:string }[] = [];
-    const colors = ["#ff6baa", "#D4AF37", "#ff9ec8", "#fff0a0"];
-    for (let i = 0; i < 30; i++) {
-      petals.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height + canvas.height,
-        size: Math.random() * 4 + 2,
-        speed: Math.random() * 0.5 + 0.2,
-        angle: Math.random() * Math.PI * 2,
-        spin: (Math.random() - 0.5) * 0.03,
-        opacity: Math.random() * 0.25 + 0.06,
-        color: colors[Math.floor(Math.random() * colors.length)],
+    type Flower = { x: number; y: number; size: number; speed: number; angle: number; spin: number; opacity: number; drift: number };
+
+    const flowers: Flower[] = [];
+    for (let i = 0; i < 38; i++) {
+      flowers.push({
+        x:       Math.random() * canvas.width,
+        y:       Math.random() * canvas.height * 2 - canvas.height, // scatter above & on screen
+        size:    Math.random() * 5 + 3,
+        speed:   Math.random() * 0.55 + 0.25,  // downward drift
+        angle:   Math.random() * Math.PI * 2,
+        spin:    (Math.random() - 0.5) * 0.018,
+        opacity: Math.random() * 0.35 + 0.08,
+        drift:   (Math.random() - 0.5) * 0.3,  // gentle sideways sway
       });
     }
+
     let raf: number;
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      petals.forEach(p => {
-        p.y -= p.speed; p.angle += p.spin;
-        if (p.y < -20) { p.y = canvas.height + 20; p.x = Math.random() * canvas.width; }
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle);
-        ctx.globalAlpha = p.opacity; ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill(); ctx.restore();
+      flowers.forEach(f => {
+        f.y     += f.speed;   // fall downward
+        f.x     += f.drift;   // gentle sway
+        f.angle += f.spin;
+
+        // reset to top when fallen off bottom
+        if (f.y > canvas.height + 20) {
+          f.y = -20;
+          f.x = Math.random() * canvas.width;
+        }
+        // wrap horizontally
+        if (f.x < -20) f.x = canvas.width + 20;
+        if (f.x > canvas.width + 20) f.x = -20;
+
+        drawForgetMeNot(ctx, f.x, f.y, f.size, f.angle, f.opacity);
       });
       raf = requestAnimationFrame(draw);
     };
     draw();
+
     const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     window.addEventListener("resize", resize);
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
@@ -147,16 +188,8 @@ export default function Home() {
           position:"relative",
           boxShadow:"0 0 50px rgba(255,107,170,0.2), 0 0 100px rgba(212,175,55,0.08)",
         }}>
-          <div style={{
-            position:"absolute", inset:"6px", borderRadius:"50%",
-            border:"1px solid rgba(212,175,55,0.25)",
-          }} />
-          <Image
-            src="/crest.png" alt="Kappa Gamma Eta Crest"
-            width={130} height={130}
-            style={{ borderRadius:"50%", objectFit:"cover" }}
-            priority
-          />
+          <div style={{ position:"absolute", inset:"6px", borderRadius:"50%", border:"1px solid rgba(212,175,55,0.25)" }} />
+          <Image src="/crest.png" alt="Kappa Gamma Eta Crest" width={130} height={130} style={{ borderRadius:"50%", objectFit:"cover" }} priority />
         </div>
 
         {/* Name */}
@@ -164,12 +197,9 @@ export default function Home() {
           fontSize:"clamp(1.9rem, 4vw, 3.5rem)", letterSpacing:"0.07em",
           lineHeight:1.1, textAlign:"center", marginBottom:"0.5rem",
         }}>
-          <span style={{ color:"#ff6baa" }}>K</span>
-          <span style={{ color:"var(--cream)" }}>appa </span>
-          <span style={{ color:"#ff6baa" }}>G</span>
-          <span style={{ color:"var(--cream)" }}>amma </span>
-          <span style={{ color:"#ff6baa" }}>E</span>
-          <span style={{ color:"var(--cream)" }}>ta</span>
+          <span style={{ color:"#ff6baa" }}>K</span><span style={{ color:"var(--cream)" }}>appa </span>
+          <span style={{ color:"#ff6baa" }}>G</span><span style={{ color:"var(--cream)" }}>amma </span>
+          <span style={{ color:"#ff6baa" }}>E</span><span style={{ color:"var(--cream)" }}>ta</span>
         </h1>
 
         <div className="gold-rule-sm animate-fadeUp delay-2" style={{ marginBottom:"1rem" }} />
@@ -188,11 +218,9 @@ export default function Home() {
           Est. 12 · 14 · 24
         </p>
 
-        {/* Scroll cue */}
         <a href="#pillars" className="animate-fadeIn delay-4" style={{
           position:"absolute", bottom:"2.2rem",
-          display:"flex", flexDirection:"column", alignItems:"center", gap:"6px",
-          textDecoration:"none",
+          display:"flex", flexDirection:"column", alignItems:"center", gap:"6px", textDecoration:"none",
         }}>
           <span className="font-cinzel" style={{ fontSize:"0.52rem", letterSpacing:"0.3em", color:"rgba(212,175,55,0.4)" }}>SCROLL</span>
           <div style={{ width:"1px", height:"30px", background:"linear-gradient(to bottom, rgba(212,175,55,0.4), transparent)" }} />
@@ -235,34 +263,13 @@ export default function Home() {
             onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,107,170,0.1)")}
             onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = i === 1 ? "rgba(255,107,170,0.06)" : "rgba(255,107,170,0.03)")}
             >
-              {/* gold top accent */}
               <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:"linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)" }} />
-
-              <div className="font-cinzel-deco" style={{
-                fontSize:"1.8rem", fontWeight:700, color:"#ff6baa",
-                textShadow:"0 0 20px rgba(255,107,170,0.35)", marginBottom:"0.5rem",
-              }}>{p.greek}</div>
-
-              <p className="font-cinzel" style={{
-                fontSize:"0.5rem", letterSpacing:"0.2em", color:"rgba(212,175,55,0.55)",
-                textTransform:"uppercase", marginBottom:"0.45rem",
-              }}>{p.sub}</p>
-
-              <h3 className="font-cormorant" style={{
-                fontSize:"1.15rem", fontWeight:600, color:"var(--cream)", marginBottom:"0.45rem",
-              }}>{p.title}</h3>
-
+              <div className="font-cinzel-deco" style={{ fontSize:"1.8rem", fontWeight:700, color:"#ff6baa", textShadow:"0 0 20px rgba(255,107,170,0.35)", marginBottom:"0.5rem" }}>{p.greek}</div>
+              <p className="font-cinzel" style={{ fontSize:"0.5rem", letterSpacing:"0.2em", color:"rgba(212,175,55,0.55)", textTransform:"uppercase", marginBottom:"0.45rem" }}>{p.sub}</p>
+              <h3 className="font-cormorant" style={{ fontSize:"1.15rem", fontWeight:600, color:"var(--cream)", marginBottom:"0.45rem" }}>{p.title}</h3>
               <div className="gold-rule-sm" style={{ marginBottom:"0.7rem" }} />
-
-              <p style={{
-                fontSize:"0.85rem", lineHeight:1.75, color:"rgba(245,237,216,0.5)",
-                marginBottom:"1rem",
-              }}>{p.desc}</p>
-
-              <span className="font-cinzel" style={{
-                fontSize:"0.52rem", letterSpacing:"0.18em",
-                color:"#D4AF37", textTransform:"uppercase",
-              }}>{p.cta}</span>
+              <p style={{ fontSize:"0.85rem", lineHeight:1.75, color:"rgba(245,237,216,0.5)", marginBottom:"1rem" }}>{p.desc}</p>
+              <span className="font-cinzel" style={{ fontSize:"0.52rem", letterSpacing:"0.18em", color:"#D4AF37", textTransform:"uppercase" }}>{p.cta}</span>
             </a>
           ))}
         </div>
@@ -270,18 +277,13 @@ export default function Home() {
 
       {/* ── FOOTER ── */}
       <footer style={{
-        position:"relative", zIndex:2,
-        padding:"1.8rem 3.5rem",
-        borderTop:"1px solid rgba(212,175,55,0.12)",
-        background:"#0e0508",
-        display:"flex", alignItems:"center", justifyContent:"space-between",
-        flexWrap:"wrap", gap:"1rem",
+        position:"relative", zIndex:2, padding:"1.8rem 3.5rem",
+        borderTop:"1px solid rgba(212,175,55,0.12)", background:"#0e0508",
+        display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"1rem",
       }}>
         <div>
           <p className="font-cinzel-deco text-kge-gradient" style={{ fontSize:"0.95rem", letterSpacing:"0.12em", marginBottom:"0.25rem" }}>ΚΓΗ</p>
-          <p className="font-cormorant" style={{ fontSize:"0.8rem", fontStyle:"italic", color:"rgba(245,237,216,0.4)" }}>
-            Kappa Gamma Eta · Est. 12.14.24
-          </p>
+          <p className="font-cormorant" style={{ fontSize:"0.8rem", fontStyle:"italic", color:"rgba(245,237,216,0.4)" }}>Kappa Gamma Eta · Est. 12.14.24</p>
         </div>
         <p className="font-cormorant" style={{ fontSize:"0.95rem", fontStyle:"italic", color:"rgba(255,107,170,0.55)" }}>
           She is strong like whiskey, but soft like wine
