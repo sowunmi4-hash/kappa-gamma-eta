@@ -151,7 +151,7 @@ export default function TDASection({ member }: { member: Member }) {
           <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", color:"#D4AF37" }}>{g.current} / {g.target}</span>
         </div>
         <div style={{ height:6, background:"rgba(212,175,55,0.1)", borderRadius:3 }}>
-          <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg, #ff6baa, #D4AF37)`, borderRadius:3, transition:"width 0.5s" }} />
+          <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg, var(--wine-lt), #ff6baa, #D4AF37)`, borderRadius:3, transition:"width 0.5s" }} />
         </div>
       </div>
     );
@@ -161,8 +161,8 @@ export default function TDASection({ member }: { member: Member }) {
     <div>
       {/* Section header */}
       <div style={{ marginBottom:"1.4rem" }}>
-        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.3rem" }}>Kappa Gamma Eta</div>
-        <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>The Divine Accord</div>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"var(--wine-lt)", marginBottom:"0.3rem" }}>Kappa Gamma Eta</div>
+        <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"var(--cream)" }}>The Divine Accord</div>
         <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)" }}>Points · Recognition · Titles · Goals</div>
         <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
       </div>
@@ -181,7 +181,7 @@ export default function TDASection({ member }: { member: Member }) {
         <div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
             <div style={{ ...S.card, textAlign:"center" }}>
-              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"2rem", color:"#D4AF37", lineHeight:1 }}>{bal?.current_points||0}</div>
+              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"2rem", color:"var(--wine-lt)", lineHeight:1 }}>{bal?.current_points||0}</div>
               <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginTop:4 }}>Current Points</div>
             </div>
             <div style={{ ...S.card, textAlign:"center" }}>
@@ -260,7 +260,7 @@ export default function TDASection({ member }: { member: Member }) {
           <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", marginBottom:"1rem" }}>Sister Leaderboard — Lifetime Points</div>
           {leaderboard.map((s,i)=>(
             <div key={s.member_id} style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"0.9rem 0", borderBottom:"1px solid rgba(212,175,55,0.1)" }}>
-              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.2rem", color: i===0?"#D4AF37":i===1?"rgba(200,200,210,0.7)":i===2?"#C87941":"rgba(245,237,216,0.3)", width:32, textAlign:"center", flexShrink:0 }}>
+              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.2rem", color: i===0?"var(--wine-lt)":i===1?"rgba(200,200,210,0.7)":i===2?"#C87941":"rgba(245,237,216,0.3)", width:32, textAlign:"center", flexShrink:0 }}>
                 {i===0?"👑":i===1?"②":i===2?"③":`#${s.rank}`}
               </div>
               <div style={{ flex:1 }}>
@@ -366,7 +366,7 @@ export default function TDASection({ member }: { member: Member }) {
         <div>
           {camp?.campaign ? (
             <div>
-              <div style={{ ...S.card, marginBottom:"1.2rem", background:"linear-gradient(135deg, rgba(255,107,170,0.1), rgba(212,175,55,0.05))", border:"1px solid rgba(255,107,170,0.2)" }}>
+              <div style={{ ...S.card, marginBottom:"1.2rem", background:"linear-gradient(135deg, rgba(123,3,35,0.2), rgba(212,175,55,0.05))", border:"1px solid rgba(123,3,35,0.4)" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.4rem" }}>Active Campaign — {(camp.campaign.month as number) ? `Month ${camp.campaign.month}` : ""}</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.3rem", color:"#F5EDD8", marginBottom:"0.3rem" }}>{camp.campaign.name as string}</div>
                 <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", marginBottom:"1rem" }}>{camp.campaign.focus as string}</div>
@@ -385,7 +385,7 @@ export default function TDASection({ member }: { member: Member }) {
                   </div>
                 </div>
                 <div style={{ marginTop:"1rem", height:8, background:"rgba(212,175,55,0.1)", borderRadius:4 }}>
-                  <div style={{ height:"100%", borderRadius:4, background:"linear-gradient(90deg,#ff6baa,#D4AF37)", width:`${Math.min(100,(camp.completed/(camp.campaign.tasks_target as number))*100)}%`, transition:"width 0.5s" }} />
+                  <div style={{ height:"100%", borderRadius:4, background:"linear-gradient(90deg,var(--wine-lt),#ff6baa,#D4AF37)", width:`${Math.min(100,(camp.completed/(camp.campaign.tasks_target as number))*100)}%`, transition:"width 0.5s" }} />
                 </div>
               </div>
 
@@ -465,7 +465,7 @@ export default function TDASection({ member }: { member: Member }) {
                 <span style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.1rem", color:"#D4AF37", flexShrink:0, marginLeft:"1rem" }}>+{s.point_value}</span>
               </div>
               <div style={{ display:"flex", gap:"0.6rem" }}>
-                <button onClick={()=>handleReview(s.id,"approved")} style={{ ...S.goldBtn, fontSize:"0.52rem", padding:"0.4rem 0.9rem" }}>✓ Approve</button>
+                <button onClick={()=>handleReview(s.id,"approved")} style={{ ...S.goldBtn, fontSize:"0.52rem", padding:"0.4rem 0.9rem", background:"rgba(123,3,35,0.2)", borderColor:"rgba(123,3,35,0.5)", color:"var(--wine-lt)" }}>✓ Approve</button>
                 <button onClick={()=>handleReview(s.id,"needs_proof","Please provide proof.")} style={{ ...S.btn(), fontSize:"0.52rem", padding:"0.4rem 0.9rem", background:"rgba(123,167,212,0.1)", borderColor:"rgba(123,167,212,0.3)", color:"#9EC5EA" }}>Needs Proof</button>
                 <button onClick={()=>handleReview(s.id,"denied","Submission denied.")} style={{ ...S.btn(), fontSize:"0.52rem", padding:"0.4rem 0.9rem", background:"rgba(192,57,43,0.1)", borderColor:"rgba(192,57,43,0.3)", color:"#E74C3C" }}>✗ Deny</button>
               </div>

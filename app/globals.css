@@ -7,18 +7,32 @@
 :root {
   --black:    #0e0508;
   --deep:     #1a0a0f;
+  --surface:  #1c0d12;
+  --card:     #221018;
+
+  /* Primary brand */
   --pink:     #ff6baa;
   --pink-lt:  #ff9ec8;
   --pink-dk:  #c8427a;
   --gold:     #D4AF37;
   --gold-lt:  #fff0a0;
   --gold-dk:  #9A7B1A;
+
+  /* New additions */
+  --wine:     #7b0323;
+  --wine-lt:  #b01840;
+  --wine-glow:rgba(123,3,35,0.35);
+  --cyan:     #75ffff;
+  --cyan-lt:  #b8ffff;
+  --cyan-dk:  #00bfbf;
+  --cyan-glow:rgba(117,255,255,0.2);
+
   --cream:    #F5EDD8;
   --muted:    rgba(245,237,216,0.5);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
 
 body {
   background: var(--black);
@@ -27,40 +41,37 @@ body {
   overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--gold-dk); border-radius: 3px; }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--black); }
+::-webkit-scrollbar-thumb { background:var(--gold-dk); border-radius:3px; }
 
-.font-cinzel      { font-family: 'Cinzel', serif; }
-.font-cinzel-deco { font-family: 'Cinzel Decorative', serif; }
-.font-cormorant   { font-family: 'Cormorant Garamond', serif; }
+.font-cinzel      { font-family:'Cinzel',serif; }
+.font-cinzel-deco { font-family:'Cinzel Decorative',serif; }
+.font-cormorant   { font-family:'Cormorant Garamond',serif; }
 
 .text-gold-gradient {
-  background: linear-gradient(135deg, var(--gold-dk) 0%, var(--gold-lt) 50%, var(--gold-dk) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background:linear-gradient(135deg,var(--gold-dk) 0%,var(--gold-lt) 50%,var(--gold-dk) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 .text-kge-gradient {
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 50%, var(--gold) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-lt) 50%,var(--gold) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 
-.gold-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
-.gold-rule-sm { height: 1px; width: 80px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 0 auto; }
+.gold-rule    { height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+.gold-rule-sm { height:1px; width:80px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:0 auto; }
+.wine-rule    { height:1px; background:linear-gradient(90deg,transparent,var(--wine-lt),transparent); }
+.cyan-rule    { height:1px; background:linear-gradient(90deg,transparent,var(--cyan),transparent); }
 
-@keyframes fadeUp   { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-@keyframes floatY   { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
-@keyframes floatPetal {
-  0%   { opacity:0; transform:translateY(100vh) rotate(0deg); }
-  10%  { opacity:0.4; }
-  90%  { opacity:0.15; }
-  100% { opacity:0; transform:translateY(-10vh) rotate(720deg); }
-}
+@keyframes fadeUp  { from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);} }
+@keyframes fadeIn  { from{opacity:0;}to{opacity:1;} }
+@keyframes floatY  { 0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);} }
+@keyframes wave    { 0%,100%{transform:translateX(0) rotate(0deg);}50%{transform:translateX(8px) rotate(2deg);} }
 
-.animate-fadeUp { animation: fadeUp 1s ease forwards; }
-.animate-fadeIn { animation: fadeIn 1.2s ease forwards; }
-.animate-floatY { animation: floatY 6s ease-in-out infinite; }
-.delay-1 { animation-delay: 0.2s; opacity:0; }
-.delay-2 { animation-delay: 0.5s; opacity:0; }
-.delay-3 { animation-delay: 0.8s; opacity:0; }
-.delay-4 { animation-delay: 1.1s; opacity:0; }
+.animate-fadeUp { animation:fadeUp 1s ease forwards; }
+.animate-fadeIn { animation:fadeIn 1.2s ease forwards; }
+.animate-floatY { animation:floatY 6s ease-in-out infinite; }
+.delay-1 { animation-delay:0.2s; opacity:0; }
+.delay-2 { animation-delay:0.5s; opacity:0; }
+.delay-3 { animation-delay:0.8s; opacity:0; }
+.delay-4 { animation-delay:1.1s; opacity:0; }

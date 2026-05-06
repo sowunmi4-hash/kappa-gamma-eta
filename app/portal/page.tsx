@@ -143,7 +143,7 @@ export default function Portal() {
               <span style={{ fontSize:"0.9rem", width:18, textAlign:"center", color: page===item.id?"#ff6baa":"rgba(245,237,216,0.3)" }}>{item.icon}</span>
               <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", color: page===item.id?"#F5EDD8":"rgba(245,237,216,0.45)" }}>{item.label}</span>
               {item.id==="notifications" && unread>0 && (
-                <div style={{ marginLeft:"auto", background:"#ff6baa", color:"#fff", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>{unread}</div>
+                <div style={{ marginLeft:"auto", background:"var(--cyan)", color:"#fff", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>{unread}</div>
               )}
               {item.id==="chalice" && news.length>0 && (
                 <div style={{ marginLeft:"auto", background:"#D4AF37", color:"#0a0306", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>{news.length}</div>
@@ -300,7 +300,7 @@ export default function Portal() {
                           {e.dress_code&&<span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
                         </div>
                         {e.description&&<div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
-                        <button onClick={()=>handleRsvp(e.id,e.rsvpd)} style={{ padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer", transition:"all 0.25s", border: e.rsvpd?"1px solid rgba(212,175,55,0.35)":"1px solid rgba(255,107,170,0.35)", background: e.rsvpd?"rgba(212,175,55,0.1)":"rgba(255,107,170,0.1)", color: e.rsvpd?"#fff0a0":"#ff9ec8" }}>
+                        <button onClick={()=>handleRsvp(e.id,e.rsvpd)} style={{ padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer", transition:"all 0.25s", border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)", background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)", color: e.rsvpd?"var(--cyan)":"#ff9ec8" }}>
                           {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
                         </button>
                       </div>
@@ -329,7 +329,7 @@ export default function Portal() {
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"0.8rem" }}>
                     <div style={{ display:"flex", alignItems:"center", gap:"0.6rem" }}>
                       <div style={{ width:26, height:26, borderRadius:"50%", border:"1px solid rgba(212,175,55,0.3)", background:"rgba(255,107,170,0.1)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.7rem" }}>🌸</div>
-                      <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#fff0a0" }}>{n.posted_by_name}</span>
+                      <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--wine-lt)" }}>{n.posted_by_name}</span>
                     </div>
                     <div style={{ display:"flex", alignItems:"center", gap:"0.8rem" }}>
                       {n.pinned&&<span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#ff6baa", border:"1px solid rgba(255,107,170,0.3)", padding:"0.18rem 0.5rem" }}>📌 Pinned</span>}
@@ -376,7 +376,7 @@ export default function Portal() {
               <div style={S.card}>
                 {notifs.length ? notifs.map(n=>(
                   <div key={n.id} onClick={()=>!n.is_read&&markRead(n.id)} style={{ display:"flex", gap:"1rem", alignItems:"flex-start", padding:"1rem 0", borderBottom:"1px solid rgba(212,175,55,0.1)", cursor: n.is_read?"default":"pointer" }}>
-                    <div style={{ width:8, height:8, borderRadius:"50%", background: n.is_read?"transparent":"#ff6baa", border: n.is_read?"1px solid rgba(245,237,216,0.2)":"none", flexShrink:0, marginTop:5 }} />
+                    <div style={{ width:8, height:8, borderRadius:"50%", background: n.is_read?"transparent":"var(--cyan)", border: n.is_read?"1px solid rgba(245,237,216,0.2)":"none", flexShrink:0, marginTop:5 }} />
                     <div>
                       <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.58rem", letterSpacing:"0.1em", textTransform:"uppercase", color: n.is_read?"rgba(245,237,216,0.4)":"#F5EDD8", marginBottom:"0.25rem" }}>{n.title}</div>
                       <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.5 }}>{n.message}</div>

@@ -223,7 +223,7 @@ export default function Home() {
         </p>
 
         <p className="font-cinzel animate-fadeUp delay-3" style={{
-          fontSize:"0.62rem", letterSpacing:"0.32em", color:"rgba(212,175,55,0.55)",
+          fontSize:"0.62rem", letterSpacing:"0.32em", color:"var(--cyan-dk)",
           marginTop:"0.9rem", textTransform:"uppercase",
         }}>
           Est. 12 · 14 · 24
@@ -234,7 +234,7 @@ export default function Home() {
           display:"flex", flexDirection:"column", alignItems:"center", gap:"6px", textDecoration:"none",
         }}>
           <span className="font-cinzel" style={{ fontSize:"0.52rem", letterSpacing:"0.3em", color:"rgba(212,175,55,0.4)" }}>SCROLL</span>
-          <div style={{ width:"1px", height:"30px", background:"linear-gradient(to bottom, rgba(212,175,55,0.4), transparent)" }} />
+          <div style={{ width:"1px", height:"30px", background:"linear-gradient(to bottom, var(--wine-lt), rgba(212,175,55,0.4), transparent)" }} />
         </a>
 
         {/* Greek key bottom */}
@@ -267,12 +267,12 @@ export default function Home() {
             <a key={p.title} href={p.href} style={{
               display:"block", textDecoration:"none", padding:"2.2rem 1.5rem",
               textAlign:"center",
-              background: i === 1 ? "rgba(255,107,170,0.06)" : "rgba(255,107,170,0.03)",
+              background: i === 1 ? "rgba(123,3,35,0.15)" : "rgba(255,107,170,0.03)",
               borderRight: i < 2 ? "1px solid rgba(212,175,55,0.15)" : "none",
               position:"relative", transition:"background 0.3s",
             }}
             onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,107,170,0.1)")}
-            onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = i === 1 ? "rgba(255,107,170,0.06)" : "rgba(255,107,170,0.03)")}
+            onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = i === 1 ? "rgba(123,3,35,0.15)" : "rgba(255,107,170,0.03)")}
             >
               <div style={{ position:"absolute", top:0, left:0, right:0, height:"2px", background:"linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)" }} />
               <div className="font-cinzel-deco" style={{ fontSize:"1.8rem", fontWeight:700, color:"#ff6baa", textShadow:"0 0 20px rgba(255,107,170,0.35)", marginBottom:"0.5rem" }}>{p.greek}</div>
@@ -296,7 +296,7 @@ export default function Home() {
           <p className="font-cinzel-deco text-kge-gradient" style={{ fontSize:"0.95rem", letterSpacing:"0.12em", marginBottom:"0.25rem" }}>ΚΓΗ</p>
           <p className="font-cormorant" style={{ fontSize:"0.8rem", fontStyle:"italic", color:"rgba(245,237,216,0.4)" }}>Kappa Gamma Eta · Est. 12.14.24</p>
         </div>
-        <p className="font-cormorant" style={{ fontSize:"0.95rem", fontStyle:"italic", color:"rgba(255,107,170,0.55)" }}>
+        <p className="font-cormorant" style={{ fontSize:"0.95rem", fontStyle:"italic", color:"var(--wine-lt)" }}>
           She is strong like whiskey, but soft like wine
         </p>
         <p className="font-cinzel" style={{ fontSize:"0.5rem", letterSpacing:"0.18em", color:"rgba(212,175,55,0.35)" }}>

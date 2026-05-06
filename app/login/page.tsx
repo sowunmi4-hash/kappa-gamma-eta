@@ -107,7 +107,7 @@ export default function LoginPage() {
 
     if (success) {
       outer.style.borderColor = "rgba(180,50,80,0.85)";
-      outer.style.boxShadow   = "0 0 50px rgba(180,50,80,0.4), 0 0 100px rgba(212,175,55,0.18)";
+      outer.style.boxShadow   = "0 0 50px rgba(123,3,35,0.55), 0 0 100px rgba(212,175,55,0.2)";
     } else {
       outer.style.borderColor = "rgba(212,175,55,0.2)";
       await delay(800);
@@ -223,12 +223,12 @@ export default function LoginPage() {
 
       {/* Greek letter watermarks */}
       {["Κ","Γ","Η"].map((g,i) => (
-        <div key={g} className="font-cinzel-deco" style={{ position:"fixed", fontSize:"18rem", fontWeight:700, color:"rgba(255,107,170,0.03)", pointerEvents:"none", zIndex:1, userSelect:"none", top:i===0?"5%":i===1?"35%":"65%", left:i===0?"5%":i===1?"60%":"15%", transform:"rotate(-15deg)" }}>{g}</div>
+        <div key={g} className="font-cinzel-deco" style={{ position:"fixed", fontSize:"18rem", fontWeight:700, color:"rgba(123,3,35,0.08)", pointerEvents:"none", zIndex:1, userSelect:"none", top:i===0?"5%":i===1?"35%":"65%", left:i===0?"5%":i===1?"60%":"15%", transform:"rotate(-15deg)" }}>{g}</div>
       ))}
 
       {/* Back to home */}
       <a href="/" className="font-cinzel" style={{ position:"fixed", top:"1.3rem", left:"2rem", zIndex:50, fontSize:"0.6rem", letterSpacing:"0.2em", color:"rgba(212,175,55,0.45)", textDecoration:"none", textTransform:"uppercase", transition:"color 0.3s" }}
-        onMouseEnter={e=>(e.currentTarget.style.color="#ff6baa")}
+        onMouseEnter={e=>(e.currentTarget.style.color="var(--cyan)")}
         onMouseLeave={e=>(e.currentTarget.style.color="rgba(212,175,55,0.45)")}
       >← Home</a>
 
@@ -282,9 +282,9 @@ export default function LoginPage() {
               {/* inner ring */}
               <div style={{ position:"absolute", inset:6, borderRadius:"50%", border:"1px solid rgba(212,175,55,0.2)", zIndex:3, pointerEvents:"none" }} />
               {/* wine fill */}
-              <div ref={fillRef} style={{ position:"absolute", bottom:0, left:0, right:0, height:"0%", zIndex:1, background:"linear-gradient(to top, #8B1A2E 0%, #C0395A 100%)", borderRadius:"0 0 50% 50% / 0 0 8px 8px" }}>
+              <div ref={fillRef} style={{ position:"absolute", bottom:0, left:0, right:0, height:"0%", zIndex:1, background:"linear-gradient(to top, #7b0323 0%, #b01840 100%)", borderRadius:"0 0 50% 50% / 0 0 8px 8px" }}>
                 {/* wave */}
-                <div style={{ position:"absolute", top:"-6px", left:"-20px", right:"-20px", height:"14px", background:"#C0395A", borderRadius:"40%", opacity:0.7, animation:"wave 1.8s ease-in-out infinite" }} />
+                <div style={{ position:"absolute", top:"-6px", left:"-20px", right:"-20px", height:"14px", background:"#b01840", borderRadius:"40%", opacity:0.7, animation:"wave 1.8s ease-in-out infinite" }} />
               </div>
               {/* crest image on top */}
               <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", zIndex:4 }}>
@@ -331,7 +331,7 @@ export default function LoginPage() {
 
               {error && <p style={{ color:"rgba(255,107,170,0.8)", fontSize:"0.85rem", textAlign:"center", fontStyle:"italic", marginBottom:"0.9rem" }}>{error}</p>}
 
-              <button type="submit" disabled={loading} style={{ width:"100%", padding:"0.85rem", fontFamily:"'Cinzel',serif", fontSize:"0.68rem", letterSpacing:"0.22em", textTransform:"uppercase", background:loading?"rgba(255,107,170,0.08)":"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)", color:"var(--pink-lt)", cursor:loading?"not-allowed":"pointer", transition:"background 0.3s" }}>
+              <button type="submit" disabled={loading} style={{ width:"100%", padding:"0.85rem", fontFamily:"'Cinzel',serif", fontSize:"0.68rem", letterSpacing:"0.22em", textTransform:"uppercase", background:loading?"rgba(123,3,35,0.12)":"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)", color:"var(--pink-lt)", cursor:loading?"not-allowed":"pointer", transition:"background 0.3s" }}>
                 {loading ? "Pouring…" : "Enter the Sanctuary →"}
               </button>
             </form>
