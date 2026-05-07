@@ -18,7 +18,7 @@ const CATEGORIES = [
   { id:"General Feedback", icon:"💬", label:"General Feedback", desc:"Thoughts, feedback, or anything on your mind" },
 ];
 
-const PAGES = ["Dashboard","Sisterhood","Events","The Chalice","Gallery","Notifications","My Profile","The Divine Accord","Sister's Voice","Other"];
+const PAGES = ["Dashboard","Sisterhood","Events","The Chalice","Gallery","Notifications","My Profile","The Divine Accord","Sister's Voice","Dues","Regalia","Other"];
 
 const STATUS_CFG: Record<string,{label:string;color:string;bg:string}> = {
   received:     { label:"Received",     color:"#D4AF37",              bg:"rgba(212,175,55,0.1)" },

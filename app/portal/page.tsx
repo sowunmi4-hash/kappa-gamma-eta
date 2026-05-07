@@ -124,11 +124,11 @@ export default function Portal() {
     { id:"tda",           icon:"⚜",   label:"The Divine Accord" },
     { id:"voice",          icon:"💙",   label:"Sister's Voice" },
     { id:"dues",           icon:"💰",   label:"Dues" },
-    { id:"collection",     icon:"✦",   label:"The Divine Collection" },
+    { id:"collection",     icon:"✦",   label:"Regalia" },
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠",    label:"Probation" }] : []),
   ];
 
-  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"The Divine Collection" };
+  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia" };
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
