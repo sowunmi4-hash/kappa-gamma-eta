@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
-type Sister = { id:string; display_name:string; frat_name:string; sl_name:string; role:string };
+type Sister = { id:string; display_name:string; frat_name:string; sl_name:string; role:string; current_points?:number };
 type Prob   = { id:string; member_id:string; member_name:string; frat_name:string; reason:string; tda_points_at_time:number; started_at:string; ends_at:string; duration_days:number; set_by_name:string };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -40,11 +40,18 @@ export default function ProbationSection({ member }: { member: Member }) {
   const [msg,         setMsg]         = useState("");
 
   const load = useCallback(async () => {
-    const [s, p] = await Promise.all([
+    const [s, p, lb] = await Promise.all([
       fetch("/api/tda?type=sisters").then(r=>r.json()),
       fetch("/api/probation?type=all").then(r=>r.json()),
+      fetch("/api/tda?type=leaderboard").then(r=>r.json()),
     ]);
-    setSisters((s||[]).filter((x:Sister)=>!["Founder","Admin"].includes(x.role)));
+    const filtered = (s||[]).filter((x:Sister)=>!["Founder","Admin"].includes(x.role));
+    // Attach current_points from leaderboard
+    const withPts = filtered.map((x:Sister) => {
+      const entry = (lb||[]).find((l:{member_id:string; current_points:number}) => l.member_id === x.id);
+      return { ...x, current_points: entry?.current_points ?? 0 };
+    });
+    setSisters(withPts);
     setProbations(p||[]);
   }, []);
 
@@ -101,7 +108,11 @@ export default function ProbationSection({ member }: { member: Member }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Sister *</label>
-              <select value={selSister} onChange={e=>setSelSister(e.target.value)} style={input} required>
+              <select value={selSister} onChange={e=>{
+              setSelSister(e.target.value);
+              const s = sisters.find(x=>x.id===e.target.value);
+              if (s) setTdaPts(String(s.current_points ?? 0));
+            }} style={input} required>
                 <option value="">— Select a sister —</option>
                 {sisters.map(s=>(
                   <option key={s.id} value={s.id}>{s.frat_name} ({s.sl_name})</option>
@@ -117,8 +128,8 @@ export default function ProbationSection({ member }: { member: Member }) {
               </select>
             </div>
             <div>
-              <label style={lbl}>TDA Points at Time</label>
-              <input type="number" value={tdaPts} onChange={e=>setTdaPts(e.target.value)} placeholder="e.g. 45" style={input} />
+              <label style={lbl}>Current TDA Points (auto-filled)</label>
+              <input type="number" value={tdaPts} readOnly style={{ ...input, cursor:"not-allowed", opacity:0.7, background:"rgba(212,175,55,0.04)" }} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Reason</label>
