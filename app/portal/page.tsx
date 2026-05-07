@@ -300,19 +300,8 @@ export default function Portal() {
           )}
 
           {/* ══ GALLERY ══ */}
-          {page==="gallery" && (
-            <div>
-              <div style={{ marginBottom:"1.6rem" }}>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Members Only</div>
-                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>Gallery</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
-              </div>
-              <div style={{ ...S.card, textAlign:"center", padding:"4rem 2rem" }}>
-                <div style={{ fontSize:"2.5rem", marginBottom:"1rem" }}>🖼</div>
-                <p style={{ fontFamily:"'Cinzel',serif", fontSize:"0.6rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(245,237,216,0.35)", marginBottom:"0.5rem" }}>Gallery Coming Soon</p>
-                <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.25)", fontSize:"0.9rem" }}>Sisters can upload photos and memories here.</p>
-              </div>
-            </div>
+          {page==="gallery" && member && (
+            <GallerySection member={member} />
           )}
 
           {/* ══ NOTIFICATIONS ══ */}
