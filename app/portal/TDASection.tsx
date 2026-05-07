@@ -52,7 +52,8 @@ export default function TDASection({ member }: { member: Member }) {
   const [adjMember, setAdjMember]     = useState("");
   const [adjPoints, setAdjPoints]     = useState("");
   const [adjReason, setAdjReason]     = useState("");
-  const [adjType, setAdjType]         = useState("bonus");
+  const [adjType,   setAdjType]   = useState("bonus");
+  const [adjTarget, setAdjTarget] = useState("both");
   const [adjMsg, setAdjMsg]           = useState("");
 
   // Admin title form
@@ -104,7 +105,7 @@ export default function TDASection({ member }: { member: Member }) {
     if (!adjMember||!adjPoints||!adjReason) { setAdjMsg("Fill all fields."); return; }
     const pts = parseInt(adjPoints); if (isNaN(pts)) { setAdjMsg("Invalid points."); return; }
     const s = sisters.find(s=>s.id===adjMember);
-    const r = await fetch("/api/tda", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"manual_adjust", member_id:adjMember, member_name:s?.display_name||"", points:pts, type:adjType, reason:adjReason }) });
+    const r = await fetch("/api/tda", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"manual_adjust", member_id:adjMember, member_name:s?.display_name||"", points:pts, type:adjType, reason:adjReason, target:adjTarget }) });
     const d = await r.json();
     if (d.error) { setAdjMsg("⚠ " + d.error); return; }
     setAdjMsg("✓ Adjustment applied."); setAdjPoints(""); setAdjReason("");
@@ -494,6 +495,14 @@ export default function TDASection({ member }: { member: Member }) {
                 <option value="bonus">Bonus</option>
                 <option value="manual">Manual Award</option>
                 <option value="deduction">Deduction</option>
+              </select>
+            </div>
+            <div style={{ marginBottom:"0.9rem" }}>
+              <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Adjust Which Balance?</label>
+              <select value={adjTarget} onChange={e=>setAdjTarget(e.target.value)} style={{ ...S.input }}>
+                <option value="both">Both (Current + Lifetime)</option>
+                <option value="current">Current Points only</option>
+                <option value="lifetime">Lifetime Points only</option>
               </select>
             </div>
             <div style={{ marginBottom:"0.9rem" }}>

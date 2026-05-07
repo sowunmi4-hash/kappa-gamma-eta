@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
       p_member_id: member_id, p_member_name: member_name,
       p_points: points, p_type: type, p_reason: reason,
       p_admin_id: m.id, p_admin_name: m.display_name,
+      p_target: body.target || "both",
     });
     if (result?.error) return NextResponse.json({ error: result.error }, { status: 400 });
     return NextResponse.json({ success: true });
