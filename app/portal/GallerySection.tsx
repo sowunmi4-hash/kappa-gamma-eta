@@ -90,7 +90,7 @@ export default function GallerySection({ member }: { member: Member }) {
     repday:  { label:"👑 Rep Day",       colour:"#D4AF37", desc:"Submit your rep day photo" },
   };
 
-  const canUpload = tab!=="repday" || (posts.length===0 && !posts.some((p:Post)=>p));
+  // For non-admin repday: already submitted = posts array has items
   const alreadySubmitted = tab==="repday" && !isAdmin && posts.length > 0;
 
   return (
@@ -119,14 +119,15 @@ export default function GallerySection({ member }: { member: Member }) {
 
       <p style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.35)", marginBottom:"1.4rem" }}>
         {TAB_CONFIG[tab].desc}
-        {tab==="repday" && isAdmin && " — viewing all sister submissions"}
+        {tab==="repday" && isAdmin && " — submit yours above, save all sister submissions below"}
       </p>
 
-      {/* Upload zone — not shown for rep day if already submitted, or if admin viewing all */}
-      {!alreadySubmitted && !(tab==="repday" && isAdmin) && (
+      {/* Upload zone — always shown unless non-admin already submitted rep day */}
+      {!alreadySubmitted && (
         <div style={{ ...card, padding:"1.4rem", marginBottom:"1.6rem", border:"1px solid rgba(212,175,55,0.18)" }}>
           <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.18em", textTransform:"uppercase", color:TAB_CONFIG[tab].colour, marginBottom:"1rem" }}>
             {tab==="repday" ? "Submit Your Rep Day Photo" : "Upload Photo"}
+          {tab==="repday" && isAdmin && <span style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"0.8rem", color:"rgba(212,175,55,0.4)", marginLeft:"0.5rem" }}>(your own)</span>}
           </div>
 
           {/* Drop zone */}
@@ -236,7 +237,7 @@ export default function GallerySection({ member }: { member: Member }) {
           <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.3)" }}>
             {tab==="public" ? "No photos yet — be the first to share!" :
              tab==="private" ? "No private photos yet." :
-             isAdmin ? "No rep day submissions yet." : "You haven't submitted your rep day photo yet."}
+             isAdmin ? "No rep day submissions yet — sisters haven't uploaded yet." : "You haven't submitted your rep day photo yet."}
           </p>
         </div>
       )}
