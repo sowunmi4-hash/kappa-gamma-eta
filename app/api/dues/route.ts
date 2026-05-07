@@ -34,10 +34,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { period, amount, description, due_date } = body;
   if (!period || !amount) return NextResponse.json({ error: "Period and amount required" }, { status: 400 });
-  const { data } = await sb.rpc("create_dues_period", {
+  const { data, error } = await sb.rpc("create_dues_period", {
     p_period: period, p_amount: amount,
     p_description: description || "", p_due_date: due_date || null,
     p_admin_name: m.display_name,
   });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data) return NextResponse.json({ error: "Failed to create period" }, { status: 500 });
   return NextResponse.json({ success: true, id: data });
 }
