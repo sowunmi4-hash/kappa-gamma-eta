@@ -278,43 +278,8 @@ export default function Portal() {
           )}
 
           {/* ══ EVENTS ══ */}
-          {page==="events" && (
-            <div>
-              <div style={{ marginBottom:"1.6rem" }}>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Kappa Gamma Eta</div>
-                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>Events</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
-              </div>
-              {events.length ? (
-                <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-                  {events.map(e=>(
-                    <div key={e.id} style={{ ...S.card, display:"flex", gap:"1.4rem", alignItems:"flex-start" }}>
-                      <div style={{ flexShrink:0, width:52, textAlign:"center", border:"1px solid rgba(212,175,55,0.25)", padding:"0.5rem 0.3rem", background:"rgba(212,175,55,0.04)" }}>
-                        <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#D4AF37", lineHeight:1 }}>{new Date(e.event_date+"T12:00:00").getDate()}</div>
-                        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>{MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}</div>
-                      </div>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#F5EDD8", marginBottom:"0.4rem" }}>{e.title}</div>
-                        <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                          {e.event_time&&<span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}</span>}
-                          {e.location&&<span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
-                          {e.dress_code&&<span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
-                        </div>
-                        {e.description&&<div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
-                        <button onClick={()=>handleRsvp(e.id,e.rsvpd)} style={{ padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer", transition:"all 0.25s", border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)", background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)", color: e.rsvpd?"var(--cyan)":"#ff9ec8" }}>
-                          {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ ...S.card, textAlign:"center", padding:"3rem" }}>
-                  <div style={{ fontSize:"2rem", marginBottom:"0.8rem" }}>📅</div>
-                  <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.35)" }}>No upcoming events at this time.</p>
-                </div>
-              )}
-            </div>
+          {page==="events" && member && (
+            <EventsSection member={member} />
           )}
 
           {/* ══ THE CHALICE ══ */}
