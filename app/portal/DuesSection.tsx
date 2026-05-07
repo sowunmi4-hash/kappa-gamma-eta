@@ -6,6 +6,7 @@ type DueRow  = { period:string; amount_due:number; total_paid:number; remaining:
 type Payment = { amount:number; date:string; method:string };
 type Report  = { member_name:string; frat_name:string; sl_name:string; period:string; amount_due:number; total_paid:number; remaining:number; status:string; due_date:string };
 type Period  = { period:string; amount:number; description:string; due_date:string };
+type PeriodSummary = { id:string; period:string; amount:number; is_active:boolean };
 
 const STATUS_CFG: Record<string,{label:string;color:string;bg:string}> = {
   paid:    { label:"✓ Paid",    color:"#4DB87A", bg:"rgba(77,184,122,0.1)" },
@@ -25,6 +26,8 @@ export default function DuesSection({ member }: { member: Member }) {
   const [report,    setReport]    = useState<Report[]>([]);
   const [period,    setPeriod]    = useState<Period|null>(null);
   const [tab,       setTab]       = useState<"mine"|"report"|"create">(isAdmin(member.role)?"report":"mine");
+  const [periods,   setPeriods]   = useState<Period[]>([]);
+  const [selPeriod, setSelPeriod] = useState<string>("");
   const [showCreate,setShowCreate]= useState(false);
 
   // Create form
@@ -35,11 +38,32 @@ export default function DuesSection({ member }: { member: Member }) {
   const [saving,    setSaving]    = useState(false);
   const [msg,       setMsg]       = useState("");
 
+  const loadReport = useCallback(async (p: string) => {
+    const r = await fetch(`/api/dues?type=report&period=${encodeURIComponent(p)}`);
+    const d = await r.json();
+    setReport(d.report||[]); setPeriod(d.period||null);
+    if (d.allPeriods?.length) {
+      setPeriods(d.allPeriods);
+    }
+  }, []);
+
   const load = useCallback(async () => {
     if (isAdmin(member.role)) {
       const r = await fetch("/api/dues?type=report");
       const d = await r.json();
       setReport(d.report||[]); setPeriod(d.period||null);
+      if (d.allPeriods?.length) {
+        setPeriods(d.allPeriods);
+        const active = d.allPeriods.find((p: any) => p.is_active);
+        const first = d.allPeriods[0];
+        const def = active?.period || first?.period || "";
+        setSelPeriod(def);
+        if (def) {
+          const r2 = await fetch(`/api/dues?type=report&period=${encodeURIComponent(def)}`);
+          const d2 = await r2.json();
+          setReport(d2.report||[]);
+        }
+      }
     }
     const r2 = await fetch("/api/dues");
     const d2 = await r2.json();
@@ -172,6 +196,24 @@ export default function DuesSection({ member }: { member: Member }) {
       {/* ── DUES REPORT (founder/admin) ── */}
       {tab==="report" && isAdmin(member.role) && (
         <div>
+          {/* Period dropdown */}
+          {periods.length > 0 && (
+            <div style={{ display:"flex", alignItems:"center", gap:"1rem", marginBottom:"1.4rem", flexWrap:"wrap" }}>
+              <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)" }}>Viewing Period:</label>
+              <select
+                value={selPeriod}
+                onChange={e=>{ setSelPeriod(e.target.value); loadReport(e.target.value); }}
+                style={{ padding:"0.5rem 2rem 0.5rem 0.9rem", background:"#1c0d12", border:"1px solid rgba(212,175,55,0.3)", color:"#fff0a0", fontFamily:"'Cinzel',serif", fontSize:"0.65rem", letterSpacing:"0.1em", outline:"none", cursor:"pointer" }}
+              >
+                {periods.map((p:any)=>(
+                  <option key={p.period} value={p.period}>
+                    {p.period}{p.is_active?" (Active)":""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Summary */}
           {report.length > 0 && (
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
