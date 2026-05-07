@@ -6,10 +6,9 @@ const COOKIE = process.env.SESSION_COOKIE_NAME || "kge_session";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow public routes and API routes
+  // Allow public routes
   if (
     pathname.startsWith("/login") ||
-    pathname.startsWith("/probation") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/sisters") ||
     pathname === "/" ||
@@ -19,30 +18,39 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Portal routes require auth
-  if (pathname.startsWith("/portal")) {
-    const token = req.cookies.get(COOKIE)?.value;
-    if (!token) return NextResponse.redirect(new URL("/login", req.url));
+  const token = req.cookies.get(COOKIE)?.value;
+  if (!token) return NextResponse.redirect(new URL("/login", req.url));
 
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+  const sb = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-    // Get session member
-    const { data: members } = await sb.rpc("get_session_member", { p_token: token });
-    if (!members?.length) return NextResponse.redirect(new URL("/login", req.url));
+  const { data: members } = await sb.rpc("get_session_member", { p_token: token });
+  if (!members?.length) return NextResponse.redirect(new URL("/login", req.url));
 
-    const member = members[0];
+  const member = members[0];
+  const isAdmin = ["Founder","Admin"].includes(member.role);
 
-    // Check probation — skip for founders/admins setting probation
-    if (!["Founder","Admin"].includes(member.role)) {
-      const { data: probStatus } = await sb.rpc("get_probation_status", { p_member_id: member.id });
-      if (probStatus?.on_probation) {
-        return NextResponse.redirect(new URL("/probation", req.url));
-      }
-    }
+  // Guide route — auth only, no other checks
+  if (pathname.startsWith("/guide")) {
+    if (isAdmin) return NextResponse.redirect(new URL("/portal", req.url));
+    return NextResponse.next();
+  }
 
+  // Probation check (skip for admins)
+  if (pathname.startsWith("/portal") && !isAdmin) {
+    const { data: probStatus } = await sb.rpc("get_probation_status", { p_member_id: member.id });
+    if (probStatus?.on_probation) return NextResponse.redirect(new URL("/probation", req.url));
+
+    // Guide check — must complete guide before accessing portal
+    const { data: guideComplete } = await sb.rpc("is_guide_complete", { p_member_id: member.id });
+    if (!guideComplete) return NextResponse.redirect(new URL("/guide", req.url));
+  }
+
+  // Probation page
+  if (pathname.startsWith("/probation")) {
+    if (isAdmin) return NextResponse.redirect(new URL("/portal", req.url));
     return NextResponse.next();
   }
 
@@ -50,5 +58,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/portal/:path*", "/probation"],
+  matcher: ["/portal/:path*", "/guide/:path*", "/guide", "/probation"],
 };
