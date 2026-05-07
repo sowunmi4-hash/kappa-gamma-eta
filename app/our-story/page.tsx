@@ -37,7 +37,7 @@ export default function OurStoryPage() {
       <nav style={{ position:"fixed", top:12, left:0, right:0, zIndex:50, display:"flex", justifyContent:"space-between", alignItems:"center", padding:"0.9rem 2.5rem", pointerEvents:"none" }}>
         <Link href="/" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.75rem", color:"#D4AF37", textDecoration:"none", letterSpacing:"0.15em", pointerEvents:"all" }}>ΚΓΗ</Link>
         <div style={{ display:"flex", gap:"2rem", pointerEvents:"all" }}>
-          {[["Home","/"],["Sisters","/sisters"],["Our Story","/our-story"],["Join","/login"]].map(([l,h])=>(
+          {[["Home","/"],["Sisters","/sisters"],["Our Story","/our-story"],["Apply","/apply"]].map(([l,h])=>(
             <Link key={l} href={h} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color: l==="Our Story"?"#D4AF37":"rgba(245,237,216,0.45)", textDecoration:"none" }}>{l}</Link>
           ))}
         </div>
@@ -167,9 +167,7 @@ export default function OurStoryPage() {
             <Link href="/sisters" style={{ padding:"0.85rem 2rem", fontFamily:"'Cinzel',serif", fontSize:"0.6rem", letterSpacing:"0.22em", textTransform:"uppercase", background:"rgba(212,175,55,0.15)", border:"1px solid rgba(212,175,55,0.45)", color:"#fff0a0", textDecoration:"none" }}>
               Meet the Sisters
             </Link>
-            <Link href="/login" style={{ padding:"0.85rem 2rem", fontFamily:"'Cinzel',serif", fontSize:"0.6rem", letterSpacing:"0.22em", textTransform:"uppercase", background:"rgba(255,107,170,0.12)", border:"1px solid rgba(255,107,170,0.35)", color:"#ff9ec8", textDecoration:"none" }}>
-              Sister Login →
-            </Link>
+
           </div>
         </div>
       </section>

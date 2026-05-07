@@ -22,7 +22,7 @@ export default async function SistersPage() {
       <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:50, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"1.1rem 3.5rem", background:"linear-gradient(180deg, rgba(14,5,8,0.97) 0%, rgba(14,5,8,0) 100%)", backdropFilter:"blur(4px)", borderBottom:"1px solid rgba(212,175,55,0.12)" }}>
         <Link href="/" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.2rem", letterSpacing:"0.1em", color:"#D4AF37", textDecoration:"none" }}>ΚΓΗ</Link>
         <ul style={{ display:"flex", gap:"2.2rem", listStyle:"none" }}>
-          {[["Home","/"],["Our Story","/about"],["Sisters","/sisters"]].map(([label,href])=>(
+          {[["Home","/"],["Our Story","/our-story"],["Sisters","/sisters"]].map(([label,href])=>(
             <li key={label}>
               <Link href={href} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.68rem", letterSpacing:"0.2em", textTransform:"uppercase", color: href==="/sisters"?"#ff6baa":"rgba(212,175,55,0.6)", textDecoration:"none" }}>{label}</Link>
             </li>
