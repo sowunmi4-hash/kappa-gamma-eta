@@ -25,7 +25,7 @@ const PILLARS = [
     title: "Our Emblems",
     desc: "The Golden Chalice, Forget-Me-Not, and the Peruvian Opal — symbols of who we are",
     cta: "Explore Our Symbols →",
-    href: "/our-story#emblems",
+    href: "/emblems",
   },
 ];
 
