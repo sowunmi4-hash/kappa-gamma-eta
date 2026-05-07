@@ -271,7 +271,7 @@ export default function Portal() {
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Kappa Gamma Eta</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>The Sisterhood</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
+                <div className="shimmer-line" style={{ margin:"1rem 0" }} />
               </div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1.2rem" }}>
                 {sisters.map(s=>(
@@ -312,7 +312,7 @@ export default function Portal() {
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Activity</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>Notifications</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
+                <div className="shimmer-line" style={{ margin:"1rem 0" }} />
               </div>
               <div style={S.card}>
                 {notifs.length ? notifs.map(n=>(
@@ -340,7 +340,7 @@ export default function Portal() {
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Your Account</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>My Profile</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
+                <div className="shimmer-line" style={{ margin:"1rem 0" }} />
               </div>
 
               {/* Banner */}

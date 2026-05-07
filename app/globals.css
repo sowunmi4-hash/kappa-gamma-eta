@@ -99,3 +99,178 @@ select:focus {
   border-color: rgba(255,107,170,0.55) !important;
   outline: none;
 }
+
+/* ═══════════════════════════════════════════════
+   KGE PORTAL ANIMATIONS
+═══════════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes slideInLeft {
+  from { opacity:0; transform:translateX(-18px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity:0; transform:scale(0.93); }
+  to   { opacity:1; transform:scale(1); }
+}
+@keyframes shimmerGold {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(255,107,170,0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(255,107,170,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,107,170,0); }
+}
+@keyframes pulseGold {
+  0%,100% { opacity:1; }
+  50%      { opacity:0.55; }
+}
+@keyframes ambientDrift {
+  0%,100% { transform:translate(0,0) scale(1); }
+  33%      { transform:translate(20px,-15px) scale(1.04); }
+  66%      { transform:translate(-15px,10px) scale(0.97); }
+}
+@keyframes countUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes borderGlow {
+  0%,100% { border-color:rgba(212,175,55,0.18); }
+  50%      { border-color:rgba(212,175,55,0.45); }
+}
+@keyframes notifBounce {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  25%      { transform:translateY(-3px) rotate(-8deg); }
+  75%      { transform:translateY(-1px) rotate(6deg); }
+}
+@keyframes lineExpand {
+  from { width:0; opacity:0; }
+  to   { width:100%; opacity:1; }
+}
+@keyframes dotPulse {
+  0%,100% { transform:scale(1); opacity:1; }
+  50%      { transform:scale(1.6); opacity:0.6; }
+}
+
+/* ── Page transition ── */
+.page-enter {
+  animation: fadeUp 0.38s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Staggered children ── */
+.stagger > *:nth-child(1) { animation: fadeUp 0.35s 0.04s cubic-bezier(0.22,1,0.36,1) both; }
+.stagger > *:nth-child(2) { animation: fadeUp 0.35s 0.10s cubic-bezier(0.22,1,0.36,1) both; }
+.stagger > *:nth-child(3) { animation: fadeUp 0.35s 0.16s cubic-bezier(0.22,1,0.36,1) both; }
+.stagger > *:nth-child(4) { animation: fadeUp 0.35s 0.22s cubic-bezier(0.22,1,0.36,1) both; }
+.stagger > *:nth-child(5) { animation: fadeUp 0.35s 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+.stagger > *:nth-child(6) { animation: fadeUp 0.35s 0.34s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Animated card ── */
+.anim-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.anim-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 35px rgba(212,175,55,0.1);
+  border-color: rgba(212,175,55,0.32) !important;
+}
+
+/* ── Stat card ── */
+.stat-card {
+  animation: scaleIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(255,107,170,0.12);
+  border-color: rgba(255,107,170,0.3) !important;
+}
+.stat-card:nth-child(1) { animation-delay: 0.06s; }
+.stat-card:nth-child(2) { animation-delay: 0.12s; }
+.stat-card:nth-child(3) { animation-delay: 0.18s; }
+.stat-card:nth-child(4) { animation-delay: 0.24s; }
+
+/* ── Shimmer divider ── */
+.shimmer-line {
+  height:1px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  background-size: 200% auto;
+  animation: shimmerGold 3s linear infinite;
+  opacity:0.45;
+}
+
+/* ── Nav item ── */
+.nav-item {
+  position:relative;
+  transition: color 0.18s ease, background 0.18s ease, padding-left 0.18s ease;
+}
+.nav-item::before {
+  content:'';
+  position:absolute;
+  left:0; top:50%;
+  transform:translateY(-50%);
+  width:0; height:70%;
+  background:var(--pink);
+  border-radius:0 2px 2px 0;
+  transition: width 0.18s ease;
+}
+.nav-item.active::before { width:3px; }
+.nav-item:hover::before  { width:2px; }
+
+/* ── Bell notification pulse ── */
+.notif-bell {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+.notif-bell:hover {
+  animation: notifBounce 0.5s ease;
+}
+.notif-bell.has-notif {
+  animation: notifBounce 0.6s ease 1s 1;
+}
+
+/* ── Glowing dot (unread indicator) ── */
+.unread-dot {
+  animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+/* ── Gold shimmer text ── */
+.shimmer-text {
+  background: linear-gradient(90deg, #D4AF37 0%, #fff0a0 40%, #D4AF37 60%, #b8892a 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation: shimmerGold 4s linear infinite;
+}
+
+/* ── Ambient background orb ── */
+.ambient-orb {
+  position:absolute; border-radius:50%;
+  filter:blur(60px); pointer-events:none; z-index:0;
+  animation: ambientDrift 12s ease-in-out infinite;
+}
+
+/* ── Sidebar slide-in ── */
+.sidebar-enter {
+  animation: slideInLeft 0.35s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Welcome banner ── */
+.welcome-enter {
+  animation: fadeUp 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Button hover lift ── */
+button, a {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}

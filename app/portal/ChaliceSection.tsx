@@ -113,7 +113,7 @@ export default function ChaliceSection({ member }: { member: Member }) {
 
       {/* Posts */}
       {posts.length ? posts.map(p => (
-        <div key={p.id} style={card}>
+        <div key={p.id} className="anim-card" style={card}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"0.8rem", flexWrap:"wrap", gap:"0.5rem" }}>
             <div style={{ display:"flex", alignItems:"center", gap:"0.6rem" }}>
               <div style={{ width:26, height:26, borderRadius:"50%", border:"1px solid rgba(212,175,55,0.3)", background:"rgba(255,107,170,0.1)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.7rem" }}>🌸</div>
