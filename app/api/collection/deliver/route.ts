@@ -10,10 +10,8 @@ async function getM(req: NextRequest) {
   return data?.[0] || null;
 }
 
-// Look up SL avatar UUID from username via SL web API
 async function getSlUUID(sl_name: string): Promise<string | null> {
   try {
-    // Try "Username Resident" format first
     const res = await fetch(
       `https://api.secondlife.com/avatar/${encodeURIComponent(sl_name + " Resident")}/id`,
       { signal: AbortSignal.timeout(8000) }
@@ -21,15 +19,6 @@ async function getSlUUID(sl_name: string): Promise<string | null> {
     if (res.ok) {
       const uuid = (await res.text()).trim();
       if (uuid && uuid !== "00000000-0000-0000-0000-000000000000") return uuid;
-    }
-    // Fallback: try without "Resident"
-    const res2 = await fetch(
-      `https://api.secondlife.com/avatar/${encodeURIComponent(sl_name)}/id`,
-      { signal: AbortSignal.timeout(8000) }
-    );
-    if (res2.ok) {
-      const uuid2 = (await res2.text()).trim();
-      if (uuid2 && uuid2 !== "00000000-0000-0000-0000-000000000000") return uuid2;
     }
   } catch { /* ignore */ }
   return null;
@@ -67,27 +56,36 @@ export async function POST(req: NextRequest) {
     }, { status: 503 });
   }
 
-  // 4. Look up avatar UUID on the server side
-  const slUUID = await getSlUUID(m.sl_name);
+  // 4. Get avatar UUID — use stored UUID first, fall back to SL web API
+  let slUUID: string | null = m.sl_uuid || null;
+
+  if (!slUUID) {
+    slUUID = await getSlUUID(m.sl_name);
+    // Store it for next time
+    if (slUUID) {
+      await sb.from("roster" as never).update({ sl_uuid: slUUID }).eq("id", m.id);
+    }
+  }
+
   if (!slUUID) {
     return NextResponse.json({
       error: "uuid_not_found",
-      message: `Could not find your Second Life avatar UUID for '${m.sl_name}'. Make sure your SL username is correct and your account exists in Second Life.`
+      message: "Could not find your Second Life avatar UUID. Please pay your dues at the in-world terminal first — this will register your avatar automatically."
     }, { status: 400 });
   }
 
-  // 5. Fire delivery request to SL vendor — now includes UUID so vendor delivers immediately
+  // 5. Send delivery request to vendor
   try {
     const vendorRes = await fetch(vendorUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        action:       "deliver",
-        sl_username:  m.sl_name,
-        sl_uuid:      slUUID,        // ← pass UUID directly, no lookup needed in LSL
-        item_name:    item.name,
-        item_key:     item.item_key || "",
-        secret:       "KGE-VENDOR-2026",
+        action:      "deliver",
+        sl_username: m.sl_name,
+        sl_uuid:     slUUID,
+        item_name:   item.name,
+        item_key:    item.item_key || "",
+        secret:      "KGE-VENDOR-2026",
       }),
       signal: AbortSignal.timeout(15000),
     });
