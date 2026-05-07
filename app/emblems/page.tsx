@@ -7,10 +7,10 @@ export const metadata = {
 };
 
 const COLOURS = [
-  { name:"Pink",  hex:"#ff6baa", role:"Passion & Strength",     rgb:"255, 107, 170" },
-  { name:"Gold",  hex:"#D4AF37", role:"Honour & Excellence",    rgb:"212, 175, 55"  },
+  { name:"Green", hex:"#35df24", role:"Growth & Vitality",      rgb:"53, 223, 36"   },
   { name:"Wine",  hex:"#7b0323", role:"Courage & Devotion",     rgb:"123, 3, 35"    },
-  { name:"Cream", hex:"#F5EDD8", role:"Grace & Refinement",     rgb:"245, 237, 216" },
+  { name:"Pink",  hex:"#ff6baa", role:"Passion & Strength",     rgb:"255, 107, 170" },
+  { name:"Cyan",  hex:"#75ffff", role:"Clarity & Sisterhood",   rgb:"117, 255, 255" },
 ];
 
 function CornerAccents() {
