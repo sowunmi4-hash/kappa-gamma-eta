@@ -2,6 +2,7 @@
 import TDASection from "./TDASection";
 import EventsSection from "./EventsSection";
 import ChaliceSection from "./ChaliceSection";
+import GallerySection from "./GallerySection";
 import SistersVoice from "./SistersVoice";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
