@@ -128,8 +128,8 @@ export default function Portal() {
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
-      <div className="ambient-orb" style={{ width:500, height:500, background:"rgba(123,3,35,0.18)", top:-150, left:-50 }} />
-      <div className="ambient-orb" style={{ width:350, height:350, background:"rgba(255,107,170,0.07)", bottom:50, right:100, animationDelay:"6s" }} />
+      <div className="ambient-orb" style={{ width:600, height:600, background:"rgba(123,3,35,0.28)", top:-200, left:-100 }} />
+      <div className="ambient-orb" style={{ width:400, height:400, background:"rgba(255,107,170,0.12)", bottom:0, right:50, animationDelay:"6s" }} />
 
       {/* ── SIDEBAR ── */}
       <aside className="sidebar-enter" style={{ width:230, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
@@ -150,8 +150,8 @@ export default function Portal() {
             <div key={item.id} onClick={() => setPage(item.id)} style={{
               display:"flex", alignItems:"center", gap:"0.7rem",
               padding:"0.65rem 1.4rem", cursor:"pointer",
-              borderLeft: page===item.id ? "2px solid #ff6baa" : "2px solid transparent",
-              background: page===item.id ? "rgba(255,107,170,0.1)" : "transparent",
+              borderLeft: page===item.id ? "3px solid #ff6baa" : "2px solid transparent",
+              background: page===item.id ? "rgba(255,107,170,0.12)" : "transparent",
               transition:"all 0.2s",
             }}
             onMouseEnter={e=>{if(page!==item.id)(e.currentTarget as HTMLDivElement).style.background="rgba(255,107,170,0.05)";}}
@@ -225,7 +225,7 @@ export default function Portal() {
                   <div key={s.label} className="stat-card" style={{ ...S.card, display:"flex", alignItems:"center", gap:"1rem", cursor:"default" }}>
                     <span style={{ fontSize:"1.4rem" }}>{s.icon}</span>
                     <div>
-                      <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#D4AF37", lineHeight:1 }}>{s.num}</div>
+                      <div className="count-up" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#D4AF37", lineHeight:1 }}>{s.num}</div>
                       <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginTop:2 }}>{s.label}</div>
                     </div>
                   </div>
