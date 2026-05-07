@@ -1,6 +1,7 @@
 "use client";
 import TDASection from "./TDASection";
 import EventsSection from "./EventsSection";
+import ChaliceSection from "./ChaliceSection";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
@@ -283,36 +284,8 @@ export default function Portal() {
           )}
 
           {/* ══ THE CHALICE ══ */}
-          {page==="chalice" && (
-            <div>
-              <div style={{ marginBottom:"1.6rem" }}>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Internal</div>
-                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>The Chalice</div>
-                <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", margin:"1rem 0", opacity:0.3 }} />
-              </div>
-              {news.length ? news.map(n=>(
-                <div key={n.id} style={{ ...S.card, marginBottom:"1rem" }}>
-                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"0.8rem" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:"0.6rem" }}>
-                      <div style={{ width:26, height:26, borderRadius:"50%", border:"1px solid rgba(212,175,55,0.3)", background:"rgba(255,107,170,0.1)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.7rem" }}>🌸</div>
-                      <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--wine-lt)" }}>{n.posted_by_name}</span>
-                    </div>
-                    <div style={{ display:"flex", alignItems:"center", gap:"0.8rem" }}>
-                      {n.pinned&&<span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#ff6baa", border:"1px solid rgba(255,107,170,0.3)", padding:"0.18rem 0.5rem" }}>📌 Pinned</span>}
-                      <span style={{ fontStyle:"italic", fontSize:"0.78rem", color:"rgba(245,237,216,0.25)" }}>{fmt(n.created_at)}</span>
-                    </div>
-                  </div>
-                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#F5EDD8", marginBottom:"0.5rem" }}>{n.title}</div>
-                  <div style={{ height:1, background:"linear-gradient(90deg,transparent,rgba(212,175,55,0.2),transparent)", margin:"0.6rem 0" }} />
-                  <div style={{ fontSize:"0.95rem", lineHeight:1.8, color:"rgba(245,237,216,0.55)", whiteSpace:"pre-wrap" }}>{n.content}</div>
-                </div>
-              )) : (
-                <div style={{ ...S.card, textAlign:"center", padding:"3rem" }}>
-                  <div style={{ fontSize:"2rem", marginBottom:"0.8rem" }}>🏺</div>
-                  <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.35)" }}>The chalice is empty for now.</p>
-                </div>
-              )}
-            </div>
+          {page==="chalice" && member && (
+            <ChaliceSection member={member} />
           )}
 
           {/* ══ GALLERY ══ */}
