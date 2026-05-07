@@ -47,9 +47,14 @@ export default function GuidePage() {
 
   const finishGuide = async () => {
     setFinishing(true);
-    await fetch("/api/guide", { method:"POST", headers:{"Content-Type":"application/json"},
+    const r = await fetch("/api/guide", { method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ action:"complete" }) });
-    router.replace("/portal");
+    const d = await r.json();
+    if (d.success) {
+      window.location.href = "/portal";
+    } else {
+      setFinishing(false);
+    }
   };
 
   if (!loaded) return (
