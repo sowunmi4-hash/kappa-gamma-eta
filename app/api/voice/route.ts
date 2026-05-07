@@ -13,7 +13,16 @@ async function getMember(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const m = await getMember(req);
   if (!m) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const type = new URL(req.url).searchParams.get("type");
+  const url = new URL(req.url);
+  const type = url.searchParams.get("type");
+  const submissionId = url.searchParams.get("submission_id");
+
+  // Get messages for a specific submission thread
+  if (type === "messages" && submissionId) {
+    const { data } = await sb.rpc("get_voice_messages", { p_submission_id: submissionId });
+    return NextResponse.json(data || []);
+  }
+
   if (type === "all" && ["Admin","Founder"].includes(m.role)) {
     const { data } = await sb.rpc("get_all_voice_submissions");
     return NextResponse.json(data || []);
@@ -34,6 +43,21 @@ export async function POST(req: NextRequest) {
       p_member_id: m.id, p_member_name: m.display_name,
       p_category: category, p_description: description,
       p_related_page: related_page || "",
+    });
+    return NextResponse.json({ success: true, id: data });
+  }
+
+  if (body.action === "reply") {
+    const { submission_id, message } = body;
+    if (!submission_id || !message) return NextResponse.json({ error: "Missing fields." }, { status: 400 });
+    const isAdmin = ["Admin","Founder"].includes(m.role);
+    const { data } = await sb.rpc("add_voice_message", {
+      p_submission_id: submission_id,
+      p_sender_id: m.id,
+      p_sender_name: m.display_name,
+      p_sender_frat_name: m.frat_name,
+      p_is_admin: isAdmin,
+      p_message: message,
     });
     return NextResponse.json({ success: true, id: data });
   }
