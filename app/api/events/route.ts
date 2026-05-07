@@ -39,13 +39,14 @@ export async function POST(req: NextRequest) {
   const { action } = body;
 
   if (action === "create") {
-    const { title, event_date, event_time, location, sl_url, dress_code, description } = body;
+    const { title, event_date, event_time, location, sl_url, dress_code, description, flyer_url } = body;
     if (!title || !event_date) return NextResponse.json({ error: "Title and date are required." }, { status: 400 });
     const { data } = await sb.rpc("create_event", {
       p_title: title, p_event_date: event_date,
       p_event_time: event_time || null,
       p_location: location || "", p_sl_url: sl_url || "",
       p_dress_code: dress_code || "", p_description: description || "",
+      p_flyer_url: flyer_url || "",
       p_member_id: m.id, p_member_name: m.display_name,
     });
     return NextResponse.json({ success: true, id: data });

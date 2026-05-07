@@ -1,8 +1,14 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const sb = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
-type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; rsvpd:boolean; created_by_name:string };
+type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; flyer_url:string; rsvpd:boolean; created_by_name:string };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtTime = (t:string) => { if(!t) return ""; const [h,m]=t.split(":"); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?"PM":"AM"}`; };
@@ -26,7 +32,6 @@ export default function EventsSection({ member }: { member: Member }) {
   const [saving,    setSaving]    = useState(false);
   const [msg,       setMsg]       = useState("");
 
-  // Form fields
   const [title,     setTitle]     = useState("");
   const [date,      setDate]      = useState("");
   const [time,      setTime]      = useState("");
@@ -35,13 +40,34 @@ export default function EventsSection({ member }: { member: Member }) {
   const [dresscode, setDresscode] = useState("");
   const [desc,      setDesc]      = useState("");
 
+  // Flyer state
+  const [flyerFile,    setFlyerFile]    = useState<File|null>(null);
+  const [flyerPreview, setFlyerPreview] = useState<string|null>(null);
+  const [uploading,    setUploading]    = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
   const load = useCallback(async () => {
     const r = await fetch("/api/events");
-    const d = await r.json();
-    setEvents(d);
+    setEvents(await r.json());
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const handleFlyerPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFlyerFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setFlyerPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const resetForm = () => {
+    setTitle(""); setDate(""); setTime(""); setLocation("");
+    setSlUrl(""); setDresscode(""); setDesc("");
+    setFlyerFile(null); setFlyerPreview(null);
+    if (fileRef.current) fileRef.current.value = "";
+  };
 
   const handleRsvp = async (eventId:string, rsvpd:boolean) => {
     await fetch("/api/rsvp", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ event_id:eventId, action: rsvpd?"remove":"add" }) });
@@ -57,14 +83,32 @@ export default function EventsSection({ member }: { member: Member }) {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title||!date) { setMsg("Title and date are required."); return; }
-    setSaving(true); setMsg("");
+    setSaving(true); setUploading(!!flyerFile); setMsg("");
+
+    let flyerUrl = "";
+
+    // Upload flyer if provided
+    if (flyerFile) {
+      const ext = flyerFile.name.split(".").pop();
+      const path = `event-flyers/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: upErr } = await sb.storage.from("flyers").upload(path, flyerFile, { upsert: true });
+      if (upErr) {
+        setMsg("Flyer upload failed: " + upErr.message);
+        setSaving(false); setUploading(false); return;
+      }
+      const { data: urlData } = sb.storage.from("flyers").getPublicUrl(path);
+      flyerUrl = urlData.publicUrl;
+    }
+
+    setUploading(false);
+
     const r = await fetch("/api/events", { method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ action:"create", title, event_date:date, event_time:time||null, location, sl_url:slUrl, dress_code:dresscode, description:desc }) });
+      body: JSON.stringify({ action:"create", title, event_date:date, event_time:time||null,
+        location, sl_url:slUrl, dress_code:dresscode, description:desc, flyer_url:flyerUrl }) });
     const d = await r.json();
     if (d.success) {
       setMsg("✓ Event created!");
-      setTitle(""); setDate(""); setTime(""); setLocation(""); setSlUrl(""); setDresscode(""); setDesc("");
-      setShowForm(false); load();
+      resetForm(); setShowForm(false); load();
     } else { setMsg(d.error||"Something went wrong."); }
     setSaving(false);
   };
@@ -128,6 +172,41 @@ export default function EventsSection({ member }: { member: Member }) {
               <label style={labelStyle}>Description</label>
               <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Tell sisters about this event…" style={{ ...inputStyle, resize:"vertical" }} />
             </div>
+
+            {/* Flyer upload */}
+            <div style={{ gridColumn:"1/-1" }}>
+              <label style={labelStyle}>Event Flyer (optional)</label>
+              <div
+                onClick={()=>fileRef.current?.click()}
+                style={{
+                  border:"2px dashed rgba(212,175,55,0.2)", padding:"1.4rem",
+                  textAlign:"center", cursor:"pointer", transition:"all 0.2s",
+                  background: flyerPreview?"transparent":"rgba(212,175,55,0.02)",
+                  position:"relative", overflow:"hidden",
+                }}
+                onMouseEnter={e=>(e.currentTarget as HTMLDivElement).style.borderColor="rgba(212,175,55,0.45)"}
+                onMouseLeave={e=>(e.currentTarget as HTMLDivElement).style.borderColor="rgba(212,175,55,0.2)"}
+              >
+                {flyerPreview ? (
+                  <div style={{ position:"relative", display:"inline-block" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={flyerPreview} alt="Flyer preview" style={{ maxHeight:200, maxWidth:"100%", objectFit:"contain", display:"block" }} />
+                    <button
+                      type="button"
+                      onClick={e=>{ e.stopPropagation(); setFlyerFile(null); setFlyerPreview(null); if(fileRef.current) fileRef.current.value=""; }}
+                      style={{ position:"absolute", top:-8, right:-8, width:22, height:22, borderRadius:"50%", background:"rgba(192,57,43,0.8)", border:"none", color:"#fff", fontSize:"0.7rem", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}
+                    >✕</button>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ fontSize:"2rem", marginBottom:"0.5rem", opacity:0.5 }}>🖼</div>
+                    <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>Click to upload flyer</div>
+                    <div style={{ fontStyle:"italic", fontSize:"0.8rem", color:"rgba(245,237,216,0.3)", marginTop:"0.3rem" }}>JPG, PNG or WebP — max 5MB</div>
+                  </div>
+                )}
+              </div>
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFlyerPick} style={{ display:"none" }} />
+            </div>
           </div>
 
           {msg && <p style={{ fontSize:"0.85rem", color:msg.startsWith("✓")?"#4DB87A":"#ff6baa", fontStyle:"italic", marginBottom:"0.8rem" }}>{msg}</p>}
@@ -138,7 +217,7 @@ export default function EventsSection({ member }: { member: Member }) {
             background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)",
             color:"#ff9ec8", cursor: saving?"not-allowed":"pointer", opacity:saving?0.5:1,
           }}>
-            {saving ? "Creating…" : "Create Event →"}
+            {uploading ? "Uploading flyer…" : saving ? "Creating…" : "Create Event →"}
           </button>
         </form>
       )}
@@ -147,73 +226,83 @@ export default function EventsSection({ member }: { member: Member }) {
       {events.length ? (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
           {events.map(e=>(
-            <div key={e.id} style={{ ...card, display:"flex", gap:"1.4rem", alignItems:"flex-start" }}>
-              {/* Date block */}
-              <div style={{ flexShrink:0, width:52, textAlign:"center", border:"1px solid rgba(212,175,55,0.25)", padding:"0.5rem 0.3rem", background:"rgba(212,175,55,0.04)" }}>
-                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#D4AF37", lineHeight:1 }}>
-                  {new Date(e.event_date+"T12:00:00").getDate()}
+            <div key={e.id} style={card}>
+              {/* Flyer */}
+              {e.flyer_url && (
+                <div style={{ marginBottom:"1rem", borderRadius:"1px", overflow:"hidden", maxHeight:220 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={e.flyer_url} alt={`${e.title} flyer`} style={{ width:"100%", objectFit:"cover", maxHeight:220, display:"block" }} />
                 </div>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>
-                  {MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}
-                </div>
-              </div>
+              )}
 
-              {/* Details */}
-              <div style={{ flex:1 }}>
-                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.4rem", gap:"1rem" }}>
-                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#F5EDD8" }}>{e.title}</div>
-                  {e.status && e.status !== "upcoming" && (
-                    <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.18rem 0.5rem", border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)", flexShrink:0 }}>{e.status}</span>
-                  )}
-                </div>
-
-                <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                  {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}</span>}
-                  {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
-                  {e.dress_code && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
-                </div>
-
-                {e.description && <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
-
-                <div style={{ display:"flex", gap:"0.7rem", flexWrap:"wrap", alignItems:"center" }}>
-                  <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
-                    padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
-                    letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer",
-                    border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)",
-                    background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)",
-                    color: e.rsvpd?"var(--cyan)":"#ff9ec8", transition:"all 0.25s",
-                  }}>
-                    {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
-                  </button>
-
-                  {e.sl_url && (
-                    <a href={e.sl_url} target="_blank" rel="noopener noreferrer" style={{
-                      padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
-                      letterSpacing:"0.15em", textTransform:"uppercase",
-                      border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)",
-                      textDecoration:"none", background:"transparent",
-                    }}>
-                      Teleport →
-                    </a>
-                  )}
-
-                  {isOfficer(member.role) && (
-                    <button onClick={()=>handleDelete(e.id)} style={{
-                      padding:"0.4rem 0.8rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem",
-                      letterSpacing:"0.12em", textTransform:"uppercase", cursor:"pointer",
-                      border:"1px solid rgba(192,57,43,0.3)", background:"rgba(192,57,43,0.08)",
-                      color:"rgba(192,57,43,0.7)", marginLeft:"auto",
-                    }}>
-                      Delete
-                    </button>
-                  )}
-                </div>
-
-                {e.created_by_name && (
-                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.2)", marginTop:"0.6rem" }}>
-                    Created by {e.created_by_name}
+              <div style={{ display:"flex", gap:"1.4rem", alignItems:"flex-start" }}>
+                {/* Date block */}
+                <div style={{ flexShrink:0, width:52, textAlign:"center", border:"1px solid rgba(212,175,55,0.25)", padding:"0.5rem 0.3rem", background:"rgba(212,175,55,0.04)" }}>
+                  <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#D4AF37", lineHeight:1 }}>
+                    {new Date(e.event_date+"T12:00:00").getDate()}
                   </div>
-                )}
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>
+                    {MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}
+                  </div>
+                </div>
+
+                {/* Details */}
+                <div style={{ flex:1 }}>
+                  <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.4rem", gap:"1rem" }}>
+                    <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#F5EDD8" }}>{e.title}</div>
+                    {e.status && e.status !== "upcoming" && (
+                      <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.18rem 0.5rem", border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)", flexShrink:0 }}>{e.status}</span>
+                    )}
+                  </div>
+
+                  <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
+                    {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}</span>}
+                    {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
+                    {e.dress_code && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
+                  </div>
+
+                  {e.description && <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
+
+                  <div style={{ display:"flex", gap:"0.7rem", flexWrap:"wrap", alignItems:"center" }}>
+                    <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
+                      padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
+                      letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer",
+                      border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)",
+                      background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)",
+                      color: e.rsvpd?"var(--cyan)":"#ff9ec8", transition:"all 0.25s",
+                    }}>
+                      {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
+                    </button>
+
+                    {e.sl_url && (
+                      <a href={e.sl_url} target="_blank" rel="noopener noreferrer" style={{
+                        padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
+                        letterSpacing:"0.15em", textTransform:"uppercase",
+                        border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)",
+                        textDecoration:"none", background:"transparent",
+                      }}>
+                        Teleport →
+                      </a>
+                    )}
+
+                    {isOfficer(member.role) && (
+                      <button onClick={()=>handleDelete(e.id)} style={{
+                        padding:"0.4rem 0.8rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem",
+                        letterSpacing:"0.12em", textTransform:"uppercase", cursor:"pointer",
+                        border:"1px solid rgba(192,57,43,0.3)", background:"rgba(192,57,43,0.08)",
+                        color:"rgba(192,57,43,0.7)", marginLeft:"auto",
+                      }}>
+                        Delete
+                      </button>
+                    )}
+                  </div>
+
+                  {e.created_by_name && (
+                    <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.2)", marginTop:"0.6rem" }}>
+                      Created by {e.created_by_name}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
