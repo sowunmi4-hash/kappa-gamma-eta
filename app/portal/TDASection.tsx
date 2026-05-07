@@ -104,9 +104,11 @@ export default function TDASection({ member }: { member: Member }) {
     if (!adjMember||!adjPoints||!adjReason) { setAdjMsg("Fill all fields."); return; }
     const pts = parseInt(adjPoints); if (isNaN(pts)) { setAdjMsg("Invalid points."); return; }
     const s = sisters.find(s=>s.id===adjMember);
-    await fetch("/api/tda", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"manual_adjust", member_id:adjMember, member_name:s?.display_name||"", points:pts, type:adjType, reason:adjReason }) });
+    const r = await fetch("/api/tda", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"manual_adjust", member_id:adjMember, member_name:s?.display_name||"", points:pts, type:adjType, reason:adjReason }) });
+    const d = await r.json();
+    if (d.error) { setAdjMsg("⚠ " + d.error); return; }
     setAdjMsg("✓ Adjustment applied."); setAdjPoints(""); setAdjReason("");
-    fetch_("leaderboard").then(setLeaderboard);
+    fetch_("leaderboard").then(setLeaderboard); fetch_("overview").then(setOverview);
   };
 
   const handleAssignTitle = async () => {

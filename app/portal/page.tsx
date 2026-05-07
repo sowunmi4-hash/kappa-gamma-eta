@@ -50,6 +50,11 @@ export default function Portal() {
   const [pNewPw,  setPNewPw]    = useState("");
   const [saving,  setSaving]    = useState(false);
   const [saveMsg, setSaveMsg]   = useState("");
+  const [pInstagram, setPInstagram] = useState("");
+  const [pTwitter,   setPTwitter]   = useState("");
+  const [pDiscord,   setPDiscord]   = useState("");
+  const [pSlProfile, setPSlProfile] = useState("");
+  const [copied,     setCopied]     = useState(false);
 
   const unread = notifs.filter(n=>!n.is_read).length;
 
@@ -59,6 +64,9 @@ export default function Portal() {
     const { member: m, profile: p } = await me.json();
     setMember(m); setProfile(p);
     setPBio(p?.bio||""); setPQuote(p?.favourite_quote||""); setPHobbies(p?.hobbies||"");
+    const sl = p?.social_links || {};
+    setPInstagram(sl.instagram||""); setPTwitter(sl.twitter||"");
+    setPDiscord(sl.discord||""); setPSlProfile(sl.sl_profile||"");
     const [s,e,n,notif] = await Promise.all([
       fetch("/api/sisters").then(r=>r.json()),
       fetch("/api/events").then(r=>r.json()),
@@ -78,7 +86,7 @@ export default function Portal() {
 
   const handleSaveProfile = async () => {
     setSaving(true); setSaveMsg("");
-    const res = await fetch("/api/profile", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ bio:pBio, favourite_quote:pQuote, hobbies:pHobbies, new_password:pNewPw||undefined }) });
+    const res = await fetch("/api/profile", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ bio:pBio, favourite_quote:pQuote, hobbies:pHobbies, new_password:pNewPw||undefined, social_links:{ instagram:pInstagram, twitter:pTwitter, discord:pDiscord, sl_profile:pSlProfile } }) });
     if (res.ok) { setSaveMsg("Saved!"); setEditing(false); setPNewPw(""); await load(); }
     else setSaveMsg("Something went wrong.");
     setSaving(false);
@@ -365,6 +373,10 @@ export default function Portal() {
                       { label:"Bio",         val:profile?.bio },
                       { label:"Favourite Quote", val:profile?.favourite_quote },
                       { label:"Hobbies",     val:profile?.hobbies },
+                    { label:"Instagram",   val:(profile as {social_links?:{instagram?:string}})?.social_links?.instagram },
+                    { label:"Twitter / X", val:(profile as {social_links?:{twitter?:string}})?.social_links?.twitter },
+                    { label:"Discord",     val:(profile as {social_links?:{discord?:string}})?.social_links?.discord },
+                    { label:"SL Profile",  val:(profile as {social_links?:{sl_profile?:string}})?.social_links?.sl_profile },
                     ].map(f=>(
                       <div key={f.label}>
                         <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.35rem" }}>{f.label}</div>
@@ -393,7 +405,25 @@ export default function Portal() {
                       </div>
                     </div>
                     {saveMsg&&<p style={{ fontSize:"0.85rem", color: saveMsg==="Saved!"?"#D4AF37":"#ff6baa", fontStyle:"italic", marginTop:"0.8rem" }}>{saveMsg}</p>}
-                    <button onClick={handleSaveProfile} disabled={saving} style={{ ...S.btn, marginTop:"1.2rem", opacity:saving?0.5:1 }}>
+                    <div style={{ marginTop:"1rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+              <div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Instagram username</div>
+                <input value={pInstagram} onChange={e=>setPInstagram(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
+              </div>
+              <div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Twitter / X username</div>
+                <input value={pTwitter} onChange={e=>setPTwitter(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
+              </div>
+              <div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Discord username</div>
+                <input value={pDiscord} onChange={e=>setPDiscord(e.target.value)} placeholder="e.g. username#1234" style={S.input} />
+              </div>
+              <div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>SL Profile URL</div>
+                <input value={pSlProfile} onChange={e=>setPSlProfile(e.target.value)} placeholder="https://my.secondlife.com/..." style={S.input} />
+              </div>
+            </div>
+            <button onClick={handleSaveProfile} disabled={saving} style={{ ...S.btn, marginTop:"1.2rem", opacity:saving?0.5:1 }}>
                       {saving?"Saving…":"Save Changes →"}
                     </button>
                   </div>
