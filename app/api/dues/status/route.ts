@@ -8,6 +8,10 @@ export async function GET(req: NextRequest) {
   if (searchParams.get("secret") !== SECRET)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const sl_username = searchParams.get("sl_username") || "";
-  const { data } = await sb.rpc("get_dues_status", { p_sl_name: sl_username });
+  const period      = searchParams.get("period") || null;
+  const { data } = await sb.rpc("get_dues_status", {
+    p_sl_name: sl_username,
+    p_period:  period,
+  });
   return NextResponse.json(data || { found: "no" });
 }
