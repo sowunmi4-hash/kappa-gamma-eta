@@ -1,0 +1,237 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+
+type Member = { id:string; display_name:string; frat_name:string; role:string };
+type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; rsvpd:boolean; created_by_name:string };
+
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtTime = (t:string) => { if(!t) return ""; const [h,m]=t.split(":"); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?"PM":"AM"}`; };
+const isOfficer = (role:string) => ["Admin","Founder","President"].includes(role);
+
+const inputStyle: React.CSSProperties = {
+  width:"100%", padding:"0.65rem 0.9rem",
+  background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.2)",
+  color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif",
+  fontSize:"0.95rem", outline:"none", borderRadius:"1px",
+};
+const labelStyle: React.CSSProperties = {
+  display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.48rem",
+  letterSpacing:"0.2em", textTransform:"uppercase",
+  color:"rgba(212,175,55,0.6)", marginBottom:"0.4rem",
+};
+
+export default function EventsSection({ member }: { member: Member }) {
+  const [events,    setEvents]    = useState<Event[]>([]);
+  const [showForm,  setShowForm]  = useState(false);
+  const [saving,    setSaving]    = useState(false);
+  const [msg,       setMsg]       = useState("");
+
+  // Form fields
+  const [title,     setTitle]     = useState("");
+  const [date,      setDate]      = useState("");
+  const [time,      setTime]      = useState("");
+  const [location,  setLocation]  = useState("");
+  const [slUrl,     setSlUrl]     = useState("");
+  const [dresscode, setDresscode] = useState("");
+  const [desc,      setDesc]      = useState("");
+
+  const load = useCallback(async () => {
+    const r = await fetch("/api/events");
+    const d = await r.json();
+    setEvents(d);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleRsvp = async (eventId:string, rsvpd:boolean) => {
+    await fetch("/api/rsvp", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ event_id:eventId, action: rsvpd?"remove":"add" }) });
+    setEvents(prev => prev.map(e => e.id===eventId ? {...e, rsvpd:!rsvpd} : e));
+  };
+
+  const handleDelete = async (eventId:string) => {
+    if (!confirm("Delete this event?")) return;
+    await fetch("/api/events", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"delete", event_id:eventId }) });
+    load();
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title||!date) { setMsg("Title and date are required."); return; }
+    setSaving(true); setMsg("");
+    const r = await fetch("/api/events", { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ action:"create", title, event_date:date, event_time:time||null, location, sl_url:slUrl, dress_code:dresscode, description:desc }) });
+    const d = await r.json();
+    if (d.success) {
+      setMsg("✓ Event created!");
+      setTitle(""); setDate(""); setTime(""); setLocation(""); setSlUrl(""); setDresscode(""); setDesc("");
+      setShowForm(false); load();
+    } else { setMsg(d.error||"Something went wrong."); }
+    setSaving(false);
+  };
+
+  const card: React.CSSProperties = { background:"#221018", border:"1px solid rgba(212,175,55,0.14)", padding:"1.4rem 1.6rem" };
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:"1.6rem", flexWrap:"wrap", gap:"1rem" }}>
+        <div>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"var(--cyan)", marginBottom:"0.35rem" }}>Kappa Gamma Eta</div>
+          <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>Events</div>
+        </div>
+        {isOfficer(member.role) && (
+          <button onClick={()=>{ setShowForm(!showForm); setMsg(""); }} style={{
+            padding:"0.55rem 1.2rem", fontFamily:"'Cinzel',serif", fontSize:"0.58rem",
+            letterSpacing:"0.18em", textTransform:"uppercase",
+            background: showForm?"rgba(212,175,55,0.1)":"rgba(255,107,170,0.15)",
+            border: showForm?"1px solid rgba(212,175,55,0.35)":"1px solid rgba(255,107,170,0.4)",
+            color: showForm?"#fff0a0":"#ff9ec8", cursor:"pointer", transition:"all 0.2s",
+          }}>
+            {showForm ? "✕ Cancel" : "+ Create Event"}
+          </button>
+        )}
+      </div>
+
+      <div style={{ height:1, background:"linear-gradient(90deg,transparent,#D4AF37,transparent)", marginBottom:"1.6rem", opacity:0.3 }} />
+
+      {/* Create event form */}
+      {showForm && isOfficer(member.role) && (
+        <form onSubmit={handleCreate} style={{ ...card, marginBottom:"1.6rem", border:"1px solid rgba(255,107,170,0.2)", background:"rgba(255,107,170,0.04)" }}>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"#ff9ec8", marginBottom:"1.2rem" }}>New Event</div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
+            <div style={{ gridColumn:"1/-1" }}>
+              <label style={labelStyle}>Event Title *</label>
+              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Sisterhood Mixer — May 2026" style={inputStyle} required />
+            </div>
+            <div>
+              <label style={labelStyle}>Date *</label>
+              <input type="date" value={date} onChange={e=>setDate(e.target.value)} style={inputStyle} required />
+            </div>
+            <div>
+              <label style={labelStyle}>Time</label>
+              <input type="time" value={time} onChange={e=>setTime(e.target.value)} style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Location (SL)</label>
+              <input value={location} onChange={e=>setLocation(e.target.value)} placeholder="e.g. Sandy Bay Club" style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Dress Code</label>
+              <input value={dresscode} onChange={e=>setDresscode(e.target.value)} placeholder="e.g. Elegant Casual" style={inputStyle} />
+            </div>
+            <div style={{ gridColumn:"1/-1" }}>
+              <label style={labelStyle}>SL Teleport URL</label>
+              <input value={slUrl} onChange={e=>setSlUrl(e.target.value)} placeholder="secondlife://..." style={inputStyle} />
+            </div>
+            <div style={{ gridColumn:"1/-1" }}>
+              <label style={labelStyle}>Description</label>
+              <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Tell sisters about this event…" style={{ ...inputStyle, resize:"vertical" }} />
+            </div>
+          </div>
+
+          {msg && <p style={{ fontSize:"0.85rem", color:msg.startsWith("✓")?"#4DB87A":"#ff6baa", fontStyle:"italic", marginBottom:"0.8rem" }}>{msg}</p>}
+
+          <button type="submit" disabled={saving} style={{
+            padding:"0.65rem 2rem", fontFamily:"'Cinzel',serif", fontSize:"0.6rem",
+            letterSpacing:"0.2em", textTransform:"uppercase",
+            background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)",
+            color:"#ff9ec8", cursor: saving?"not-allowed":"pointer", opacity:saving?0.5:1,
+          }}>
+            {saving ? "Creating…" : "Create Event →"}
+          </button>
+        </form>
+      )}
+
+      {/* Events list */}
+      {events.length ? (
+        <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
+          {events.map(e=>(
+            <div key={e.id} style={{ ...card, display:"flex", gap:"1.4rem", alignItems:"flex-start" }}>
+              {/* Date block */}
+              <div style={{ flexShrink:0, width:52, textAlign:"center", border:"1px solid rgba(212,175,55,0.25)", padding:"0.5rem 0.3rem", background:"rgba(212,175,55,0.04)" }}>
+                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#D4AF37", lineHeight:1 }}>
+                  {new Date(e.event_date+"T12:00:00").getDate()}
+                </div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>
+                  {MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}
+                </div>
+              </div>
+
+              {/* Details */}
+              <div style={{ flex:1 }}>
+                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.4rem", gap:"1rem" }}>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#F5EDD8" }}>{e.title}</div>
+                  {e.status && e.status !== "upcoming" && (
+                    <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.18rem 0.5rem", border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)", flexShrink:0 }}>{e.status}</span>
+                  )}
+                </div>
+
+                <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
+                  {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}</span>}
+                  {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
+                  {e.dress_code && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
+                </div>
+
+                {e.description && <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
+
+                <div style={{ display:"flex", gap:"0.7rem", flexWrap:"wrap", alignItems:"center" }}>
+                  <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
+                    padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
+                    letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer",
+                    border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)",
+                    background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)",
+                    color: e.rsvpd?"var(--cyan)":"#ff9ec8", transition:"all 0.25s",
+                  }}>
+                    {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
+                  </button>
+
+                  {e.sl_url && (
+                    <a href={e.sl_url} target="_blank" rel="noopener noreferrer" style={{
+                      padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
+                      letterSpacing:"0.15em", textTransform:"uppercase",
+                      border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)",
+                      textDecoration:"none", background:"transparent",
+                    }}>
+                      Teleport →
+                    </a>
+                  )}
+
+                  {isOfficer(member.role) && (
+                    <button onClick={()=>handleDelete(e.id)} style={{
+                      padding:"0.4rem 0.8rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem",
+                      letterSpacing:"0.12em", textTransform:"uppercase", cursor:"pointer",
+                      border:"1px solid rgba(192,57,43,0.3)", background:"rgba(192,57,43,0.08)",
+                      color:"rgba(192,57,43,0.7)", marginLeft:"auto",
+                    }}>
+                      Delete
+                    </button>
+                  )}
+                </div>
+
+                {e.created_by_name && (
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.2)", marginTop:"0.6rem" }}>
+                    Created by {e.created_by_name}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ ...card, textAlign:"center", padding:"3rem" }}>
+          <div style={{ fontSize:"2rem", marginBottom:"0.8rem" }}>📅</div>
+          <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.35)", marginBottom:"0.8rem" }}>No upcoming events at this time.</p>
+          {isOfficer(member.role) && (
+            <button onClick={()=>setShowForm(true)} style={{
+              padding:"0.55rem 1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.58rem",
+              letterSpacing:"0.18em", textTransform:"uppercase",
+              background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)",
+              color:"#ff9ec8", cursor:"pointer",
+            }}>+ Create the first event</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

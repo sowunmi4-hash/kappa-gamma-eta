@@ -1,5 +1,6 @@
 "use client";
 import TDASection from "./TDASection";
+import EventsSection from "./EventsSection";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
