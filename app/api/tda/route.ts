@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data || []);
   }
   if (type === "tda_title_list") {
-    const { data } = await sb.from("tda_titles" as never).select("*").order("sort_order");
+    const { data } = await sb.rpc("get_tda_title_list");
     return NextResponse.json(data || []);
   }
   return NextResponse.json({ error: "Unknown type" }, { status: 400 });
