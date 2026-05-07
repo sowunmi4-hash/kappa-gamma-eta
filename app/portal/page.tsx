@@ -4,6 +4,7 @@ import EventsSection from "./EventsSection";
 import ChaliceSection from "./ChaliceSection";
 import GallerySection from "./GallerySection";
 import DuesSection from "./DuesSection";
+import ProbationSection from "./ProbationSection";
 import SistersVoice from "./SistersVoice";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ type Event   = { id:string; title:string; event_date:string; event_time:string; 
 type Post    = { id:string; title:string; content:string; posted_by_name:string; pinned:boolean; created_at:string };
 type Notif   = { id:string; title:string; message:string; is_read:boolean; created_at:string };
 
-type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues";
+type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation";
 
 const ROLE_COLOUR: Record<string,string> = {
   Founder:"#D4AF37", President:"#ff6baa", Admin:"#7BA7D4", Member:"rgba(245,237,216,0.45)"
@@ -122,9 +123,10 @@ export default function Portal() {
     { id:"tda",           icon:"⚜",   label:"The Divine Accord" },
     { id:"voice",          icon:"💙",   label:"Sister's Voice" },
     { id:"dues",           icon:"💰",   label:"Dues" },
+    ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠",    label:"Probation" }] : []),
   ];
 
-  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues" };
+  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation" };
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
@@ -444,6 +446,10 @@ export default function Portal() {
           {/* ══ DUES ══ */}
           {page==="dues" && member && (
             <DuesSection member={member} />
+          )}
+
+          {page==="probation" && member && ["Founder","Admin"].includes(member.role) && (
+            <ProbationSection member={member} />
           )}
 
           </div>{/* end page-enter */}
