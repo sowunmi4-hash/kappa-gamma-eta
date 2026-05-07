@@ -127,16 +127,18 @@ export default function Portal() {
   const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues" };
 
   return (
-    <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif" }}>
+    <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
+      <div className="ambient-orb" style={{ width:500, height:500, background:"rgba(123,3,35,0.18)", top:-150, left:-50 }} />
+      <div className="ambient-orb" style={{ width:350, height:350, background:"rgba(255,107,170,0.07)", bottom:50, right:100, animationDelay:"6s" }} />
 
       {/* ── SIDEBAR ── */}
-      <aside style={{ width:230, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
+      <aside className="sidebar-enter" style={{ width:230, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
 
         {/* Logo */}
         <div style={{ padding:"1.5rem 1.4rem 1.2rem", borderBottom:"1px solid rgba(212,175,55,0.14)", display:"flex", alignItems:"center", gap:"0.7rem" }}>
           <div style={{ width:36, height:36, borderRadius:"50%", border:"1px solid rgba(212,175,55,0.5)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Cinzel Decorative',serif", fontSize:"0.65rem", color:"#D4AF37", background:"radial-gradient(circle, rgba(255,107,170,0.15), rgba(14,5,8,0.8))", flexShrink:0 }}>ΚΓΗ</div>
           <div>
-            <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.72rem", letterSpacing:"0.08em", lineHeight:1.3 }}>Kappa Gamma Eta</div>
+            <div className="shimmer-text" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.72rem", letterSpacing:"0.08em", lineHeight:1.3 }}>Kappa Gamma Eta</div>
             <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.2em", color:"rgba(212,175,55,0.45)", textTransform:"uppercase", marginTop:2 }}>Sister Portal</div>
           </div>
         </div>
@@ -192,19 +194,20 @@ export default function Portal() {
           <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.65rem", letterSpacing:"0.22em", textTransform:"uppercase", color:"rgba(245,237,216,0.45)" }}>{PAGE_TITLES[page]}</span>
           <div style={{ display:"flex", alignItems:"center", gap:"1.2rem" }}>
             <span style={{ fontSize:"0.82rem", fontStyle:"italic", color:"rgba(245,237,216,0.25)" }}>{new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span>
-            <button onClick={()=>setPage("notifications")} style={{ position:"relative", background:"none", border:"none", cursor:"pointer", color:"rgba(245,237,216,0.45)", fontSize:"1rem" }}>
-              🔔{unread>0&&<span style={{ position:"absolute", top:-2, right:-2, width:8, height:8, borderRadius:"50%", background:"#ff6baa", border:"1.5px solid #0a0306" }} />}
+            <button onClick={()=>setPage("notifications")} className={`notif-bell${unread>0?" has-notif":""}`} style={{ position:"relative", background:"none", border:"none", cursor:"pointer", color:"rgba(245,237,216,0.45)", fontSize:"1rem" }}>
+              🔔{unread>0&&<span className="unread-dot" style={{ position:"absolute", top:-2, right:-2, width:8, height:8, borderRadius:"50%", background:"#ff6baa", border:"1.5px solid #0a0306" }} />}
             </button>
           </div>
         </div>
 
         <div style={{ padding:"2rem", maxWidth:1080, margin:"0 auto" }}>
+          <div key={page} className="page-enter">
 
           {/* ══ DASHBOARD ══ */}
           {page==="dashboard" && (
             <div>
               {/* Welcome */}
-              <div style={{ background:"linear-gradient(135deg, rgba(255,107,170,0.12), rgba(212,175,55,0.06))", border:"1px solid rgba(255,107,170,0.2)", padding:"1.8rem 2rem", marginBottom:"1.4rem", position:"relative", overflow:"hidden" }}>
+              <div className="welcome-enter" style={{ background:"linear-gradient(135deg, rgba(255,107,170,0.12), rgba(212,175,55,0.06))", border:"1px solid rgba(255,107,170,0.2)", padding:"1.8rem 2rem", marginBottom:"1.4rem", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", right:-10, top:"50%", transform:"translateY(-50%)", fontFamily:"'Cinzel Decorative',serif", fontSize:"5.5rem", color:"rgba(255,107,170,0.04)", lineHeight:1, pointerEvents:"none" }}>ΚΓΗ</div>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Good day, Sister</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#F5EDD8", marginBottom:"0.3rem" }}>Welcome back, <span style={{ color:"#ff6baa" }}>{member?.frat_name}</span></div>
@@ -212,14 +215,14 @@ export default function Portal() {
               </div>
 
               {/* Stats */}
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
+              <div className="stagger" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
                 {[
                   { icon:"👑", num:sisters.length||"—", label:"Sisters" },
                   { icon:"📅", num:events.length||"—", label:"Upcoming Events" },
                   { icon:"🔔", num:unread||"—",        label:"Notifications" },
                   { icon:"🏺", num:news.length||"—",   label:"Chalice Posts" },
                 ].map(s=>(
-                  <div key={s.label} style={{ ...S.card, display:"flex", alignItems:"center", gap:"1rem" }}>
+                  <div key={s.label} className="stat-card" style={{ ...S.card, display:"flex", alignItems:"center", gap:"1rem", cursor:"default" }}>
                     <span style={{ fontSize:"1.4rem" }}>{s.icon}</span>
                     <div>
                       <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#D4AF37", lineHeight:1 }}>{s.num}</div>
@@ -275,7 +278,7 @@ export default function Portal() {
               </div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1.2rem" }}>
                 {sisters.map(s=>(
-                  <div key={s.id} style={{ ...S.card, textAlign:"center", transition:"all 0.3s", cursor:"default" }}
+                  <div key={s.id} className="anim-card" style={{ ...S.card, textAlign:"center", transition:"all 0.3s", cursor:"default" }}
                     onMouseEnter={e=>{(e.currentTarget as HTMLDivElement).style.borderColor="rgba(255,107,170,0.35)";(e.currentTarget as HTMLDivElement).style.transform="translateY(-3px)";}}
                     onMouseLeave={e=>{(e.currentTarget as HTMLDivElement).style.borderColor="rgba(212,175,55,0.14)";(e.currentTarget as HTMLDivElement).style.transform="translateY(0)";}}>
                     <div style={{ width:68, height:68, borderRadius:"50%", border:`1.5px solid ${ROLE_COLOUR[s.role]}50`, margin:"0 auto 0.9rem", display:"flex", alignItems:"center", justifyContent:"center", background:`radial-gradient(circle, ${ROLE_COLOUR[s.role]}15, rgba(10,3,6,0.9))`, fontSize:"1.3rem", position:"relative" }}>
@@ -443,7 +446,7 @@ export default function Portal() {
             <DuesSection member={member} />
           )}
 
-
+          </div>{/* end page-enter */}
         </div>
       </div>
     </div>
