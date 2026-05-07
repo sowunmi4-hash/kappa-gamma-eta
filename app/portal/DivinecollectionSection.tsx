@@ -35,7 +35,7 @@ function timeAgo(d:string) {
 
 export default function DivineCollectionSection({ member }: { member: Member }) {
   const [items,      setItems]      = useState<Item[]>([]);
-  const [filter,     setFilter]     = useState("All");
+  const [filter,     setFilter]     = useState("Clothing");
   const [loading,    setLoading]    = useState(false);
   const [delivering, setDelivering] = useState<string|null>(null);
   const [msg,        setMsg]        = useState<{id:string; text:string; type:"ok"|"err"|"dues"}|null>(null);
@@ -113,7 +113,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
     setASaving(false);
   };
 
-  const filtered = filter==="All" ? items : items.filter(i=>i.category===filter);
+  const filtered = items.filter(i=>i.category===filter);
 
   return (
     <div>
@@ -200,7 +200,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
 
       {/* Category filter */}
       <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:"1.4rem" }}>
-        {["All",...CATEGORIES].map(c=>(
+        {CATEGORIES.map(c=>(
           <button key={c} onClick={()=>setFilter(c)} style={{
             padding:"0.35rem 0.9rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem",
             letterSpacing:"0.12em", textTransform:"uppercase", cursor:"pointer",
@@ -223,10 +223,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
               <div style={{ position:"absolute", top:10, left:10, zIndex:2, fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.2rem 0.55rem", background:"rgba(14,5,8,0.85)", border:`1px solid ${CATCOLOUR[item.category]||"rgba(245,237,216,0.3)"}50`, color:CATCOLOUR[item.category]||"rgba(245,237,216,0.5)" }}>
                 {item.category}
               </div>
-              {/* Founder delete */}
-              {isFounder && (
-                <button onClick={()=>handleDelete(item.id)} style={{ position:"absolute", top:8, right:8, zIndex:2, width:24, height:24, borderRadius:"50%", background:"rgba(192,57,43,0.7)", border:"none", color:"#fff", fontSize:"0.65rem", cursor:"pointer" }}>✕</button>
-              )}
+
               {/* Image */}
               {item.image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -275,6 +272,27 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
                   }}>
                   {delivering===item.id ? "Delivering…" : item.claimed ? "✓ Redelivery →" : "✦ Receive →"}
                 </button>
+
+                {/* Founder/Admin delete */}
+                {isFounder && (
+                  <button
+                    onClick={()=>handleDelete(item.id)}
+                    style={{
+                      width:"100%", padding:"0.5rem", marginTop:"0.5rem",
+                      fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
+                      letterSpacing:"0.12em", textTransform:"uppercase",
+                      cursor:"pointer",
+                      border:"1px solid rgba(192,57,43,0.35)",
+                      background:"rgba(192,57,43,0.08)",
+                      color:"rgba(220,80,60,0.7)",
+                      transition:"all 0.2s",
+                    }}
+                    onMouseEnter={e=>{ (e.currentTarget as HTMLButtonElement).style.background="rgba(192,57,43,0.18)"; (e.currentTarget as HTMLButtonElement).style.color="#e05030"; }}
+                    onMouseLeave={e=>{ (e.currentTarget as HTMLButtonElement).style.background="rgba(192,57,43,0.08)"; (e.currentTarget as HTMLButtonElement).style.color="rgba(220,80,60,0.7)"; }}
+                  >
+                    ✕ Remove Item
+                  </button>
+                )}
               </div>
             </div>
           ))}
