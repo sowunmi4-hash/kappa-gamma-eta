@@ -205,16 +205,32 @@ export default function GallerySection({ member }: { member: Member }) {
 
                 {/* Actions */}
                 <div style={{ display:"flex", gap:"0.5rem", marginTop:"0.6rem" }}>
-                  {/* Founder save button on rep day */}
+                  {/* Founder save button on rep day — downloads to computer */}
                   {tab==="repday" && isAdmin && (
-                    <button onClick={()=>handleSaveRepday(p.id, p.saved_by_founder)} style={{
+                    <button onClick={async ()=>{
+                      // Download the image to computer
+                      try {
+                        const res = await fetch(p.image_url);
+                        const blob = await res.blob();
+                        const ext = blob.type.split("/")[1] || "jpg";
+                        const filename = `${p.frat_name.replace(/[^a-zA-Z0-9]/g,"_")}_RepDay.${ext}`;
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url; a.download = filename;
+                        document.body.appendChild(a); a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      } catch { window.open(p.image_url, "_blank"); }
+                      // Mark as saved
+                      handleSaveRepday(p.id, p.saved_by_founder);
+                    }} style={{
                       flex:1, padding:"0.35rem 0", fontFamily:"'Cinzel',serif", fontSize:"0.46rem",
                       letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer",
                       border: p.saved_by_founder?"1px solid rgba(77,184,122,0.4)":"1px solid rgba(212,175,55,0.3)",
                       background: p.saved_by_founder?"rgba(77,184,122,0.1)":"rgba(212,175,55,0.06)",
                       color: p.saved_by_founder?"#4DB87A":"rgba(212,175,55,0.7)",
                     }}>
-                      {p.saved_by_founder ? "✓ Saved" : "Save →"}
+                      {p.saved_by_founder ? "✓ Download Again" : "⬇ Save →"}
                     </button>
                   )}
                   {/* Delete — own photos or admin */}
