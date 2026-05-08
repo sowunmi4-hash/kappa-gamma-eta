@@ -1,11 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "@/lib/supabase-client";
 
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const sb = getSupabaseClient();
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
 type Post   = { id:string; member_name:string; frat_name:string; image_url:string; caption:string; saved_by_founder:boolean; created_at:string };

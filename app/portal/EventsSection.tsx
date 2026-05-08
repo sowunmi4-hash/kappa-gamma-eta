@@ -1,11 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "@/lib/supabase-client";
 
-const sb = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const sb = getSupabaseClient();
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
 type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; sl_region:string; event_duration_minutes:number; flyer_url:string; rsvpd:boolean; created_by_name:string };
