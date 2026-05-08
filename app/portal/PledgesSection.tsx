@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 type Member = { id:string; display_name:string; frat_name:string; role:string; sl_name:string };
 type Pledge = {
   id:string; sl_name:string; display_name:string; pledge_name:string|null;
-  pledge_start:string|null; pledge_duration_days:number; pledge_status:string; created_at:string;
+  pledge_start:string|null; pledge_end_date:string|null; pledge_duration_days:number; pledge_status:string; created_at:string;
 };
 
 const input: React.CSSProperties = { width:"100%", padding:"0.65rem 0.9rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.2)", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", outline:"none", boxSizing:"border-box" };
@@ -25,7 +25,8 @@ export default function PledgesSection({ member }: { member: Member }) {
 
   // Edit form state
   const [ePledgeName, setEPledgeName] = useState("");
-  const [eDuration,   setEDuration]   = useState("");
+  const [eStartDate,  setEStartDate]  = useState("");
+  const [eEndDate,    setEEndDate]    = useState("");
   const [eSaving,     setESaving]     = useState(false);
 
   const load = useCallback(async () => {
@@ -41,13 +42,14 @@ export default function PledgesSection({ member }: { member: Member }) {
   const openEdit = (p: Pledge) => {
     setEditing(p.id);
     setEPledgeName(p.pledge_name || "");
-    setEDuration(p.pledge_duration_days?.toString() || "30");
+    setEStartDate(p.pledge_start ? p.pledge_start.slice(0,10) : "");
+    setEEndDate(p.pledge_end_date || "");
   };
 
   const saveDetails = async (id: string) => {
     setESaving(true);
     const r = await fetch("/api/pledges", { method:"PATCH", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ member_id: id, pledge_name: ePledgeName||null, duration_days: parseInt(eDuration)||30 })
+      body: JSON.stringify({ member_id: id, pledge_name: ePledgeName||null, start_date: eStartDate||null, end_date: eEndDate||null })
     });
     setESaving(false);
     if (r.ok) { setEditing(null); load(); setMsg({id, text:"Details saved.", ok:true}); }
@@ -149,15 +151,27 @@ export default function PledgesSection({ member }: { member: Member }) {
                   {/* Edit form */}
                   {isEditing ? (
                     <div style={{ borderTop:"1px solid rgba(212,175,55,0.1)", paddingTop:"1.2rem" }}>
-                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
+                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
                         <div>
                           <label style={lbl}>Pledge Name</label>
                           <input value={ePledgeName} onChange={e=>setEPledgeName(e.target.value)} placeholder="e.g. Rose of the East" style={input} />
                         </div>
                         <div>
-                          <label style={lbl}>Duration (days)</label>
-                          <input type="number" value={eDuration} onChange={e=>setEDuration(e.target.value)} placeholder="30" style={input} />
+                          <label style={lbl}>Start Date</label>
+                          <input type="date" value={eStartDate} onChange={e=>setEStartDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
                         </div>
+                        <div>
+                          <label style={lbl}>End Date</label>
+                          <input type="date" value={eEndDate} onChange={e=>setEEndDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
+                        </div>
+                        {eStartDate && eEndDate && (
+                          <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", paddingTop:"0.3rem" }}>
+                            <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>Duration:</span>
+                            <span style={{ color:"#D4AF37", fontFamily:"'Cinzel',serif", fontSize:"0.7rem" }}>
+                              {Math.max(0, Math.ceil((new Date(eEndDate).getTime() - new Date(eStartDate).getTime()) / 86400000))} days
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div style={{ display:"flex", gap:"0.8rem" }}>
                         <button onClick={()=>saveDetails(p.id)} disabled={eSaving} style={{ padding:"0.55rem 1.2rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(212,175,55,0.15)", border:"1px solid rgba(212,175,55,0.4)", color:"#fff0a0", cursor:"pointer" }}>
