@@ -21,7 +21,7 @@ export default function OurStoryPage() {
       <nav style={{ position:"fixed", top:12, left:0, right:0, zIndex:50, display:"flex", justifyContent:"space-between", alignItems:"center", padding:"0.9rem 2.5rem" }}>
         <Link href="/" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.75rem", color:"#D4AF37", textDecoration:"none", letterSpacing:"0.15em" }}>ΚΓΗ</Link>
         <div style={{ display:"flex", gap:"2rem" }}>
-          {[["Home","/"],["Sisters","/sisters"],["Our Story","/our-story"],["Emblems","/emblems"],["Apply","/apply"],["Check Status","/apply/status"]].map(([l,h])=>(
+          {[["Home","/"],["Sisters","/sisters"],["Our Story","/our-story"],["Emblems","/emblems"],["Apply","/apply"]].map(([l,h])=>(
             <Link key={l} href={h} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color:l==="Our Story"?"#D4AF37":"rgba(245,237,216,0.4)", textDecoration:"none" }}>{l}</Link>
           ))}
         </div>

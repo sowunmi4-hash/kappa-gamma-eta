@@ -46,7 +46,7 @@ export default function EmblemsPage() {
       <nav style={{ position:"fixed", top:12, left:0, right:0, zIndex:50, display:"flex", justifyContent:"space-between", alignItems:"center", padding:"0.9rem 2.5rem" }}>
         <Link href="/" style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.75rem", color:"#D4AF37", textDecoration:"none", letterSpacing:"0.15em" }}>ΚΓΗ</Link>
         <div style={{ display:"flex", gap:"2rem" }}>
-          {[["Home","/"],["Our Story","/our-story"],["Sisters","/sisters"],["Emblems","/emblems"],["Apply","/apply"],["Check Status","/apply/status"]].map(([l,h])=>(
+          {[["Home","/"],["Our Story","/our-story"],["Sisters","/sisters"],["Emblems","/emblems"],["Apply","/apply"]].map(([l,h])=>(
             <Link key={l} href={h} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color:l==="Emblems"?"#D4AF37":"rgba(245,237,216,0.4)", textDecoration:"none" }}>{l}</Link>
           ))}
         </div>
@@ -96,6 +96,9 @@ export default function EmblemsPage() {
             { icon:"🏺", name:"The Golden Chalice", role:"Central Emblem", desc:"The Golden Chalice overflowing with wine — symbolising the richness of bonds between sisters. Celebratory and nourishing, full of joy, support, and the sweet rewards of friendship that deepen over time." },
             { icon:"🌸", name:"The Forget-Me-Not", role:"Official Flower", desc:"A symbol of remembrance, loyalty, and enduring affection. The Forget-Me-Not represents the unbreakable ties of KGE's members — a reminder to always honour the friendships that shape our lives." },
             { icon:"💎", name:"Peruvian Opal Pink", role:"Official Gemstone", desc:"Chosen for its ethereal beauty and transformative energy — embodying calm, creativity, and emotional healing. Symbolic of the growth each member undergoes during her time in KGE." },
+            { icon:"🤝", name:"The Friendship Symbol", role:"Unity & Bond", desc:"A heart formed by two clasped hands — rendered in KGE's colours, it is the most personal of our emblems. The Friendship Symbol represents the unity, loyalty, and unbreakable bond at the core of everything Kappa Gamma Eta stands for." },
+            { icon:"🍷", name:"Wine", role:"Official Drink", desc:"More than a drink — wine is woven into the identity of KGE. It speaks to depth, warmth, and the sweetness that comes with time and patience. In our motto, wine represents the softness that lives alongside strength: she is strong like whiskey, but soft like wine." },
+            { icon:"🕊️", name:"The Crane", role:"Official Animal", desc:"Graceful, resilient, and fiercely loyal — the Crane embodies the spirit of the KGE woman. Revered across cultures as a symbol of longevity, nobility, and devotion, it reminds every sister to carry herself with elegance and to honour the bonds she has pledged to keep." },
           ].map(s=>(
             <div key={s.name} style={{ background:"#120709", border:"1px solid rgba(212,175,55,0.14)", padding:"2rem 1.5rem", textAlign:"center", position:"relative", overflow:"hidden" }}>
               <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:"linear-gradient(90deg,transparent,rgba(212,175,55,0.35),transparent)" }} />
