@@ -163,7 +163,7 @@ export default function StatusPage() {
                 Thank you for your interest in Kappa Gamma Eta. We have received your application and it is currently <strong style={{ color: '#D4AF37' }}>under review</strong> by our Founders.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.8rem' }}>
-                We take the time to carefully consider every applicant. Please check back here for updates — you will see a new letter when a decision has been made.
+                We take the time to carefully consider every applicant. Please check back here for updates, you will see a new letter when a decision has been made.
               </p>
               <div style={divider} />
               <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.4)', fontSize: '0.9rem', textAlign: 'right' }}>With warmth,<br /><span style={{ color: '#D4AF37' }}>The Founders of Kappa Gamma Eta</span></p>
@@ -185,14 +185,14 @@ export default function StatusPage() {
                 Thank you for taking the time to apply to Kappa Gamma Eta. We were genuinely moved by your application and the thoughtfulness you put into it.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
-                After careful consideration, we have placed your application on our <strong style={{ color: '#ff6baa' }}>waitlist</strong>. This is not a rejection — it means we see real potential in you and want to keep the door open. Should a place become available, or should circumstances change, you will be among the first we reach out to.
+                After careful consideration, we have placed your application on our <strong style={{ color: '#ff6baa' }}>waitlist</strong>. This is not a rejection, it means we see real potential in you and want to keep the door open. Should a place become available, or should circumstances change, you will be among the first we reach out to.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.8rem' }}>
-                We encourage you to continue being the woman you are. Please check back here — if your status changes, a new letter will appear.
+                We encourage you to continue being the woman you are. Please check back here, if your status changes, a new letter will appear.
               </p>
               <div style={{ background: 'rgba(255,107,170,0.05)', border: '1px solid rgba(255,107,170,0.15)', padding: '1rem 1.2rem', marginBottom: '1.8rem' }}>
                 <p style={{ margin: 0, fontStyle: 'italic', color: 'rgba(245,237,216,0.5)', fontSize: '0.88rem', lineHeight: 1.7 }}>
-                  "She is strong like whiskey, but soft like wine." — Keep being her.
+                  "She is strong like whiskey, but soft like wine.", Keep being her.
                 </p>
               </div>
               <div style={divider} />
@@ -215,7 +215,7 @@ export default function StatusPage() {
                 We are pleased to invite you to the <strong style={{ color: '#D4AF37' }}>interview stage</strong> of your application to Kappa Gamma Eta. Your application stood out to our Founders and we would love to get to know you better.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '2rem' }}>
-                Please select one of the available time slots below. We will meet with you in Second Life at your chosen time. Come as you are — this is simply a conversation.
+                Please select one of the available time slots below. We will meet with you in Second Life at your chosen time. Come as you are, this is simply a conversation.
               </p>
 
               {/* Slot picker */}
@@ -226,7 +226,7 @@ export default function StatusPage() {
                 </div>
               ) : (
                 <div style={{ marginBottom: '1.8rem' }}>
-                  <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.5)', marginBottom: '1rem' }}>Available Times — Select One</div>
+                  <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.5)', marginBottom: '1rem' }}>Available Times, Select One</div>
                   <div style={{ display: 'grid', gap: '0.6rem' }}>
                     {parseSlots(result.interview_slots).length === 0 ? (
                       <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.35)', fontSize: '0.9rem' }}>Time slots will be posted shortly. Please check back soon.</p>
@@ -291,7 +291,7 @@ export default function StatusPage() {
                 On behalf of the Founders and sisters of <strong style={{ color: '#D4AF37' }}>Kappa Gamma Eta</strong>, it is with great joy that we welcome you into our sisterhood.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
-                Your application moved us. You embody the spirit of what we stand for — unity, respect, and empowerment. We believe you will be a wonderful addition to our family.
+                Your application moved us. You embody the spirit of what we stand for, unity, respect, and empowerment. We believe you will be a wonderful addition to our family.
               </p>
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
                 Your pledging journey begins now. You will have access to your personal pledge portal where you can track your progress. Use the credentials below to log in.
