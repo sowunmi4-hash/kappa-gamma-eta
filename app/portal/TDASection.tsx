@@ -134,6 +134,7 @@ function TDARewards({ member }: { member: Member }) {
 
 export default function TDASection({ member }: { member: Member }) {
   const [tab, setTab]                 = useState<Tab>("overview");
+  const [attendance, setAttendance]     = useState<{weekly:number;monthly:number;yearly:number}>({weekly:0,monthly:0,yearly:0});
   const [overview, setOverview]       = useState<Record<string,unknown>|null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderRow[]>([]);
   const [activities, setActivities]   = useState<Activity[]>([]);
