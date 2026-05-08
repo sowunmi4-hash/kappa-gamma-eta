@@ -5,7 +5,7 @@ import { getSupabaseClient } from "@/lib/supabase-client";
 const sb = getSupabaseClient();
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
-type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; sl_region:string; event_duration_minutes:number; flyer_url:string; rsvpd:boolean; created_by_name:string };
+type Event  = { id:string; title:string; event_date:string; event_time:string; event_end_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; sl_region:string; event_duration_minutes:number; flyer_url:string; rsvpd:boolean; created_by_name:string };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtTime = (t:string) => { if(!t) return ""; const [h,m]=t.split(":"); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?"PM":"AM"}`; };
@@ -33,6 +33,7 @@ export default function EventsSection({ member }: { member: Member }) {
   const [date,      setDate]      = useState("");
   const [time,      setTime]      = useState("");
   const [location,  setLocation]  = useState("");
+  const [endTime,   setEndTime]   = useState("");
   const [slUrl,     setSlUrl]     = useState("");
   const [slRegion,  setSlRegion]  = useState("");
   const [duration,  setDuration]  = useState("60");
@@ -63,7 +64,7 @@ export default function EventsSection({ member }: { member: Member }) {
 
   const resetForm = () => {
     setTitle(""); setDate(""); setTime(""); setLocation("");
-    setSlUrl(""); setSlRegion(""); setDuration("60"); setDresscode(""); setDesc("");
+    setSlUrl(""); setSlRegion(""); setDuration("60"); setEndTime(""); setDresscode(""); setDesc("");
     setFlyerFile(null); setFlyerPreview(null);
     if (fileRef.current) fileRef.current.value = "";
   };
@@ -103,6 +104,7 @@ export default function EventsSection({ member }: { member: Member }) {
 
     const r = await fetch("/api/events", { method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ action:"create", title, event_date:date, event_time:time||null,
+        event_end_time:endTime||null,
         location, sl_url:slUrl, sl_region:slRegion||null, event_duration_minutes:parseInt(duration)||60,
         dress_code:dresscode, description:desc, flyer_url:flyerUrl }) });
     const d = await r.json();
@@ -153,8 +155,16 @@ export default function EventsSection({ member }: { member: Member }) {
               <input id="field-46" name="field-46" type="date" value={date} onChange={e=>setDate(e.target.value)} style={inputStyle} required />
             </div>
             <div>
-              <label style={labelStyle}>Time</label>
-              <input id="field-47" name="field-47" type="time" value={time} onChange={e=>setTime(e.target.value)} style={inputStyle} />
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.8rem" }}>
+                <div>
+                  <label style={labelStyle}>Start Time (SLT)</label>
+                  <input id="field-47" name="field-47" type="time" value={time} onChange={e=>setTime(e.target.value)} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>End Time (SLT)</label>
+                  <input id="field-end-time" name="field-end-time" type="time" value={endTime} onChange={e=>setEndTime(e.target.value)} style={inputStyle} />
+                </div>
+              </div>
             </div>
             <div>
               <label style={labelStyle}>Location (SL)</label>
@@ -264,7 +274,7 @@ export default function EventsSection({ member }: { member: Member }) {
                   </div>
 
                   <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                    {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}</span>}
+                    {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}{e.event_end_time ? ` – ${fmtTime(e.event_end_time)}` : ""} SLT</span>}
                     {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
                     {e.dress_code && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
                   </div>
