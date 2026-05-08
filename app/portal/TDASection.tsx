@@ -50,13 +50,13 @@ function TDARewards({ member }: { member: Member }) {
     setIssuing(memberId + title);
     const r = await fetch("/api/tda/rewards", { method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ member_id: memberId, title, month }) });
-    const d = await r.json();
+    const d = await r.json().catch(() => null);
     setIssuing(null);
-    if (d.success) {
+    if (d?.success) {
       setMsg(`✓ ${title} awarded to ${d.awarded_to}. All points reset.`);
       setBoard(prev => prev.map(b => ({ ...b, total_points: 0 })));
     } else {
-      setMsg("⚠ " + (d.error || "Something went wrong."));
+      setMsg("⚠ " + (d?.error || "Something went wrong."));
     }
   };
 
