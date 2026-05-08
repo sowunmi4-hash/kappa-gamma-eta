@@ -130,7 +130,7 @@ export default function Portal() {
     { id:"collection",     icon:"✦",   label:"Regalia" },
     { id:"handbook",      icon:"📖",  label:"The Handbook" },
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📖", label:"Orientation Guide" }] : []),
-    ...(["Founder","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }] : []),
+    ...(["Founder","Admin","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }] : []),
   ];
 
   const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications" };
@@ -471,7 +471,7 @@ export default function Portal() {
             <GuideSection />
           )}
 
-          {page==="applications" && member && ["Founder","DOP"].includes(member.role) && (
+          {page==="applications" && member && ["Founder","Admin","DOP"].includes(member.role) && (
             <ApplicationsSection />
           )}
 
