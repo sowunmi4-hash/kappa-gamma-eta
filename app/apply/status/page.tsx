@@ -149,7 +149,7 @@ export default function StatusPage() {
               <p style={{ color: 'rgba(245,237,216,0.3)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Check your spelling or <a href="/apply" style={{ color: '#ff6baa', textDecoration: 'none' }}>submit an application</a>.</p>
             </div>
 
-          ) : result.status === 'pending' || result.status === 'waitlisted' ? (
+          ) : result.status === 'pending' ? (
             <div style={letterCard}>
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <div style={{ fontFamily: "'Cinzel Decorative',serif", fontSize: '1.4rem', color: '#D4AF37', letterSpacing: '0.08em' }}>Κ Γ Η</div>
@@ -166,6 +166,36 @@ export default function StatusPage() {
               </p>
               <div style={divider} />
               <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.4)', fontSize: '0.9rem', textAlign: 'right' }}>With warmth,<br /><span style={{ color: '#D4AF37' }}>The Founders of Kappa Gamma Eta</span></p>
+            </div>
+
+          ) : result.status === 'waitlisted' ? (
+            <div style={letterCard}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <div style={{ fontFamily: "'Cinzel Decorative',serif", fontSize: '1.4rem', color: '#D4AF37', letterSpacing: '0.08em' }}>Κ Γ Η</div>
+                <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.4)', marginTop: '0.3rem' }}>Kappa Gamma Eta</div>
+              </div>
+              <div style={divider} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.8rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.4)', fontSize: '0.85rem', margin: 0 }}>{date}</p>
+                <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.3rem 0.8rem', background: 'rgba(255,107,170,0.08)', border: '1px solid rgba(255,107,170,0.25)', color: '#ff6baa' }}>Waitlist</span>
+              </div>
+              <p style={{ fontSize: '1.1rem', marginBottom: '1.2rem' }}>Dear <strong style={{ color: '#ff6baa' }}>{result.iw_name}</strong>,</p>
+              <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
+                Thank you for taking the time to apply to Kappa Gamma Eta. We were genuinely moved by your application and the thoughtfulness you put into it.
+              </p>
+              <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
+                After careful consideration, we have placed your application on our <strong style={{ color: '#ff6baa' }}>waitlist</strong>. This is not a rejection — it means we see real potential in you and want to keep the door open. Should a place become available, or should circumstances change, you will be among the first we reach out to.
+              </p>
+              <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.8rem' }}>
+                We encourage you to continue being the woman you are. Please check back here — if your status changes, a new letter will appear.
+              </p>
+              <div style={{ background: 'rgba(255,107,170,0.05)', border: '1px solid rgba(255,107,170,0.15)', padding: '1rem 1.2rem', marginBottom: '1.8rem' }}>
+                <p style={{ margin: 0, fontStyle: 'italic', color: 'rgba(245,237,216,0.5)', fontSize: '0.88rem', lineHeight: 1.7 }}>
+                  "She is strong like whiskey, but soft like wine." — Keep being her.
+                </p>
+              </div>
+              <div style={divider} />
+              <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.4)', fontSize: '0.9rem', textAlign: 'right' }}>With sincere regard,<br /><span style={{ color: '#D4AF37' }}>The Founders of Kappa Gamma Eta</span></p>
             </div>
 
           ) : result.status === 'interview' ? (
