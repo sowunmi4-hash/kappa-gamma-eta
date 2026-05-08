@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 
 interface App {
   id: string; iw_name: string; age: string; instagram: string; has_discord: string
@@ -15,7 +16,7 @@ const STA: Record<string, { c: string; l: string }> = {
   interview:  { c: '#75ffff', l: '💬 Interview' },
   accepted:   { c: '#35df24', l: '✅ Accepted' },
   waitlisted: { c: '#ff6baa', l: '⏸ Waitlisted' },
-  rejected:   { c: '#c44',    l: '✕ Rejected' },
+  rejected:   { c: '#c44444', l: '✕ Rejected' },
 }
 const yn = (v: boolean | null) => v === true ? 'Yes' : v === false ? 'No' : '—'
 
@@ -28,6 +29,9 @@ export default function ApplicationsSection() {
   const [notes, setNotes] = useState('')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -39,7 +43,15 @@ export default function ApplicationsSection() {
   }, [filter])
 
   useEffect(() => { load() }, [load])
-  const open = (a: App) => { setSel(a); setNs(a.status); setNotes(a.review_notes || ''); setMsg('') }
+
+  const open = (a: App) => {
+    setSel(a); setNs(a.status); setNotes(a.review_notes || ''); setMsg('')
+    document.body.style.overflow = 'hidden'
+  }
+  const close = () => {
+    setSel(null)
+    document.body.style.overflow = ''
+  }
 
   const save = async () => {
     if (!sel) return
@@ -54,99 +66,204 @@ export default function ApplicationsSection() {
     setSaving(false)
   }
 
-  const inp: React.CSSProperties = { width: '100%', background: 'rgba(14,5,8,0.8)', border: '1px solid rgba(212,175,55,0.28)', borderRadius: '6px', padding: '9px 13px', color: '#F5EDD8', fontFamily: 'inherit', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }
   const counts: Record<string, number> = { all: 0 }
   apps.forEach(a => { counts.all++; counts[a.status] = (counts[a.status] || 0) + 1 })
 
+  const inp: React.CSSProperties = {
+    width: '100%', background: 'rgba(10,3,6,0.8)',
+    border: '1px solid rgba(212,175,55,0.25)', borderRadius: '4px',
+    padding: '0.6rem 0.9rem', color: '#F5EDD8',
+    fontFamily: "'Cormorant Garamond',serif", fontSize: '0.95rem',
+    outline: 'none', boxSizing: 'border-box',
+  }
+
+  const modal = sel && mounted ? createPortal(
+    <div
+      onClick={e => { if (e.target === e.currentTarget) close() }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(10,3,6,0.92)', backdropFilter: 'blur(6px)',
+        overflowY: 'auto', padding: '2rem 1rem',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      }}
+    >
+      <div style={{
+        background: 'linear-gradient(160deg, #1a0a0f 0%, #120709 100%)',
+        border: '1px solid rgba(212,175,55,0.25)',
+        borderRadius: '4px', width: '100%', maxWidth: '700px',
+        margin: '0 auto', overflow: 'hidden',
+      }}>
+
+        {/* Header */}
+        <div style={{
+          padding: '1.6rem 2rem 1.2rem',
+          borderBottom: '1px solid rgba(212,175,55,0.1)',
+          background: 'linear-gradient(135deg, rgba(255,107,170,0.06), rgba(212,175,55,0.04))',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        }}>
+          <div>
+            <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.48rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#ff6baa', marginBottom: '0.4rem' }}>Pledge Application</div>
+            <div style={{ fontFamily: "'Cinzel Decorative',serif", fontSize: '1.3rem', color: '#F5EDD8', lineHeight: 1.2 }}>{sel.iw_name}</div>
+            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: 'italic', fontSize: '0.85rem', color: 'rgba(245,237,216,0.35)', marginTop: '0.3rem' }}>
+              Submitted {new Date(sel.submitted_at).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{
+              background: (STA[sel.status]?.c || '#888') + '20',
+              color: STA[sel.status]?.c || '#888',
+              border: '1px solid ' + (STA[sel.status]?.c || '#888') + '50',
+              fontFamily: "'Cinzel',serif", fontSize: '0.46rem', letterSpacing: '0.15em',
+              textTransform: 'uppercase', padding: '0.3rem 0.8rem', borderRadius: '2px',
+            }}>{STA[sel.status]?.l || sel.status}</span>
+            <button onClick={close} style={{ background: 'none', border: '1px solid rgba(212,175,55,0.2)', color: 'rgba(245,237,216,0.4)', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+          </div>
+        </div>
+
+        {/* Quick facts grid */}
+        <div style={{ padding: '1.4rem 2rem', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+          <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.4)', marginBottom: '1rem' }}>Profile</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.8rem' }}>
+            {[
+              ['Age', sel.age || '—'],
+              ['Instagram', sel.instagram || '—'],
+              ['Discord', sel.has_discord || '—'],
+              ['Online Freq', sel.online_freq || '—'],
+              ['Prev Sorority', yn(sel.prev_sorority)],
+              ['Pays Dues', yn(sel.can_pay_dues)],
+              ['IG Daily', yn(sel.instagram_daily)],
+              ['Can Pledge', yn(sel.can_pledge)],
+            ].map(([l, v]) => (
+              <div key={l} style={{ background: 'rgba(123,3,35,0.12)', border: '1px solid rgba(212,175,55,0.08)', padding: '0.6rem 0.8rem' }}>
+                <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.38rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.45)', marginBottom: '0.3rem' }}>{l}</div>
+                <div style={{ color: '#F5EDD8', fontSize: '0.88rem', wordBreak: 'break-word' }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Essay answers */}
+        <div style={{ padding: '1.4rem 2rem', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+          <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.4)', marginBottom: '1rem' }}>Responses</div>
+          {[
+            ['Why Kappa Gamma Eta?', sel.why_kge],
+            ['What Sisterhood Means to Her', sel.sisterhood_meaning],
+            ['What She Brings to KGE', sel.brings_to_kge],
+          ].map(([label, value]) => value ? (
+            <div key={label} style={{ marginBottom: '1.2rem' }}>
+              <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.46rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#D4AF37', marginBottom: '0.5rem' }}>{label}</div>
+              <div style={{ fontStyle: 'italic', fontSize: '0.95rem', color: 'rgba(245,237,216,0.75)', lineHeight: 1.7, padding: '0.9rem 1.1rem', background: 'rgba(14,5,8,0.4)', borderLeft: '2px solid rgba(212,175,55,0.3)' }}>{value}</div>
+            </div>
+          ) : null)}
+        </div>
+
+        {/* Decision */}
+        <div style={{ padding: '1.4rem 2rem' }}>
+          <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.4)', marginBottom: '1rem' }}>Decision</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.45)', marginBottom: '0.4rem' }}>Update Status</div>
+              <select style={{ ...inp, cursor: 'pointer' }} value={ns} onChange={e => setNs(e.target.value)}>
+                <option value="pending">⏳ Pending</option>
+                <option value="interview">💬 Interview</option>
+                <option value="accepted">✅ Accepted</option>
+                <option value="waitlisted">⏸ Waitlisted</option>
+                <option value="rejected">✕ Rejected</option>
+              </select>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.45)', marginBottom: '0.4rem' }}>Internal Notes</div>
+              <textarea style={{ ...inp, minHeight: '60px', resize: 'vertical' }} placeholder="Private notes for Founders & Admin..." value={notes} onChange={e => setNotes(e.target.value)} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button onClick={save} disabled={saving} style={{
+              padding: '0.65rem 1.8rem', fontFamily: "'Cinzel',serif", fontSize: '0.55rem',
+              letterSpacing: '0.2em', textTransform: 'uppercase',
+              background: saving ? 'rgba(255,107,170,0.06)' : 'rgba(255,107,170,0.15)',
+              border: '1px solid rgba(255,107,170,0.4)', color: '#ff9ec8',
+              cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.5 : 1, transition: 'all 0.2s',
+            }}>{saving ? 'Saving…' : 'Save Decision'}</button>
+            {sel.reviewed_by && <span style={{ fontStyle: 'italic', fontSize: '0.8rem', color: 'rgba(245,237,216,0.25)' }}>Last reviewed by {sel.reviewed_by}</span>}
+            {msg && <span style={{ fontSize: '0.85rem', color: msg === 'Saved!' ? '#35df24' : '#ff6baa', fontStyle: 'italic' }}>{msg}</span>}
+          </div>
+        </div>
+
+      </div>
+    </div>,
+    document.body
+  ) : null
+
   return (
-    <div style={{ maxWidth: '880px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '22px' }}>
-        <h2 style={{ fontFamily: "'Cinzel Decorative',serif", fontSize: '1.4rem', color: '#F5EDD8', fontWeight: 400, margin: '0 0 4px' }}>Pledge Applications</h2>
-        <p style={{ color: 'rgba(245,237,216,0.4)', fontSize: '0.85rem', margin: 0 }}>Review and manage incoming applications to Kappa Gamma Eta</p>
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: '1.6rem' }}>
+        <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#ff6baa', marginBottom: '0.35rem' }}>Membership</div>
+        <div style={{ fontFamily: "'Cinzel Decorative',serif", fontSize: '1.5rem', color: '#F5EDD8' }}>Pledge Applications</div>
+        <div className="shimmer-line" style={{ margin: '1rem 0' }} />
       </div>
 
-      <div style={{ display: 'flex', gap: '7px', marginBottom: '18px', flexWrap: 'wrap' }}>
+      {/* Filter tabs */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.4rem', flexWrap: 'wrap' }}>
         {['all', 'pending', 'interview', 'accepted', 'waitlisted', 'rejected'].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{ background: filter === f ? 'rgba(123,3,35,0.55)' : 'rgba(123,3,35,0.12)', border: '1px solid ' + (filter === f ? '#D4AF37' : 'rgba(212,175,55,0.18)'), color: filter === f ? '#D4AF37' : 'rgba(245,237,216,0.55)', borderRadius: '20px', padding: '5px 14px', cursor: 'pointer', fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            {f === 'all' ? 'All' : STA[f]?.l || f}{counts[f] ? ' (' + counts[f] + ')' : ''}
+          <button key={f} onClick={() => setFilter(f)} style={{
+            background: filter === f ? 'rgba(255,107,170,0.15)' : 'transparent',
+            border: '1px solid ' + (filter === f ? 'rgba(255,107,170,0.4)' : 'rgba(212,175,55,0.15)'),
+            color: filter === f ? '#ff9ec8' : 'rgba(245,237,216,0.4)',
+            fontFamily: "'Cinzel',serif", fontSize: '0.46rem', letterSpacing: '0.15em',
+            textTransform: 'uppercase', padding: '0.4rem 0.9rem', cursor: 'pointer', transition: 'all 0.2s',
+          }}>
+            {f === 'all' ? 'All' : STA[f]?.l || f}{counts[f] ? ' · ' + counts[f] : ''}
           </button>
         ))}
       </div>
 
-      {loading
-        ? <div style={{ textAlign: 'center', color: 'rgba(245,237,216,0.35)', padding: '40px', fontStyle: 'italic' }}>Loading applications...</div>
-        : apps.length === 0
-          ? <div style={{ textAlign: 'center', padding: '60px', color: 'rgba(245,237,216,0.28)' }}><div style={{ fontSize: '36px', marginBottom: '10px' }}>🌸</div><p style={{ fontStyle: 'italic' }}>No applications yet</p></div>
-          : <div style={{ display: 'grid', gap: '10px' }}>
-              {apps.map(a => (
-                <div key={a.id} onClick={() => open(a)} style={{ background: '#221018', border: '1px solid rgba(212,175,55,' + (sel?.id === a.id ? '0.45' : '0.14') + ')', borderRadius: '10px', padding: '14px 18px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px', transition: 'all 0.2s' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                      <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.65rem', letterSpacing: '0.1em', color: '#D4AF37' }}>{a.iw_name}</span>
-                      <span style={{ background: (STA[a.status]?.c || '#888') + '22', color: STA[a.status]?.c || '#888', border: '1px solid ' + (STA[a.status]?.c || '#888') + '44', borderRadius: '10px', padding: '1px 9px', fontSize: '11px' }}>{STA[a.status]?.l || a.status}</span>
-                    </div>
-                    <div style={{ color: 'rgba(245,237,216,0.4)', fontSize: '0.8rem' }}>Age {a.age || '?'} · {a.online_freq || '—'} · Dues: {yn(a.can_pay_dues)} · Pledge: {yn(a.can_pledge)}</div>
-                  </div>
-                  <div style={{ color: 'rgba(245,237,216,0.25)', fontSize: '0.75rem', textAlign: 'right', flexShrink: 0 }}>
-                    {new Date(a.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    {a.reviewed_by && <div style={{ marginTop: '2px' }}>by {a.reviewed_by}</div>}
-                  </div>
+      {/* List */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '3rem', fontStyle: 'italic', color: 'rgba(245,237,216,0.3)', fontFamily: "'Cormorant Garamond',serif" }}>Loading applications…</div>
+      ) : apps.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '4rem' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🌸</div>
+          <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.3)' }}>No applications yet.</p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {apps.map(a => (
+            <div key={a.id} onClick={() => open(a)} style={{
+              background: '#221018', border: '1px solid rgba(212,175,55,' + (sel?.id === a.id ? '0.4' : '0.12') + ')',
+              padding: '1rem 1.4rem', cursor: 'pointer', transition: 'all 0.2s',
+              display: 'flex', alignItems: 'center', gap: '1rem',
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.35)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = sel?.id === a.id ? 'rgba(212,175,55,0.4)' : 'rgba(212,175,55,0.12)' }}
+            >
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
+                  <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.65rem', letterSpacing: '0.1em', color: '#D4AF37' }}>{a.iw_name}</span>
+                  <span style={{
+                    background: (STA[a.status]?.c || '#888') + '18',
+                    color: STA[a.status]?.c || '#888',
+                    border: '1px solid ' + (STA[a.status]?.c || '#888') + '40',
+                    fontFamily: "'Cinzel',serif", fontSize: '0.38rem', letterSpacing: '0.12em',
+                    textTransform: 'uppercase', padding: '0.15rem 0.6rem',
+                  }}>{STA[a.status]?.l || a.status}</span>
                 </div>
-              ))}
-            </div>
-      }
-
-      {sel && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(10,3,6,0.94)', backdropFilter: 'blur(4px)', zIndex: 1000, overflowY: 'auto', padding: '16px', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }} onClick={e => { if (e.target === e.currentTarget) setSel(null) }}>
-          <div style={{ background: '#120709', border: '1px solid rgba(212,175,55,0.28)', borderRadius: '14px', padding: 'clamp(20px,3vw,32px)', maxWidth: '680px', width: '100%', margin: '16px auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-              <div>
-                <h3 style={{ fontFamily: "'Cinzel Decorative',serif", color: '#F5EDD8', fontSize: '1.2rem', fontWeight: 400, margin: '0 0 4px' }}>{sel.iw_name}</h3>
-                <p style={{ color: 'rgba(245,237,216,0.4)', margin: 0, fontSize: '0.82rem' }}>Submitted {new Date(sel.submitted_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-              </div>
-              <button onClick={() => setSel(null)} style={{ background: 'none', border: 'none', color: 'rgba(245,237,216,0.4)', fontSize: '18px', cursor: 'pointer', padding: '4px 8px' }}>✕</button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: '10px', marginBottom: '20px' }}>
-              {[['Age', sel.age || '—'], ['Instagram', sel.instagram || '—'], ['Discord', sel.has_discord || '—'], ['Online', sel.online_freq || '—'], ['Prev Sorority', yn(sel.prev_sorority)], ['Pays Dues', yn(sel.can_pay_dues)], ['IG Daily', yn(sel.instagram_daily)], ['Can Pledge', yn(sel.can_pledge)]].map(([l, v]) => (
-                <div key={l} style={{ background: 'rgba(123,3,35,0.15)', borderRadius: '7px', padding: '9px 12px' }}>
-                  <div style={{ fontFamily: "'Cinzel',serif", color: 'rgba(245,237,216,0.38)', fontSize: '0.42rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '3px' }}>{l}</div>
-                  <div style={{ color: '#F5EDD8', fontSize: '0.85rem', wordBreak: 'break-word' }}>{v}</div>
+                <div style={{ fontSize: '0.82rem', color: 'rgba(245,237,216,0.38)', fontStyle: 'italic' }}>
+                  Age {a.age || '?'} · {a.online_freq || '—'} · Dues: {yn(a.can_pay_dues)} · Pledge: {yn(a.can_pledge)}
                 </div>
-              ))}
-            </div>
-
-            {[['🍷 Why KGE?', sel.why_kge], ['🌸 What Sisterhood Means', sel.sisterhood_meaning], ['✦ What She Brings', sel.brings_to_kge]].map(([l, v]) => v && (
-              <div key={l} style={{ marginBottom: '16px' }}>
-                <div style={{ fontFamily: "'Cinzel',serif", color: '#D4AF37', fontSize: '0.5rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>{l}</div>
-                <div style={{ color: 'rgba(245,237,216,0.8)', fontSize: '0.9rem', lineHeight: '1.7', background: 'rgba(14,5,8,0.5)', borderRadius: '7px', padding: '11px 14px', borderLeft: '2px solid rgba(212,175,55,0.3)' }}>{v}</div>
               </div>
-            ))}
-
-            <div style={{ borderTop: '1px solid rgba(212,175,55,0.12)', paddingTop: '20px', marginTop: '4px' }}>
-              <div style={{ fontFamily: "'Cinzel',serif", color: '#ff6baa', fontSize: '0.55rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>Decision</div>
-              <div style={{ marginBottom: '14px' }}>
-                <div style={{ fontFamily: "'Cinzel',serif", color: 'rgba(212,175,55,0.5)', fontSize: '0.45rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '7px' }}>Status</div>
-                <select style={{ ...inp, maxWidth: '200px', cursor: 'pointer' }} value={ns} onChange={e => setNs(e.target.value)}>
-                  <option value="pending">⏳ Pending</option>
-                  <option value="interview">💬 Interview</option>
-                  <option value="accepted">✅ Accepted</option>
-                  <option value="waitlisted">⏸ Waitlisted</option>
-                  <option value="rejected">✕ Rejected</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '14px' }}>
-                <div style={{ fontFamily: "'Cinzel',serif", color: 'rgba(212,175,55,0.5)', fontSize: '0.45rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '7px' }}>Internal Notes</div>
-                <textarea style={{ ...inp, minHeight: '70px', resize: 'vertical' }} placeholder="Notes visible only to Founders & DOP..." value={notes} onChange={e => setNotes(e.target.value)} />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <button onClick={save} disabled={saving} style={{ padding: '0.65rem 1.6rem', fontFamily: "'Cinzel',serif", fontSize: '0.55rem', letterSpacing: '0.15em', textTransform: 'uppercase', background: 'rgba(255,107,170,0.15)', border: '1px solid rgba(255,107,170,0.4)', color: '#ff9ec8', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.5 : 1 }}>{saving ? 'Saving...' : 'Save Decision'}</button>
-                {msg && <span style={{ color: msg === 'Saved!' ? '#35df24' : '#ff6baa', fontSize: '0.85rem', fontStyle: 'italic' }}>{msg}</span>}
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.1em', color: 'rgba(212,175,55,0.3)', textTransform: 'uppercase' }}>
+                  {new Date(a.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </div>
+                {a.reviewed_by && <div style={{ fontSize: '0.75rem', color: 'rgba(245,237,216,0.2)', fontStyle: 'italic', marginTop: '0.2rem' }}>by {a.reviewed_by}</div>}
               </div>
             </div>
-          </div>
+          ))}
         </div>
       )}
+
+      {modal}
     </div>
   )
 }
