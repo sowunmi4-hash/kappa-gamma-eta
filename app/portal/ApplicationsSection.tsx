@@ -167,7 +167,7 @@ export default function ApplicationsSection() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
             <div>
               <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.45)', marginBottom: '0.4rem' }}>Update Status</div>
-              <select style={{ ...inp, cursor: 'pointer' }} value={ns} onChange={e => setNs(e.target.value)}>
+              <select id="field-39" name="field-39" style={{ ...inp, cursor: 'pointer' }} value={ns} onChange={e => setNs(e.target.value)}>
                 <option value="pending">⏳ Pending</option>
                 <option value="interview">💬 Interview</option>
                 <option value="accepted">✅ Accepted</option>
@@ -177,7 +177,7 @@ export default function ApplicationsSection() {
             </div>
             <div>
               <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.45)', marginBottom: '0.4rem' }}>Internal Notes</div>
-              <textarea style={{ ...inp, minHeight: '60px', resize: 'vertical' }} placeholder="Private notes for Founders & Admin..." value={notes} onChange={e => setNotes(e.target.value)} />
+              <textarea id="field-40" name="field-40" style={{ ...inp, minHeight: '60px', resize: 'vertical' }} placeholder="Private notes for Founders & Admin..." value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
           </div>
 
@@ -198,7 +198,7 @@ export default function ApplicationsSection() {
               </div>
               {slots.length < 4 && (
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
+                  <input id="field-41" name="field-41"
                     style={{ ...inp, fontSize: '0.85rem', flex: 1 }}
                     placeholder="e.g. Saturday May 10 · 3:00 PM SLT"
                     value={slotInput}

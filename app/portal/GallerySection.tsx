@@ -149,9 +149,9 @@ export default function GallerySection({ member }: { member: Member }) {
               </>
             )}
           </div>
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFilePick} style={{ display:"none" }} />
+          <input id="field-6" name="field-6" ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFilePick} style={{ display:"none" }} />
 
-          <input value={caption} onChange={e=>setCaption(e.target.value)} placeholder="Add a caption… (optional)" style={{ width:"100%", padding:"0.6rem 0.9rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.18)", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.9rem", outline:"none", marginBottom:"0.8rem" }} />
+          <input id="field-7" name="field-7" value={caption} onChange={e=>setCaption(e.target.value)} placeholder="Add a caption… (optional)" style={{ width:"100%", padding:"0.6rem 0.9rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.18)", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.9rem", outline:"none", marginBottom:"0.8rem" }} />
 
           {msg && <p style={{ fontSize:"0.85rem", color:msg.startsWith("✓")?"#4DB87A":"#ff6baa", fontStyle:"italic", marginBottom:"0.8rem" }}>{msg}</p>}
 

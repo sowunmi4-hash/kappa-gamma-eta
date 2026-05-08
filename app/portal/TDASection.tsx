@@ -74,7 +74,7 @@ function TDARewards({ member }: { member: Member }) {
       {/* Month label */}
       <div style={{ display:"flex", alignItems:"center", gap:"1rem", marginBottom:"1.6rem", flexWrap:"wrap" }}>
         <label style={lbl}>Reward Month</label>
-        <input value={month} onChange={e=>setMonth(e.target.value)} style={{...input, width:160}} />
+        <input id="field-8" name="field-8" value={month} onChange={e=>setMonth(e.target.value)} style={{...input, width:160}} />
       </div>
 
       {msg && (
@@ -418,16 +418,16 @@ export default function TDASection({ member }: { member: Member }) {
 
                 <div style={{ marginBottom:"0.9rem" }}>
                   <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Event / Context Name</label>
-                  <input value={eventName} onChange={e=>setEventName(e.target.value)} placeholder="e.g. Sisterhood Mixer May 2026" style={S.input} />
+                  <input id="field-9" name="field-9" value={eventName} onChange={e=>setEventName(e.target.value)} placeholder="e.g. Sisterhood Mixer May 2026" style={S.input} />
                 </div>
                 <div style={{ marginBottom:"0.9rem" }}>
                   <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Description</label>
-                  <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Brief description of your activity…" style={{ ...S.input, resize:"vertical" }} />
+                  <textarea id="field-10" name="field-10" value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Brief description of your activity…" style={{ ...S.input, resize:"vertical" }} />
                 </div>
                 {selActivity.requires_proof && (
                   <div style={{ marginBottom:"0.9rem" }}>
                     <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(255,107,170,0.6)", display:"block", marginBottom:"0.4rem" }}>Proof URL (required)</label>
-                    <input value={proof} onChange={e=>setProof(e.target.value)} placeholder="Link to photo, post or evidence…" style={S.input} />
+                    <input id="field-11" name="field-11" value={proof} onChange={e=>setProof(e.target.value)} placeholder="Link to photo, post or evidence…" style={S.input} />
                   </div>
                 )}
 
@@ -590,14 +590,14 @@ export default function TDASection({ member }: { member: Member }) {
             <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", marginBottom:"1rem" }}>Manual Point Adjustment</div>
             <div style={{ marginBottom:"0.9rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Sister</label>
-              <select value={adjMember} onChange={e=>setAdjMember(e.target.value)} style={{ ...S.input }}>
+              <select id="field-12" name="field-12" value={adjMember} onChange={e=>setAdjMember(e.target.value)} style={{ ...S.input }}>
                 <option value="">Select sister…</option>
                 {sisters.map(s=><option key={s.id} value={s.id}>{s.frat_name} — {s.display_name}</option>)}
               </select>
             </div>
             <div style={{ marginBottom:"0.9rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Type</label>
-              <select value={adjType} onChange={e=>setAdjType(e.target.value)} style={{ ...S.input }}>
+              <select id="field-13" name="field-13" value={adjType} onChange={e=>setAdjType(e.target.value)} style={{ ...S.input }}>
                 <option value="bonus">Bonus</option>
                 <option value="manual">Manual Award</option>
                 <option value="deduction">Deduction</option>
@@ -605,7 +605,7 @@ export default function TDASection({ member }: { member: Member }) {
             </div>
             <div style={{ marginBottom:"0.9rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Adjust Which Balance?</label>
-              <select value={adjTarget} onChange={e=>setAdjTarget(e.target.value)} style={{ ...S.input }}>
+              <select id="field-14" name="field-14" value={adjTarget} onChange={e=>setAdjTarget(e.target.value)} style={{ ...S.input }}>
                 <option value="both">Both (Current + Lifetime)</option>
                 <option value="current">Current Points only</option>
                 <option value="lifetime">Lifetime Points only</option>
@@ -613,11 +613,11 @@ export default function TDASection({ member }: { member: Member }) {
             </div>
             <div style={{ marginBottom:"0.9rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Points (use negative to deduct)</label>
-              <input value={adjPoints} onChange={e=>setAdjPoints(e.target.value)} type="number" placeholder="e.g. 25 or -10" style={S.input} />
+              <input id="field-15" name="field-15" value={adjPoints} onChange={e=>setAdjPoints(e.target.value)} type="number" placeholder="e.g. 25 or -10" style={S.input} />
             </div>
             <div style={{ marginBottom:"1rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Reason (required)</label>
-              <input value={adjReason} onChange={e=>setAdjReason(e.target.value)} placeholder="e.g. Founder-approved bonus for event organisation" style={S.input} />
+              <input id="field-16" name="field-16" value={adjReason} onChange={e=>setAdjReason(e.target.value)} placeholder="e.g. Founder-approved bonus for event organisation" style={S.input} />
             </div>
             {adjMsg && <p style={{ fontSize:"0.85rem", color:adjMsg.startsWith("✓")?"#4DB87A":"#C0392B", fontStyle:"italic", marginBottom:"0.8rem" }}>{adjMsg}</p>}
             <button onClick={handleAdjust} style={{ ...S.goldBtn, width:"100%" }}>Apply Adjustment →</button>
@@ -651,14 +651,14 @@ export default function TDASection({ member }: { member: Member }) {
             <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", marginBottom:"1rem" }}>Assign Official Title</div>
             <div style={{ marginBottom:"0.9rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Title</label>
-              <select value={selTitle} onChange={e=>setSelTitle(e.target.value)} style={{ ...S.input }}>
+              <select id="field-17" name="field-17" value={selTitle} onChange={e=>setSelTitle(e.target.value)} style={{ ...S.input }}>
                 <option value="">Select title…</option>
                 {titleDefs.map(t=><option key={t.id} value={t.id}>{t.name} ({t.cycle})</option>)}
               </select>
             </div>
             <div style={{ marginBottom:"1rem" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)", display:"block", marginBottom:"0.4rem" }}>Assign to Sister</label>
-              <select value={selTitleMember} onChange={e=>setSelTitleMember(e.target.value)} style={{ ...S.input }}>
+              <select id="field-18" name="field-18" value={selTitleMember} onChange={e=>setSelTitleMember(e.target.value)} style={{ ...S.input }}>
                 <option value="">Select sister…</option>
                 {sisters.map(s=><option key={s.id} value={s.id}>{s.frat_name} — {s.display_name}</option>)}
               </select>

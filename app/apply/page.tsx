@@ -110,17 +110,17 @@ export default function ApplyPage() {
           <p style={{ color: 'rgba(245,237,216,0.28)', fontSize: '11px', margin: '0 0 26px', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Step {step} of 3</p>
 
           {step === 1 && <>
-            <div style={fld}><label style={lbl}>Second Life Avatar Name *</label><input style={inp} placeholder="Your SL display or username" value={form.iw_name} onChange={e => set('iw_name', e.target.value)} /></div>
+            <div style={fld}><label style={lbl}>Second Life Avatar Name *</label><input id="field-59" name="field-59" style={inp} placeholder="Your SL display or username" value={form.iw_name} onChange={e => set('iw_name', e.target.value)} /></div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={fld}><label style={lbl}>Age * <span style={{ color: '#ff6baa', textTransform: 'none', letterSpacing: 0 }}>(18+)</span></label><input style={inp} type="number" min="18" max="99" placeholder="Your RL age" value={form.age} onChange={e => set('age', e.target.value)} /></div>
-              <div style={fld}><label style={lbl}>Instagram Handle</label><input style={inp} placeholder="@yourhandle" value={form.instagram} onChange={e => set('instagram', e.target.value)} /></div>
+              <div style={fld}><label style={lbl}>Age * <span style={{ color: '#ff6baa', textTransform: 'none', letterSpacing: 0 }}>(18+)</span></label><input id="field-60" name="field-60" style={inp} type="number" min="18" max="99" placeholder="Your RL age" value={form.age} onChange={e => set('age', e.target.value)} /></div>
+              <div style={fld}><label style={lbl}>Instagram Handle</label><input id="field-61" name="field-61" style={inp} placeholder="@yourhandle" value={form.instagram} onChange={e => set('instagram', e.target.value)} /></div>
             </div>
-            <div style={fld}><label style={lbl}>Do you have Discord?</label><input style={inp} placeholder="Yes — username  or  No" value={form.has_discord} onChange={e => set('has_discord', e.target.value)} /></div>
+            <div style={fld}><label style={lbl}>Do you have Discord?</label><input id="field-62" name="field-62" style={inp} placeholder="Yes — username  or  No" value={form.has_discord} onChange={e => set('has_discord', e.target.value)} /></div>
           </>}
 
           {step === 2 && <>
             <div style={fld}><label style={lbl}>How often are you online in Second Life?</label>
-              <select style={{ ...inp, cursor: 'pointer' }} value={form.online_freq} onChange={e => set('online_freq', e.target.value)}>
+              <select id="field-63" name="field-63" style={{ ...inp, cursor: 'pointer' }} value={form.online_freq} onChange={e => set('online_freq', e.target.value)}>
                 <option value="">Select one</option>
                 <option value="Daily">Daily</option>
                 <option value="Several times a week">Several times a week</option>
@@ -135,9 +135,9 @@ export default function ApplyPage() {
           </>}
 
           {step === 3 && <>
-            <div style={fld}><label style={lbl}>Why do you want to join Kappa Gamma Eta? *</label><textarea style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="What draws you to KGE? What do you hope to find here..." value={form.why_kge} onChange={e => set('why_kge', e.target.value)} /></div>
-            <div style={fld}><label style={lbl}>What does sisterhood mean to you? *</label><textarea style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="Share what unity, respect, and empowerment mean to you..." value={form.sisterhood_meaning} onChange={e => set('sisterhood_meaning', e.target.value)} /></div>
-            <div style={fld}><label style={lbl}>What do you bring to KGE? *</label><textarea style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="Your qualities, energy, talents..." value={form.brings_to_kge} onChange={e => set('brings_to_kge', e.target.value)} /></div>
+            <div style={fld}><label style={lbl}>Why do you want to join Kappa Gamma Eta? *</label><textarea id="field-64" name="field-64" style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="What draws you to KGE? What do you hope to find here..." value={form.why_kge} onChange={e => set('why_kge', e.target.value)} /></div>
+            <div style={fld}><label style={lbl}>What does sisterhood mean to you? *</label><textarea id="field-65" name="field-65" style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="Share what unity, respect, and empowerment mean to you..." value={form.sisterhood_meaning} onChange={e => set('sisterhood_meaning', e.target.value)} /></div>
+            <div style={fld}><label style={lbl}>What do you bring to KGE? *</label><textarea id="field-66" name="field-66" style={{ ...inp, minHeight: '110px', resize: 'vertical', lineHeight: '1.6' }} placeholder="Your qualities, energy, talents..." value={form.brings_to_kge} onChange={e => set('brings_to_kge', e.target.value)} /></div>
             <div style={{ background: 'rgba(123,3,35,0.1)', border: '1px solid rgba(212,175,55,0.1)', borderRadius: '8px', padding: '13px 15px', marginBottom: '8px' }}><p style={{ margin: 0, fontSize: '12px', color: 'rgba(245,237,216,0.45)', lineHeight: '1.7' }}>By submitting, you confirm you are 18+ and all information is truthful. Kappa Gamma Eta reserves the right to accept or decline any application.</p></div>
           </>}
 

@@ -412,38 +412,38 @@ export default function Portal() {
                     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem" }}>
                       <div>
                         <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Bio</div>
-                        <textarea value={pBio} onChange={e=>setPBio(e.target.value)} rows={3} placeholder="Tell your sisters about yourself…" style={{ ...S.input, resize:"vertical" }} />
+                        <textarea id="field-19" name="field-19" value={pBio} onChange={e=>setPBio(e.target.value)} rows={3} placeholder="Tell your sisters about yourself…" style={{ ...S.input, resize:"vertical" }} />
                       </div>
                       <div>
                         <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Favourite Quote</div>
-                        <input value={pQuote} onChange={e=>setPQuote(e.target.value)} placeholder="Your favourite quote…" style={S.input} />
+                        <input id="field-20" name="field-20" value={pQuote} onChange={e=>setPQuote(e.target.value)} placeholder="Your favourite quote…" style={S.input} />
                       </div>
                       <div>
                         <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Hobbies</div>
-                        <input value={pHobbies} onChange={e=>setPHobbies(e.target.value)} placeholder="e.g. Music, Fashion, Travel…" style={S.input} />
+                        <input id="field-21" name="field-21" value={pHobbies} onChange={e=>setPHobbies(e.target.value)} placeholder="e.g. Music, Fashion, Travel…" style={S.input} />
                       </div>
                       <div>
                         <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Change Password</div>
-                        <input value={pNewPw} onChange={e=>setPNewPw(e.target.value)} type="password" placeholder="New password (leave blank to keep current)" style={S.input} />
+                        <input id="field-22" name="field-22" value={pNewPw} onChange={e=>setPNewPw(e.target.value)} type="password" placeholder="New password (leave blank to keep current)" style={S.input} />
                       </div>
                     </div>
                     {saveMsg&&<p style={{ fontSize:"0.85rem", color: saveMsg==="Saved!"?"#D4AF37":"#ff6baa", fontStyle:"italic", marginTop:"0.8rem" }}>{saveMsg}</p>}
                     <div style={{ marginTop:"1rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
               <div>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Instagram username</div>
-                <input value={pInstagram} onChange={e=>setPInstagram(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
+                <input id="field-23" name="field-23" value={pInstagram} onChange={e=>setPInstagram(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
               </div>
               <div>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Twitter / X username</div>
-                <input value={pTwitter} onChange={e=>setPTwitter(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
+                <input id="field-24" name="field-24" value={pTwitter} onChange={e=>setPTwitter(e.target.value)} placeholder="e.g. kge_official" style={S.input} />
               </div>
               <div>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Discord username</div>
-                <input value={pDiscord} onChange={e=>setPDiscord(e.target.value)} placeholder="e.g. username#1234" style={S.input} />
+                <input id="field-25" name="field-25" value={pDiscord} onChange={e=>setPDiscord(e.target.value)} placeholder="e.g. username#1234" style={S.input} />
               </div>
               <div>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>SL Profile URL</div>
-                <input value={pSlProfile} onChange={e=>setPSlProfile(e.target.value)} placeholder="https://my.secondlife.com/..." style={S.input} />
+                <input id="field-26" name="field-26" value={pSlProfile} onChange={e=>setPSlProfile(e.target.value)} placeholder="https://my.secondlife.com/..." style={S.input} />
               </div>
             </div>
             <button onClick={handleSaveProfile} disabled={saving} style={{ ...S.btn, marginTop:"1.2rem", opacity:saving?0.5:1 }}>

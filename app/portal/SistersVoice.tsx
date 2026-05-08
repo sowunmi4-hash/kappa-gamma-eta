@@ -158,7 +158,7 @@ function SubmissionThread({ submission, member, onStatusChange }: {
           {/* Reply input */}
           {canReply && (
             <div style={{ display:"flex", gap:"0.6rem", alignItems:"flex-end" }}>
-              <textarea
+              <textarea id="field-27" name="field-27"
                 value={replyText}
                 onChange={e=>setReplyText(e.target.value)}
                 onKeyDown={e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); handleReply(); }}}
@@ -190,7 +190,7 @@ function SubmissionThread({ submission, member, onStatusChange }: {
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.8rem" }}>
                   <div>
                     <label style={lbl}>Status</label>
-                    <select value={editStatus} onChange={e=>setEditStatus(e.target.value)} style={input}>
+                    <select id="field-28" name="field-28" value={editStatus} onChange={e=>setEditStatus(e.target.value)} style={input}>
                       <option value="received">Received</option>
                       <option value="acknowledged">Acknowledged</option>
                       <option value="in_progress">In Progress</option>
@@ -200,7 +200,7 @@ function SubmissionThread({ submission, member, onStatusChange }: {
                   </div>
                   <div>
                     <label style={lbl}>Internal Note (optional)</label>
-                    <input value={editNotes} onChange={e=>setEditNotes(e.target.value)} placeholder="Note visible to sister…" style={input} />
+                    <input id="field-29" name="field-29" value={editNotes} onChange={e=>setEditNotes(e.target.value)} placeholder="Note visible to sister…" style={input} />
                   </div>
                   <div style={{ gridColumn:"1/-1", display:"flex", gap:"0.5rem" }}>
                     <button onClick={handleUpdateStatus} disabled={updating} style={{ padding:"0.45rem 1.1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.12em", textTransform:"uppercase", background:"rgba(77,184,122,0.12)", border:"1px solid rgba(77,184,122,0.3)", color:"#4DB87A", cursor:"pointer" }}>{updating?"Saving…":"Save →"}</button>
@@ -298,14 +298,14 @@ export default function SistersVoice({ member }: { member: Member }) {
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom:"1rem" }}>
               <label style={lbl}>Related Page (optional)</label>
-              <select value={relPage} onChange={e=>setRelPage(e.target.value)} style={input}>
+              <select id="field-30" name="field-30" value={relPage} onChange={e=>setRelPage(e.target.value)} style={input}>
                 <option value="">— No specific page —</option>
                 {PAGES.map(p=><option key={p} value={p}>{p}</option>)}
               </select>
             </div>
             <div style={{ marginBottom:"1.2rem" }}>
               <label style={lbl}>Describe your concern *</label>
-              <textarea value={description} onChange={e=>setDescription(e.target.value)} rows={5} placeholder="Be as detailed as you like…" style={{ ...input, resize:"vertical" }} required />
+              <textarea id="field-31" name="field-31" value={description} onChange={e=>setDescription(e.target.value)} rows={5} placeholder="Be as detailed as you like…" style={{ ...input, resize:"vertical" }} required />
             </div>
             {submitMsg && <div style={{ padding:"0.8rem 1rem", marginBottom:"1rem", border:`1px solid ${submitMsg.startsWith("✓")?"rgba(77,184,122,0.3)":"rgba(255,107,170,0.3)"}`, background:submitMsg.startsWith("✓")?"rgba(77,184,122,0.08)":"rgba(255,107,170,0.08)", fontStyle:"italic", fontSize:"0.88rem", color:submitMsg.startsWith("✓")?"#4DB87A":"#ff9ec8" }}>{submitMsg}</div>}
             <button type="submit" disabled={submitting||!category} style={{ padding:"0.75rem 2rem", fontFamily:"'Cinzel',serif", fontSize:"0.6rem", letterSpacing:"0.2em", textTransform:"uppercase", background: !category?"rgba(255,107,170,0.05)":"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)", color:"#ff9ec8", cursor:submitting||!category?"not-allowed":"pointer", opacity:!category?0.5:1 }}>

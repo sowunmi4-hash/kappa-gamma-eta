@@ -154,15 +154,15 @@ export default function PledgesSection({ member }: { member: Member }) {
                       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
                         <div>
                           <label style={lbl}>Pledge Name</label>
-                          <input value={ePledgeName} onChange={e=>setEPledgeName(e.target.value)} placeholder="e.g. Rose of the East" style={input} />
+                          <input id="field-42" name="field-42" value={ePledgeName} onChange={e=>setEPledgeName(e.target.value)} placeholder="e.g. Rose of the East" style={input} />
                         </div>
                         <div>
                           <label style={lbl}>Start Date</label>
-                          <input type="date" value={eStartDate} onChange={e=>setEStartDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
+                          <input id="field-43" name="field-43" type="date" value={eStartDate} onChange={e=>setEStartDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
                         </div>
                         <div>
                           <label style={lbl}>End Date</label>
-                          <input type="date" value={eEndDate} onChange={e=>setEEndDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
+                          <input id="field-44" name="field-44" type="date" value={eEndDate} onChange={e=>setEEndDate(e.target.value)} style={{...input, colorScheme:"dark"}} />
                         </div>
                         {eStartDate && eEndDate && (
                           <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", paddingTop:"0.3rem" }}>

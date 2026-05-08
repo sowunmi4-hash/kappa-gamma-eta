@@ -189,21 +189,21 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Item Name *</label>
-              <input value={aName} onChange={e=>setAName(e.target.value)} placeholder="e.g. KGE Formal Gown" style={input} required />
+              <input id="field-32" name="field-32" value={aName} onChange={e=>setAName(e.target.value)} placeholder="e.g. KGE Formal Gown" style={input} required />
             </div>
             <div>
               <label style={lbl}>Category</label>
-              <select value={aCat} onChange={e=>setACat(e.target.value)} style={input}>
+              <select id="field-33" name="field-33" value={aCat} onChange={e=>setACat(e.target.value)} style={input}>
                 {CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
               <label style={lbl}>SL Inventory Item Name</label>
-              <input value={aKey} onChange={e=>setAKey(e.target.value)} placeholder="Exact name as it appears in SL" style={input} />
+              <input id="field-34" name="field-34" value={aKey} onChange={e=>setAKey(e.target.value)} placeholder="Exact name as it appears in SL" style={input} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Description</label>
-              <textarea value={aDesc} onChange={e=>setADesc(e.target.value)} rows={2} placeholder="Describe this item…" style={{ ...input, resize:"vertical" }} />
+              <textarea id="field-35" name="field-35" value={aDesc} onChange={e=>setADesc(e.target.value)} rows={2} placeholder="Describe this item…" style={{ ...input, resize:"vertical" }} />
             </div>
             {/* Image upload */}
             <div style={{ gridColumn:"1/-1" }}>
@@ -225,7 +225,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
                   </div>
                 )}
               </div>
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>{ const f=e.target.files?.[0]; if(!f) return; setAFile(f); const r=new FileReader(); r.onload=ev=>setAPreview(ev.target?.result as string); r.readAsDataURL(f); }} style={{ display:"none" }} />
+              <input id="field-36" name="field-36" ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>{ const f=e.target.files?.[0]; if(!f) return; setAFile(f); const r=new FileReader(); r.onload=ev=>setAPreview(ev.target?.result as string); r.readAsDataURL(f); }} style={{ display:"none" }} />
             </div>
           </div>
           {aMsg && <p style={{ fontSize:"0.85rem", color:aMsg.startsWith("✓")?"#4DB87A":"#ff6baa", fontStyle:"italic", marginBottom:"0.8rem" }}>{aMsg}</p>}

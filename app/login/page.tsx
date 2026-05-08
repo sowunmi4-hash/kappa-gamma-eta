@@ -310,14 +310,14 @@ export default function LoginPage() {
 
               <div style={{ marginBottom:"1rem" }}>
                 <label className="font-cinzel" style={{ display:"block", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.65)", marginBottom:"0.45rem" }}>SL Username</label>
-                <input type="text" placeholder="e.g. lkarats" value={slName} onChange={e=>setSlName(e.target.value)} disabled={loading} style={inputStyle}
+                <input id="field-67" name="field-67" type="text" placeholder="e.g. lkarats" value={slName} onChange={e=>setSlName(e.target.value)} disabled={loading} style={inputStyle}
                   onFocus={e=>(e.target.style.borderColor="rgba(255,107,170,0.55)")}
                   onBlur={e=>(e.target.style.borderColor="rgba(212,175,55,0.22)")} required />
               </div>
 
               <div style={{ marginBottom:"1.1rem" }}>
                 <label className="font-cinzel" style={{ display:"block", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.65)", marginBottom:"0.45rem" }}>Password</label>
-                <input type="password" placeholder="Enter your password" value={password} onChange={e=>setPassword(e.target.value)} disabled={loading} style={inputStyle}
+                <input id="field-68" name="field-68" type="password" placeholder="Enter your password" value={password} onChange={e=>setPassword(e.target.value)} disabled={loading} style={inputStyle}
                   onFocus={e=>(e.target.style.borderColor="rgba(255,107,170,0.55)")}
                   onBlur={e=>(e.target.style.borderColor="rgba(212,175,55,0.22)")} required />
               </div>
@@ -346,13 +346,13 @@ export default function LoginPage() {
 
               <div style={{ marginBottom:"1rem" }}>
                 <label className="font-cinzel" style={{ display:"block", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.65)", marginBottom:"0.45rem" }}>New Password</label>
-                <input type="password" placeholder="At least 6 characters" value={newPassword} onChange={e=>setNewPassword(e.target.value)} disabled={loading} style={inputStyle}
+                <input id="field-69" name="field-69" type="password" placeholder="At least 6 characters" value={newPassword} onChange={e=>setNewPassword(e.target.value)} disabled={loading} style={inputStyle}
                   onFocus={e=>(e.target.style.borderColor="rgba(255,107,170,0.55)")}
                   onBlur={e=>(e.target.style.borderColor="rgba(212,175,55,0.22)")} required />
               </div>
               <div style={{ marginBottom:"1.3rem" }}>
                 <label className="font-cinzel" style={{ display:"block", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.65)", marginBottom:"0.45rem" }}>Confirm Password</label>
-                <input type="password" placeholder="Repeat your password" value={confirmPw} onChange={e=>setConfirmPw(e.target.value)} disabled={loading} style={inputStyle}
+                <input id="field-70" name="field-70" type="password" placeholder="Repeat your password" value={confirmPw} onChange={e=>setConfirmPw(e.target.value)} disabled={loading} style={inputStyle}
                   onFocus={e=>(e.target.style.borderColor="rgba(255,107,170,0.55)")}
                   onBlur={e=>(e.target.style.borderColor="rgba(212,175,55,0.22)")} required />
               </div>

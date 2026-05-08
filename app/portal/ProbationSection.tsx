@@ -108,7 +108,7 @@ export default function ProbationSection({ member }: { member: Member }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Sister *</label>
-              <select value={selSister} onChange={e=>{
+              <select id="field-55" name="field-55" value={selSister} onChange={e=>{
               setSelSister(e.target.value);
               const s = sisters.find(x=>x.id===e.target.value);
               if (s) setTdaPts(String(s.current_points ?? 0));
@@ -121,7 +121,7 @@ export default function ProbationSection({ member }: { member: Member }) {
             </div>
             <div>
               <label style={lbl}>Duration (days) *</label>
-              <select value={duration} onChange={e=>setDuration(e.target.value)} style={input}>
+              <select id="field-56" name="field-56" value={duration} onChange={e=>setDuration(e.target.value)} style={input}>
                 {[1,3,5,7,10,14,21,30].map(d=>(
                   <option key={d} value={d}>{d} day{d>1?"s":""}</option>
                 ))}
@@ -129,11 +129,11 @@ export default function ProbationSection({ member }: { member: Member }) {
             </div>
             <div>
               <label style={lbl}>Current TDA Points (auto-filled)</label>
-              <input type="number" value={tdaPts} readOnly style={{ ...input, cursor:"not-allowed", opacity:0.7, background:"rgba(212,175,55,0.04)" }} />
+              <input id="field-57" name="field-57" type="number" value={tdaPts} readOnly style={{ ...input, cursor:"not-allowed", opacity:0.7, background:"rgba(212,175,55,0.04)" }} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={lbl}>Reason</label>
-              <input value={reason} onChange={e=>setReason(e.target.value)} style={input} />
+              <input id="field-58" name="field-58" value={reason} onChange={e=>setReason(e.target.value)} style={input} />
             </div>
           </div>
           {msg && <p style={{ fontSize:"0.85rem", color:msg.startsWith("✓")?"#4DB87A":"#ff6baa", fontStyle:"italic", marginBottom:"0.8rem" }}>{msg}</p>}

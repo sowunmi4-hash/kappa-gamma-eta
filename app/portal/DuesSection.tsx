@@ -196,19 +196,19 @@ export default function DuesSection({ member }: { member: Member }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div>
               <label style={lbl}>Period Name *</label>
-              <input value={cPeriod} onChange={e=>setCPeriod(e.target.value)} placeholder="e.g. May 2026" style={input} required />
+              <input id="field-1" name="field-1" value={cPeriod} onChange={e=>setCPeriod(e.target.value)} placeholder="e.g. May 2026" style={input} required />
             </div>
             <div>
               <label style={lbl}>Amount (L$) *</label>
-              <input type="number" value={cAmount} onChange={e=>setCAmount(e.target.value)} placeholder="e.g. 500" style={input} required />
+              <input id="field-2" name="field-2" type="number" value={cAmount} onChange={e=>setCAmount(e.target.value)} placeholder="e.g. 500" style={input} required />
             </div>
             <div>
               <label style={lbl}>Due Date</label>
-              <input type="date" value={cDate} onChange={e=>setCDate(e.target.value)} style={input} />
+              <input id="field-3" name="field-3" type="date" value={cDate} onChange={e=>setCDate(e.target.value)} style={input} />
             </div>
             <div>
               <label style={lbl}>Description</label>
-              <input value={cDesc} onChange={e=>setCDesc(e.target.value)} placeholder="Optional note" style={input} />
+              <input id="field-4" name="field-4" value={cDesc} onChange={e=>setCDesc(e.target.value)} placeholder="Optional note" style={input} />
             </div>
           </div>
           <p style={{ fontStyle:"italic", fontSize:"0.82rem", color:"rgba(245,237,216,0.35)", marginBottom:"0.8rem" }}>
@@ -244,7 +244,7 @@ export default function DuesSection({ member }: { member: Member }) {
           {periods.length > 0 && (
             <div style={{ display:"flex", alignItems:"center", gap:"1rem", marginBottom:"1.4rem", flexWrap:"wrap" }}>
               <label style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.55)" }}>Viewing Period:</label>
-              <select
+              <select id="field-5" name="field-5"
                 value={selPeriod}
                 onChange={e=>{ setSelPeriod(e.target.value); loadReport(e.target.value); }}
                 style={{ padding:"0.5rem 2rem 0.5rem 0.9rem", background:"#1c0d12", border:"1px solid rgba(212,175,55,0.3)", color:"#fff0a0", fontFamily:"'Cinzel',serif", fontSize:"0.65rem", letterSpacing:"0.1em", outline:"none", cursor:"pointer" }}

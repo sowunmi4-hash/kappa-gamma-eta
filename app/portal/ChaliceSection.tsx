@@ -83,12 +83,12 @@ export default function ChaliceSection({ member }: { member: Member }) {
 
           <div style={{ marginBottom:"1rem" }}>
             <label style={label}>Title *</label>
-            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Sisterhood Mixer — This Saturday!" style={input} required />
+            <input id="field-37" name="field-37" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Sisterhood Mixer — This Saturday!" style={input} required />
           </div>
 
           <div style={{ marginBottom:"1rem" }}>
             <label style={label}>Message *</label>
-            <textarea value={content} onChange={e=>setContent(e.target.value)} rows={5} placeholder="Write your announcement here…" style={{ ...input, resize:"vertical" }} required />
+            <textarea id="field-38" name="field-38" value={content} onChange={e=>setContent(e.target.value)} rows={5} placeholder="Write your announcement here…" style={{ ...input, resize:"vertical" }} required />
           </div>
 
           <div onClick={()=>setPinned(!pinned)} style={{ display:"flex", alignItems:"center", gap:"0.6rem", cursor:"pointer", marginBottom:"1.2rem" }}>

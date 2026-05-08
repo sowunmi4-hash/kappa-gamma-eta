@@ -146,39 +146,39 @@ export default function EventsSection({ member }: { member: Member }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={labelStyle}>Event Title *</label>
-              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Sisterhood Mixer — May 2026" style={inputStyle} required />
+              <input id="field-45" name="field-45" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Sisterhood Mixer — May 2026" style={inputStyle} required />
             </div>
             <div>
               <label style={labelStyle}>Date *</label>
-              <input type="date" value={date} onChange={e=>setDate(e.target.value)} style={inputStyle} required />
+              <input id="field-46" name="field-46" type="date" value={date} onChange={e=>setDate(e.target.value)} style={inputStyle} required />
             </div>
             <div>
               <label style={labelStyle}>Time</label>
-              <input type="time" value={time} onChange={e=>setTime(e.target.value)} style={inputStyle} />
+              <input id="field-47" name="field-47" type="time" value={time} onChange={e=>setTime(e.target.value)} style={inputStyle} />
             </div>
             <div>
               <label style={labelStyle}>Location (SL)</label>
-              <input value={location} onChange={e=>setLocation(e.target.value)} placeholder="e.g. Sandy Bay Club" style={inputStyle} />
+              <input id="field-48" name="field-48" value={location} onChange={e=>setLocation(e.target.value)} placeholder="e.g. Sandy Bay Club" style={inputStyle} />
             </div>
             <div>
               <label style={labelStyle}>Dress Code</label>
-              <input value={dresscode} onChange={e=>setDresscode(e.target.value)} placeholder="e.g. Elegant Casual" style={inputStyle} />
+              <input id="field-49" name="field-49" value={dresscode} onChange={e=>setDresscode(e.target.value)} placeholder="e.g. Elegant Casual" style={inputStyle} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={labelStyle}>SL Teleport URL</label>
-              <input value={slUrl} onChange={e=>setSlUrl(e.target.value)} placeholder="secondlife://..." style={inputStyle} />
+              <input id="field-50" name="field-50" value={slUrl} onChange={e=>setSlUrl(e.target.value)} placeholder="secondlife://..." style={inputStyle} />
             </div>
             <div>
               <label style={labelStyle}>SL Region Name <span style={{color:"rgba(53,223,36,0.7)",fontSize:"0.42rem"}}>(for paddle attendance tracking)</span></label>
-              <input value={slRegion} onChange={e=>setSlRegion(e.target.value)} placeholder="e.g. Sushene 1" style={inputStyle} />
+              <input id="field-51" name="field-51" value={slRegion} onChange={e=>setSlRegion(e.target.value)} placeholder="e.g. Sushene 1" style={inputStyle} />
             </div>
             <div>
               <label style={labelStyle}>Event Duration (minutes)</label>
-              <input type="number" value={duration} onChange={e=>setDuration(e.target.value)} placeholder="60" style={inputStyle} />
+              <input id="field-52" name="field-52" type="number" value={duration} onChange={e=>setDuration(e.target.value)} placeholder="60" style={inputStyle} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={labelStyle}>Description</label>
-              <textarea value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Tell sisters about this event…" style={{ ...inputStyle, resize:"vertical" }} />
+              <textarea id="field-53" name="field-53" value={desc} onChange={e=>setDesc(e.target.value)} rows={3} placeholder="Tell sisters about this event…" style={{ ...inputStyle, resize:"vertical" }} />
             </div>
 
             {/* Flyer upload */}
@@ -213,7 +213,7 @@ export default function EventsSection({ member }: { member: Member }) {
                   </div>
                 )}
               </div>
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFlyerPick} style={{ display:"none" }} />
+              <input id="field-54" name="field-54" ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFlyerPick} style={{ display:"none" }} />
             </div>
           </div>
 
