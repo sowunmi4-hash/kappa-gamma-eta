@@ -118,24 +118,25 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
   return (
     <div>
       {/* Crystal Hero */}
-      <div style={{ textAlign:"center", marginBottom:"2rem", position:"relative" }}>
-        <div style={{
-          display:"inline-block", position:"relative",
-          filter:"drop-shadow(0 0 32px rgba(255,107,170,0.5)) drop-shadow(0 0 80px rgba(123,3,35,0.4))",
-          animation:"float 3s ease-in-out infinite",
-        }}>
-          <img
-            src="/regalia-crystal.png"
-            alt="KGE Regalia Crystal"
-            style={{ width:"clamp(140px,20vw,220px)", display:"block", margin:"0 auto" }}
-          />
-        </div>
+      <div style={{ textAlign:"center", marginBottom:"2.5rem", position:"relative" }}>
         <style>{`
-          @keyframes float {
+          @keyframes crystalFloat {
             0%, 100% { transform: translateY(0px); }
-            50%       { transform: translateY(-12px); }
+            50%       { transform: translateY(-16px); }
           }
         `}</style>
+        <img
+          src="/regalia-crystal.png"
+          alt="KGE Regalia Crystal"
+          style={{
+            width:"clamp(220px,30vw,360px)",
+            display:"block",
+            margin:"0 auto",
+            animation:"crystalFloat 3.5s ease-in-out infinite",
+            filter:"drop-shadow(0 0 40px rgba(255,107,170,0.7)) drop-shadow(0 0 100px rgba(255,107,170,0.35))",
+            mixBlendMode:"screen",
+          }}
+        />
       </div>
 
       {/* Header */}
