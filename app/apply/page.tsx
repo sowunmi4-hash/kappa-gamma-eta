@@ -151,10 +151,7 @@ export default function ApplyPage() {
             }
           </div>
         </div>
-        <div style={{ textAlign: 'center', marginTop: '28px', color: 'rgba(245,237,216,0.22)', fontSize: '12px' }}>
-          <p>Unity · Respect · Empowerment</p>
-          <p style={{ marginTop: '5px' }}>Already a sister? <a href="/login" style={{ color: '#D4AF37', textDecoration: 'none' }}>Sign in →</a></p>
-        </div>
+
       </div>
     </div>
   )
