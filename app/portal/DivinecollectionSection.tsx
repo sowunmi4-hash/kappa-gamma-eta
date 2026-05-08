@@ -54,6 +54,15 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
 
   const isFounder = ["Founder","Admin"].includes(member.role);
 
+  const [vendorLoc, setVendorLoc] = useState<{online:boolean; region?:string; parcel?:string; x?:number; y?:number; z?:number} | null>(null);
+
+  useEffect(() => {
+    fetch("/api/collection/vendor-location")
+      .then(r => r.json())
+      .then(setVendorLoc)
+      .catch(() => setVendorLoc({ online: false }));
+  }, []);
+
   const load = useCallback(async () => {
     setLoading(true);
     const r = await fetch("/api/collection");
@@ -129,7 +138,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
           src="/regalia-crystal.png"
           alt="KGE Regalia Crystal"
           style={{
-            width:"clamp(220px,30vw,360px)",
+            width:"clamp(180px,22vw,300px)",
             display:"block",
             margin:"0 auto",
             animation:"crystalFloat 3.5s ease-in-out infinite",
@@ -137,6 +146,23 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
             mixBlendMode:"screen",
           }}
         />
+        {/* Live vendor location */}
+        <div style={{ marginTop:"0.8rem" }}>
+          {vendorLoc?.online && vendorLoc.region ? (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.4rem 1rem" }}>
+              <span style={{ width:7, height:7, borderRadius:"50%", background:"#35df24", display:"inline-block", flexShrink:0, boxShadow:"0 0 6px #35df24" }} />
+              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.7)" }}>
+                {vendorLoc.region}
+                {vendorLoc.x != null ? ` (${vendorLoc.x}, ${vendorLoc.y}, ${vendorLoc.z})` : ""}
+              </span>
+            </div>
+          ) : (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.15)", border:"1px solid rgba(212,175,55,0.1)", padding:"0.4rem 1rem" }}>
+              <span style={{ width:7, height:7, borderRadius:"50%", background:"rgba(245,237,216,0.2)", display:"inline-block", flexShrink:0 }} />
+              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.3)" }}>Location syncing…</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Header */}
