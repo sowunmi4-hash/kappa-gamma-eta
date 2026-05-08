@@ -129,7 +129,7 @@ export default function ApplyPage() {
               </select>
             </div>
             <div style={fld}><label style={lbl}>Have you been in a sorority before?</label><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>{RB('yes', 'prev_sorority', 'Yes')}{RB('no', 'prev_sorority', 'No')}</div></div>
-            <div style={fld}><label style={lbl}>Are you able to pay monthly dues? (L$500/mo)</label><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>{RB('yes', 'can_pay_dues', 'Yes')}{RB('no', 'can_pay_dues', 'No')}</div></div>
+            <div style={fld}><label style={lbl}>Are you able to pay monthly dues? (L$2,000/mo)</label><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>{RB('yes', 'can_pay_dues', 'Yes')}{RB('no', 'can_pay_dues', 'No')}</div></div>
             <div style={fld}><label style={lbl}>Do you post on Instagram daily?</label><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>{RB('yes', 'instagram_daily', 'Yes')}{RB('no', 'instagram_daily', 'No')}</div></div>
             <div style={fld}><label style={lbl}>Are you able to commit to the pledging process?</label><div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>{RB('yes', 'can_pledge', 'Yes')}{RB('no', 'can_pledge', 'No')}</div></div>
           </>}
