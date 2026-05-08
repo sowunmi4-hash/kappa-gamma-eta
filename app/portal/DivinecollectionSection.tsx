@@ -152,8 +152,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
             <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.6rem 1.4rem" }}>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#35df24", display:"inline-block", flexShrink:0, boxShadow:"0 0 6px #35df24" }} />
               <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(212,175,55,0.85)" }}>
-                {vendorLoc.region}
-                {vendorLoc.x != null ? ` (${vendorLoc.x}, ${vendorLoc.y}, ${vendorLoc.z})` : ""}
+                ✦ Regalia Vendor — {vendorLoc.region}{vendorLoc.x != null ? ` (${vendorLoc.x}, ${vendorLoc.y}, ${vendorLoc.z})` : ""}
               </span>
             </div>
           ) : (
