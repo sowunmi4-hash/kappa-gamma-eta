@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-type Tab = "overview"|"leaderboard"|"submit"|"my_submissions"|"campaign"|"goals"|"admin_review"|"admin_adjust"|"admin_titles";
+type Tab = "overview"|"leaderboard"|"submit"|"my_submissions"|"campaign"|"goals"|"admin_review"|"admin_adjust"|"admin_titles"|"admin_rewards";
 type Member = { id:string; display_name:string; frat_name:string; role:string };
 type Activity = { id:string; name:string; category:string; point_value:number; requires_proof:boolean };
 type Submission = { id:string; activity_name:string; category:string; point_value:number; status:string; description:string; review_notes:string; created_at:string; member_name:string; proof_url:string; event_name:string };
@@ -25,6 +25,111 @@ const S = {
 };
 
 const isAdmin = (role:string) => ["Admin","Founder"].includes(role);
+
+// ── TDA Rewards leaderboard state ─────────────────────────────
+function TDARewards({ member }: { member: Member }) {
+  const [board,    setBoard]    = useState<{rank:number;member_id:string;member_name:string;sl_name:string;total_points:number}[]>([]);
+  const [loading,  setLoading]  = useState(true);
+  const [issuing,  setIssuing]  = useState<string|null>(null);
+  const [msg,      setMsg]      = useState("");
+  const [month,    setMonth]    = useState(() => {
+    const d = new Date();
+    return d.toLocaleString("en-GB",{month:"long",year:"numeric"});
+  });
+
+  useEffect(() => {
+    fetch("/api/tda/rewards").then(r=>r.json()).then(d => {
+      setBoard(d.leaderboard || []);
+      setLoading(false);
+    });
+  }, []);
+
+  const issue = async (memberId: string, title: string) => {
+    const name = board.find(b=>b.member_id===memberId)?.member_name || "";
+    if (!confirm(`Award ${title} title to ${name} for ${month}?\n\nThis will:\n• ${title==="Elite"?"Post Sister of the Month to The Chalice\n• ":""}Reset ALL sisters' TDA points to 0\n• Notify all sisters`)) return;
+    setIssuing(memberId + title);
+    const r = await fetch("/api/tda/rewards", { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ member_id: memberId, title, month }) });
+    const d = await r.json();
+    setIssuing(null);
+    if (d.success) {
+      setMsg(`✓ ${title} awarded to ${d.awarded_to}. All points reset.`);
+      setBoard(prev => prev.map(b => ({ ...b, total_points: 0 })));
+    } else {
+      setMsg("⚠ " + (d.error || "Something went wrong."));
+    }
+  };
+
+  const lbl: React.CSSProperties = { fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" };
+  const input: React.CSSProperties = { padding:"0.6rem 0.9rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.25)", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", outline:"none" };
+
+  return (
+    <div>
+      <div style={{ marginBottom:"1.6rem" }}>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#D4AF37", marginBottom:"0.35rem" }}>Founder / Admin Only</div>
+        <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8" }}>Monthly Reward</div>
+        <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)", marginTop:"0.3rem" }}>Award Elite & Diamond — resets all sister points</div>
+      </div>
+
+      {/* Month label */}
+      <div style={{ display:"flex", alignItems:"center", gap:"1rem", marginBottom:"1.6rem", flexWrap:"wrap" }}>
+        <label style={lbl}>Reward Month</label>
+        <input value={month} onChange={e=>setMonth(e.target.value)} style={{...input, width:160}} />
+      </div>
+
+      {msg && (
+        <div style={{ marginBottom:"1.2rem", padding:"0.7rem 1rem", background: msg.startsWith("✓") ? "rgba(53,223,36,0.08)" : "rgba(255,107,170,0.08)", border:`1px solid ${msg.startsWith("✓") ? "rgba(53,223,36,0.25)" : "rgba(255,107,170,0.25)"}`, color: msg.startsWith("✓") ? "#35df24" : "#ff6baa", fontSize:"0.9rem" }}>
+          {msg}
+        </div>
+      )}
+
+      {loading ? (
+        <div style={{ padding:"2rem", textAlign:"center", color:"rgba(245,237,216,0.3)", fontStyle:"italic" }}>Loading leaderboard…</div>
+      ) : board.length === 0 ? (
+        <div style={{ padding:"2rem", textAlign:"center", color:"rgba(245,237,216,0.3)", fontStyle:"italic" }}>No TDA points recorded yet.</div>
+      ) : (
+        <div style={{ display:"flex", flexDirection:"column", gap:"0.8rem" }}>
+          {board.slice(0,10).map((s, idx) => {
+            const isElite   = idx === 0;
+            const isDiamond = idx === 1;
+            const colour    = isElite ? "#D4AF37" : isDiamond ? "#75ffff" : "rgba(245,237,216,0.4)";
+            return (
+              <div key={s.member_id} style={{ background:"#120709", border:`1px solid ${isElite ? "rgba(212,175,55,0.3)" : isDiamond ? "rgba(117,255,255,0.15)" : "rgba(212,175,55,0.08)"}`, padding:"1rem 1.4rem", display:"flex", alignItems:"center", gap:"1.2rem", flexWrap:"wrap" }}>
+                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.3rem", color:colour, minWidth:32, textAlign:"center" }}>
+                  {isElite ? "✦" : isDiamond ? "💎" : `#${idx+1}`}
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", color:"#F5EDD8", marginBottom:"0.2rem" }}>{s.member_name}</div>
+                  <div style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.35)" }}>@{s.sl_name}</div>
+                </div>
+                <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.1rem", color:colour, minWidth:60, textAlign:"right" }}>
+                  {s.total_points} pts
+                </div>
+                {(isElite || isDiamond) && (
+                  <button
+                    onClick={()=>issue(s.member_id, isElite ? "Elite" : "Diamond")}
+                    disabled={issuing !== null}
+                    style={{ padding:"0.45rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.14em", textTransform:"uppercase",
+                      background: isElite ? "rgba(212,175,55,0.12)" : "rgba(117,255,255,0.08)",
+                      border:`1px solid ${isElite ? "rgba(212,175,55,0.4)" : "rgba(117,255,255,0.25)"}`,
+                      color: isElite ? "#D4AF37" : "#75ffff", cursor:"pointer" }}>
+                    {issuing === s.member_id+(isElite?"Elite":"Diamond") ? "Issuing…" : `Award ${isElite ? "✦ Elite" : "💎 Diamond"}`}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{ marginTop:"1.5rem", padding:"0.8rem 1rem", background:"rgba(123,3,35,0.08)", border:"1px solid rgba(123,3,35,0.15)" }}>
+        <p style={{ margin:0, fontSize:"0.8rem", color:"rgba(245,237,216,0.3)", fontStyle:"italic" }}>
+          Awarding Elite posts Sister of the Month to The Chalice &amp; notifies all sisters. Both titles reset ALL sister points to 0. L$5,000 is handled by Founder in-world.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function TDASection({ member }: { member: Member }) {
   const [tab, setTab]                 = useState<Tab>("overview");
@@ -142,6 +247,7 @@ export default function TDASection({ member }: { member: Member }) {
       { id:"admin_review"  as Tab, label:"⚙ Review",   adminOnly:true },
       { id:"admin_adjust"  as Tab, label:"⚙ Adjust",   adminOnly:true },
       { id:"admin_titles"  as Tab, label:"⚙ Titles",   adminOnly:true },
+      { id:"admin_rewards" as Tab, label:"⚙ Monthly Reward", adminOnly:true },
     ] : []),
   ];
 
@@ -536,6 +642,9 @@ export default function TDASection({ member }: { member: Member }) {
       )}
 
       {/* ── ADMIN: TITLES ── */}
+      {tab==="admin_rewards" && isAdmin(member.role) && (
+        <TDARewards member={member} />
+      )}
       {tab==="admin_titles" && isAdmin(member.role) && (
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.2rem" }}>
           <div style={S.card}>
