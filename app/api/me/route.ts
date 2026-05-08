@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const { data: profile } = await sb.rpc("get_member_profile", { p_member_id: member.id });
 
   // Lazy trigger: run auto probation check on last day of month
-  sb.rpc("run_auto_probation").catch(() => {});
+  sb.rpc("run_auto_probation").then(() => {}).catch(() => {});
 
   return NextResponse.json({ member, profile: profile?.[0] || null });
 }
