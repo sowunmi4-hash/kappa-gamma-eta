@@ -132,9 +132,8 @@ function TDARewards({ member }: { member: Member }) {
   );
 }
 
-export default function TDASection({ member }: { member: Member }) {
+export default function TDASection({ member, eventAttendance, onAttendanceUpdate }: { member: Member; eventAttendance: {weekly:number;monthly:number;yearly:number}|null; onAttendanceUpdate: (a:{weekly:number;monthly:number;yearly:number})=>void }) {
   const [tab, setTab]                 = useState<Tab>("overview");
-  const [attendance, setAttendance]     = useState<{weekly:number;monthly:number;yearly:number}>({weekly:0,monthly:0,yearly:0});
   const [overview, setOverview]       = useState<Record<string,unknown>|null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderRow[]>([]);
   const [activities, setActivities]   = useState<Activity[]>([]);
@@ -190,7 +189,7 @@ export default function TDASection({ member }: { member: Member }) {
     if (t==="admin_titles")  { fetch_("sisters").then(setSisters); fetch_("tda_title_list").then(setTitleDefs); }
     if (t==="submit")          fetch_("activities").then(setActivities);
     if (t==="overview")      { fetch_("overview").then(setOverview); fetch_("transactions").then(setTransactions);
-      fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) setAttendance(d); }); }
+      fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) onAttendanceUpdate(d); }); }
   }, [fetch_]);
 
   const handleSubmit = async () => {
@@ -313,9 +312,9 @@ export default function TDASection({ member }: { member: Member }) {
           {/* Event Attendance Tracker */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
             {[
-              { label:"This Week", count: attendance.weekly, goal: 3 },
-              { label:"This Month", count: attendance.monthly, goal: 12 },
-              { label:"This Year", count: attendance.yearly, goal: 144 },
+              { label:"This Week", count: eventAttendance?.weekly ?? 0, goal: 3 },
+              { label:"This Month", count: eventAttendance?.monthly ?? 0, goal: 12 },
+              { label:"This Year", count: eventAttendance?.yearly ?? 0, goal: 144 },
             ].map(a => (
               <div key={a.label} style={{ ...S.card, textAlign:"center", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${a.count>=a.goal?"#35df24":"rgba(212,175,55,0.4)"},transparent)` }} />

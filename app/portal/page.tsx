@@ -459,7 +459,7 @@ export default function Portal() {
 
           {/* ══ TDA ══ */}
           {page==="tda" && member && (
-            <TDASection member={member} />
+            <TDASection member={member} eventAttendance={eventAttendance} onAttendanceUpdate={setEventAttendance} />
           )}
 
           {/* ══ SISTER'S VOICE ══ */}
