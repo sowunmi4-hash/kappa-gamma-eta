@@ -1,3 +1,4 @@
+import React from "react";
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
@@ -22,6 +23,13 @@ const input: React.CSSProperties = { width:"100%", padding:"0.65rem 0.9rem", bac
 const lbl:   React.CSSProperties = { display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.6)", marginBottom:"0.4rem" };
 
 export default function DuesSection({ member }: { member: Member }) {
+  const [terminalLoc, setTerminalLoc] = React.useState<{online:boolean; region?:string; x?:number; y?:number; z?:number} | null>(null);
+  React.useEffect(() => {
+    fetch("/api/dues/terminal-location")
+      .then(r => r.json())
+      .then(setTerminalLoc)
+      .catch(() => setTerminalLoc({ online: false }));
+  }, []);
   const [dues,      setDues]      = useState<DueRow[]>([]);
   const [report,    setReport]    = useState<Report[]>([]);
   const [period,    setPeriod]    = useState<Period|null>(null);
@@ -99,6 +107,43 @@ export default function DuesSection({ member }: { member: Member }) {
 
   return (
     <div>
+      {/* Crystal Hero */}
+      <div style={{ textAlign:"center", marginBottom:"2.5rem" }}>
+        <style>{`
+          @keyframes duesFloat {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-16px); }
+          }
+        `}</style>
+        <img
+          src="/regalia-crystal.png"
+          alt="KGE Dues Terminal"
+          style={{
+            width:"clamp(260px,32vw,420px)",
+            display:"block",
+            margin:"0 auto",
+            animation:"duesFloat 3.5s ease-in-out infinite",
+            filter:"drop-shadow(0 0 40px rgba(255,107,170,0.7)) drop-shadow(0 0 100px rgba(255,107,170,0.35))",
+            mixBlendMode:"screen",
+          }}
+        />
+        <div style={{ marginTop:"0.8rem" }}>
+          {terminalLoc?.online && terminalLoc.region ? (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.6rem 1.4rem" }}>
+              <span style={{ width:7, height:7, borderRadius:"50%", background:"#35df24", display:"inline-block", flexShrink:0, boxShadow:"0 0 6px #35df24" }} />
+              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(212,175,55,0.85)" }}>
+                ✦ Dues Terminal — {terminalLoc.region}{terminalLoc.x != null ? ` (${terminalLoc.x}, ${terminalLoc.y}, ${terminalLoc.z})` : ""}
+              </span>
+            </div>
+          ) : (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.15)", border:"1px solid rgba(212,175,55,0.1)", padding:"0.6rem 1.4rem" }}>
+              <span style={{ width:7, height:7, borderRadius:"50%", background:"rgba(245,237,216,0.2)", display:"inline-block", flexShrink:0 }} />
+              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(245,237,216,0.35)" }}>Location syncing…</span>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Header */}
       <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:"1.6rem", flexWrap:"wrap", gap:"1rem" }}>
         <div>
