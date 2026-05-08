@@ -473,7 +473,6 @@ export default function Portal() {
 
           {page==="applications" && member && ["Founder","DOP"].includes(member.role) && (
             <ApplicationsSection />
-            <GuideSection />
           )}
 
           </div>{/* end page-enter */}
