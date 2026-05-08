@@ -49,7 +49,32 @@ export async function POST(req: NextRequest) {
       p_flyer_url: flyer_url || "",
       p_member_id: m.id, p_member_name: m.display_name,
     });
-    return NextResponse.json({ success: true, id: data });
+    const eventId = data;
+
+    // Format date nicely
+    const dateStr = new Date(event_date + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const timeStr = event_time ? ` at ${event_time.slice(0,5)}` : "";
+
+    // Notify all sisters
+    await sb.rpc("notify_all_sisters", {
+      p_title: `📅 New Event: ${title}`,
+      p_message: `${title} — ${dateStr}${timeStr}${location ? ` · ${location}` : ""}. Check the Events tab for details.`,
+    });
+
+    // Post to The Chalice
+    await sb.rpc("create_news_post", {
+      p_title: `📅 ${title}`,
+      p_content: `A new event has been announced!
+
+📅 ${dateStr}${timeStr}${location ? `
+📍 ${location}` : ""}${dress_code ? `
+👗 ${dress_code}` : ""}${description ? `
+
+${description}` : ""}`,
+      p_posted_by: m.display_name,
+    });
+
+    return NextResponse.json({ success: true, id: eventId });
   }
 
   if (action === "delete") {
