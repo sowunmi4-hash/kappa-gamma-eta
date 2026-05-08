@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
   if (parseInt(b.age) < 18)
     return NextResponse.json({ error: "You must be 18 or older to apply." }, { status: 400 });
   const { data, error } = await sb.rpc("submit_application", {
-    p_iw_name: b.iw_name.trim(),
-    p_age: b.age.trim(),
+    p_iw_name: b.iw_name.trim(), p_age: b.age.trim(),
     p_instagram: b.instagram?.trim() || null,
     p_has_discord: b.has_discord?.trim() || null,
     p_prev_sorority: b.prev_sorority === true,
@@ -42,10 +41,14 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const token = req.cookies.get(COOKIE)?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id, status, review_notes } = await req.json();
+  const { id, status, review_notes, interview_slots } = await req.json();
   if (!id || !status) return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
   const { data, error } = await sb.rpc("review_application", {
-    p_token: token, p_id: id, p_status: status, p_review_notes: review_notes || null,
+    p_token: token,
+    p_id: id,
+    p_status: status,
+    p_review_notes: review_notes || null,
+    p_interview_slots: interview_slots ? JSON.stringify(interview_slots) : null,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });
