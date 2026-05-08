@@ -57,7 +57,7 @@ function TDARewards({ member }: { member: Member }) {
       setMsg(`✓ ${title} awarded to ${d.awarded_to}. All points reset.`);
       setBoard(prev => prev.map(b => ({ ...b, total_points: 0 })));
     } else {
-      setMsg("⚠ " + (d?.error || "Something went wrong."));
+      setMsg("⚠ " + (d?.error || JSON.stringify(d) || "null response"));
     }
   };
 
