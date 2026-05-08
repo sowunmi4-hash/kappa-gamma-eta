@@ -188,7 +188,8 @@ export default function TDASection({ member }: { member: Member }) {
     if (t==="admin_adjust")  { fetch_("sisters").then(setSisters); }
     if (t==="admin_titles")  { fetch_("sisters").then(setSisters); fetch_("tda_title_list").then(setTitleDefs); }
     if (t==="submit")          fetch_("activities").then(setActivities);
-    if (t==="overview")      { fetch_("overview").then(setOverview); fetch_("transactions").then(setTransactions); }
+    if (t==="overview")      { fetch_("overview").then(setOverview); fetch_("transactions").then(setTransactions);
+      fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) setAttendance(d); }); }
   }, [fetch_]);
 
   const handleSubmit = async () => {
@@ -306,6 +307,28 @@ export default function TDASection({ member }: { member: Member }) {
               <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"2rem", color:"#fff0a0", lineHeight:1 }}>{pending_||0}</div>
               <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginTop:4 }}>Pending</div>
             </div>
+          </div>
+
+          {/* Event Attendance Tracker */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1rem", marginBottom:"1.4rem" }}>
+            {[
+              { label:"This Week", count: attendance.weekly, goal: 3 },
+              { label:"This Month", count: attendance.monthly, goal: 12 },
+              { label:"This Year", count: attendance.yearly, goal: 144 },
+            ].map(a => (
+              <div key={a.label} style={{ ...S.card, textAlign:"center", position:"relative", overflow:"hidden" }}>
+                <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${a.count>=a.goal?"#35df24":"rgba(212,175,55,0.4)"},transparent)` }} />
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.5rem" }}>{a.label}</div>
+                <div style={{ fontFamily:"'Cinzel Decorative',serif", lineHeight:1, marginBottom:"0.5rem" }}>
+                  <span style={{ fontSize:"2rem", color: a.count >= a.goal ? "#35df24" : "#D4AF37" }}>{a.count}</span>
+                  <span style={{ fontSize:"1.1rem", color:"rgba(245,237,216,0.3)" }}>/{a.goal}</span>
+                </div>
+                <div style={{ height:4, background:"rgba(245,237,216,0.06)", borderRadius:2, overflow:"hidden" }}>
+                  <div style={{ height:"100%", borderRadius:2, background: a.count>=a.goal ? "#35df24" : "linear-gradient(90deg,#ff6baa,#D4AF37)", width:`${Math.min(100,(a.count/a.goal)*100)}%`, transition:"width 0.5s" }} />
+                </div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(245,237,216,0.25)", marginTop:"0.4rem" }}>Events Attended</div>
+              </div>
+            ))}
           </div>
 
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.2rem", marginBottom:"1.2rem" }}>
