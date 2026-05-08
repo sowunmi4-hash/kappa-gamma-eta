@@ -48,7 +48,7 @@ export async function PATCH(req: NextRequest) {
     p_id: id,
     p_status: status,
     p_review_notes: review_notes || null,
-    p_interview_slots: interview_slots ? JSON.stringify(interview_slots) : null,
+    p_interview_slots: interview_slots && interview_slots.length > 0 ? interview_slots : null,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });

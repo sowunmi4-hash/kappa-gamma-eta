@@ -47,6 +47,13 @@ export default function StatusPage() {
   const [slotDone, setSlotDone] = useState(false)
   const [slotMsg, setSlotMsg] = useState('')
 
+  const parseSlots = (slots: any): string[] => {
+    if (!slots) return []
+    if (Array.isArray(slots)) return slots
+    if (typeof slots === 'string') { try { return JSON.parse(slots) } catch { return [] } }
+    return []
+  }
+
   const search = async () => {
     if (!name.trim()) return
     setLoading(true); setError(''); setResult(null); setSlotDone(false)
@@ -190,9 +197,9 @@ export default function StatusPage() {
                 <div style={{ marginBottom: '1.8rem' }}>
                   <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.44rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.5)', marginBottom: '1rem' }}>Available Times — Select One</div>
                   <div style={{ display: 'grid', gap: '0.6rem' }}>
-                    {(result.interview_slots || []).length === 0 ? (
+                    {parseSlots(result.interview_slots).length === 0 ? (
                       <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.35)', fontSize: '0.9rem' }}>Time slots will be posted shortly. Please check back soon.</p>
-                    ) : (result.interview_slots || []).map((slot, i) => (
+                    ) : parseSlots(result.interview_slots).map((slot, i) => (
                       <button key={i} onClick={() => pickSlot(slot)} disabled={slotPicking} style={{
                         background: 'rgba(123,3,35,0.15)', border: '1px solid rgba(212,175,55,0.25)',
                         color: '#F5EDD8', padding: '0.9rem 1.2rem', textAlign: 'left',
