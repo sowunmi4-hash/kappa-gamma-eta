@@ -1,4 +1,3 @@
-import React from "react";
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
@@ -23,8 +22,8 @@ const input: React.CSSProperties = { width:"100%", padding:"0.65rem 0.9rem", bac
 const lbl:   React.CSSProperties = { display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.6)", marginBottom:"0.4rem" };
 
 export default function DuesSection({ member }: { member: Member }) {
-  const [terminalLoc, setTerminalLoc] = React.useState<{online:boolean; region?:string; x?:number; y?:number; z?:number} | null>(null);
-  React.useEffect(() => {
+  const [terminalLoc, setTerminalLoc] = useState<{online:boolean; region?:string; x?:number; y?:number; z?:number} | null>(null);
+  useEffect(() => {
     fetch("/api/dues/terminal-location")
       .then(r => r.json())
       .then(setTerminalLoc)
