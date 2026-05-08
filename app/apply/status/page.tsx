@@ -10,6 +10,7 @@ type AppResult = {
   interview_slots?: string[]
   interview_slot_picked?: string
   submitted_at?: string
+  temp_password?: string
 }
 
 const pg: React.CSSProperties = {
