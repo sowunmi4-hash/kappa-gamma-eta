@@ -8,7 +8,7 @@ const sb = createClient(
 );
 
 type Member = { id:string; display_name:string; frat_name:string; role:string };
-type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; flyer_url:string; rsvpd:boolean; created_by_name:string };
+type Event  = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; sl_url:string; sl_region:string; event_duration_minutes:number; flyer_url:string; rsvpd:boolean; created_by_name:string };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtTime = (t:string) => { if(!t) return ""; const [h,m]=t.split(":"); const hr=parseInt(h); return `${hr>12?hr-12:hr||12}:${m} ${hr>=12?"PM":"AM"}`; };
@@ -37,6 +37,8 @@ export default function EventsSection({ member }: { member: Member }) {
   const [time,      setTime]      = useState("");
   const [location,  setLocation]  = useState("");
   const [slUrl,     setSlUrl]     = useState("");
+  const [slRegion,  setSlRegion]  = useState("");
+  const [duration,  setDuration]  = useState("60");
   const [dresscode, setDresscode] = useState("");
   const [desc,      setDesc]      = useState("");
 
@@ -64,7 +66,7 @@ export default function EventsSection({ member }: { member: Member }) {
 
   const resetForm = () => {
     setTitle(""); setDate(""); setTime(""); setLocation("");
-    setSlUrl(""); setDresscode(""); setDesc("");
+    setSlUrl(""); setSlRegion(""); setDuration("60"); setDresscode(""); setDesc("");
     setFlyerFile(null); setFlyerPreview(null);
     if (fileRef.current) fileRef.current.value = "";
   };
@@ -104,7 +106,8 @@ export default function EventsSection({ member }: { member: Member }) {
 
     const r = await fetch("/api/events", { method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ action:"create", title, event_date:date, event_time:time||null,
-        location, sl_url:slUrl, dress_code:dresscode, description:desc, flyer_url:flyerUrl }) });
+        location, sl_url:slUrl, sl_region:slRegion||null, event_duration_minutes:parseInt(duration)||60,
+        dress_code:dresscode, description:desc, flyer_url:flyerUrl }) });
     const d = await r.json();
     if (d.success) {
       setMsg("✓ Event created!");
@@ -167,6 +170,14 @@ export default function EventsSection({ member }: { member: Member }) {
             <div style={{ gridColumn:"1/-1" }}>
               <label style={labelStyle}>SL Teleport URL</label>
               <input value={slUrl} onChange={e=>setSlUrl(e.target.value)} placeholder="secondlife://..." style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>SL Region Name <span style={{color:"rgba(53,223,36,0.7)",fontSize:"0.42rem"}}>(for paddle attendance tracking)</span></label>
+              <input value={slRegion} onChange={e=>setSlRegion(e.target.value)} placeholder="e.g. Sushene 1" style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Event Duration (minutes)</label>
+              <input type="number" value={duration} onChange={e=>setDuration(e.target.value)} placeholder="60" style={inputStyle} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
               <label style={labelStyle}>Description</label>
