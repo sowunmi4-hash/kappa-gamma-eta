@@ -154,7 +154,7 @@ export default function LoginPage() {
         setMemberName(data.frat_name || data.display_name);
         setStage("success");
         await delay(2500);
-        router.push("/portal");
+        router.push(data.role === "Pledge" ? "/pledge" : "/portal");
       } else {
         setError(data.error || "Incorrect credentials — the chalice remains empty.");
         disableInputs(false);
@@ -188,7 +188,7 @@ export default function LoginPage() {
         setMemberName(data.frat_name || data.display_name);
         setStage("success");
         await delay(2500);
-        router.push("/portal");
+        router.push(data.role === "Pledge" ? "/pledge" : "/portal");
       } else {
         setError(data.error || "Something went wrong.");
         disableInputs(false);

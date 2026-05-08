@@ -292,9 +292,31 @@ export default function StatusPage() {
               <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
                 Your application moved us. You embody the spirit of what we stand for — unity, respect, and empowerment. We believe you will be a wonderful addition to our family.
               </p>
-              <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '2rem' }}>
-                A Founder will reach out to you in Second Life with your next steps. Until then, know that you are already one of us.
+              <p style={{ lineHeight: 1.9, color: 'rgba(245,237,216,0.75)', marginBottom: '1.2rem' }}>
+                Your pledging journey begins now. You will have access to your personal pledge portal where you can track your progress. Use the credentials below to log in.
               </p>
+
+              {result.temp_password && (
+                <div style={{ background: 'rgba(53,223,36,0.05)', border: '1px solid rgba(53,223,36,0.3)', padding: '1.4rem 1.6rem', marginBottom: '1.4rem' }}>
+                  <p style={{ fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(53,223,36,0.7)', marginBottom: '0.8rem' }}>Your Portal Access</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.12em', color: 'rgba(245,237,216,0.4)', textTransform: 'uppercase', minWidth: 80 }}>Username</span>
+                      <code style={{ background: 'rgba(245,237,216,0.08)', padding: '0.3rem 0.7rem', color: '#F5EDD8', fontSize: '0.95rem', letterSpacing: '0.05em' }}>{result.iw_name}</code>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.12em', color: 'rgba(245,237,216,0.4)', textTransform: 'uppercase', minWidth: 80 }}>Password</span>
+                      <code style={{ background: 'rgba(245,237,216,0.08)', padding: '0.3rem 0.7rem', color: '#35df24', fontSize: '1rem', letterSpacing: '0.15em', fontWeight: 'bold' }}>{result.temp_password}</code>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.12em', color: 'rgba(245,237,216,0.4)', textTransform: 'uppercase', minWidth: 80 }}>Login</span>
+                      <code style={{ background: 'rgba(245,237,216,0.08)', padding: '0.3rem 0.7rem', color: '#75ffff', fontSize: '0.85rem' }}>kappa-gamma-eta.vercel.app/login</code>
+                    </div>
+                  </div>
+                  <p style={{ margin: '0.8rem 0 0', fontSize: '0.8rem', color: 'rgba(245,237,216,0.35)', fontStyle: 'italic' }}>Save these credentials. You will be prompted to change your password on first login.</p>
+                </div>
+              )}
+
               <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)', padding: '1.2rem 1.4rem', marginBottom: '1.8rem', textAlign: 'center' }}>
                 <p style={{ fontStyle: 'italic', color: 'rgba(245,237,216,0.5)', margin: '0 0 0.3rem', fontSize: '0.85rem' }}>Our Motto</p>
                 <p style={{ fontFamily: "'Cinzel',serif", fontSize: '0.7rem', letterSpacing: '0.1em', color: '#D4AF37', margin: 0 }}>"She is strong like whiskey, but soft like wine."</p>
