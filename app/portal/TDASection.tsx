@@ -39,9 +39,9 @@ function TDARewards({ member }: { member: Member }) {
 
   useEffect(() => {
     fetch("/api/tda/rewards").then(r=>r.json()).then(d => {
-      setBoard(d.leaderboard || []);
+      setBoard(d?.leaderboard || []);
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, []);
 
   const issue = async (memberId: string, title: string) => {
