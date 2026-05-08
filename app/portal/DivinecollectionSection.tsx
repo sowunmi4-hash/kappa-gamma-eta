@@ -127,7 +127,7 @@ export default function DivineCollectionSection({ member }: { member: Member }) 
           <img
             src="/regalia-crystal.png"
             alt="KGE Regalia Crystal"
-            style={{ width:"clamp(140px,20vw,220px)", display:"block", margin:"0 auto", mixBlendMode:"screen" }}
+            style={{ width:"clamp(140px,20vw,220px)", display:"block", margin:"0 auto" }}
           />
         </div>
         <style>{`
