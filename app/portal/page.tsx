@@ -111,6 +111,14 @@ export default function Portal() {
     setNotifs(prev => prev.map(n => n.id===id ? {...n, is_read:true} : n));
   };
 
+  const deleteSister = async (id: string, name: string) => {
+    if (!confirm(`Remove ${name} from the sisterhood? This cannot be undone.`)) return;
+    const r = await fetch("/api/members", { method:"DELETE", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ member_id: id }) });
+    const d = await r.json();
+    if (d.error) { alert(d.error); return; }
+    setSisters(prev => prev.filter(s => s.id !== id));
+  };
+
   if (loading) return (
     <div style={{ minHeight:"100vh", background:"#0a0306", display:"flex", alignItems:"center", justifyContent:"center" }}>
       <p style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.25em", color:"rgba(212,175,55,0.5)", textTransform:"uppercase" }}>Entering the Sanctuary…</p>
