@@ -298,7 +298,7 @@ export default function Portal() {
                     <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"#ff9ec8", marginBottom:"0.3rem", lineHeight:1.3 }}>{s.frat_name}</div>
                     <div style={{ fontSize:"0.82rem", color:"#F5EDD8", marginBottom:"0.5rem", lineHeight:1.3 }}>{s.display_name}</div>
                     <span style={{ ...S.tag(ROLE_COLOUR[s.role]) }}>{s.role}</span>
-                    {isAdmin(member?.role||"") && s.id !== member?.id && !(member?.role==="Admin" && s.role==="Founder") && (
+                    {["Founder","Admin"].includes(member?.role||"") && s.id !== member?.id && !(member?.role==="Admin" && s.role==="Founder") && (
                       <div style={{ marginTop:"0.8rem" }}>
                         <button onClick={()=>deleteSister(s.id, s.display_name)} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.12em", textTransform:"uppercase", background:"rgba(123,3,35,0.12)", border:"1px solid rgba(123,3,35,0.35)", color:"rgba(245,237,216,0.35)", padding:"0.3rem 0.7rem", cursor:"pointer", width:"100%" }}>
                           ✕ Remove
