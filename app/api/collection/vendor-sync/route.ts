@@ -4,12 +4,11 @@ const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { secret, url, region, parcel, x, y, z, object_key } = body;
-  if (!secret || !url) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-  const { data } = await sb.rpc("register_vendor", {
-    p_secret: secret, p_url: url,
-    p_region: region || null, p_parcel: parcel || null,
-    p_x: x ?? null, p_y: y ?? null, p_z: z ?? null,
+  const { secret, region, parcel, x, y, z, object_key } = body;
+  if (!secret || !region) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  const { data } = await sb.rpc("sync_vendor_location", {
+    p_secret: secret, p_region: region, p_parcel: parcel || "",
+    p_x: x ?? 0, p_y: y ?? 0, p_z: z ?? 0,
     p_object_key: object_key || null,
   });
   if (data?.error) return NextResponse.json({ error: data.error }, { status: 401 });
