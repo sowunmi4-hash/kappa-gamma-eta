@@ -50,7 +50,8 @@ function TDARewards({ member }: { member: Member }) {
     setIssuing(memberId + title);
     const r = await fetch("/api/tda/rewards", { method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({ member_id: memberId, title, month }) });
-    const d = await r.json().catch(() => null);
+    let d = null;
+    try { d = await r.json(); } catch(e) {}
     setIssuing(null);
     if (d?.success) {
       setMsg(`✓ ${title} awarded to ${d.awarded_to}. All points reset.`);
@@ -73,8 +74,8 @@ function TDARewards({ member }: { member: Member }) {
 
       {/* Month label */}
       <div style={{ display:"flex", alignItems:"center", gap:"1rem", marginBottom:"1.6rem", flexWrap:"wrap" }}>
-        <label style={lbl}>Reward Month</label>
-        <input id="field-8" name="field-8" value={month} onChange={e=>setMonth(e.target.value)} style={{...input, width:160}} />
+        <label htmlFor="reward-month" style={lbl}>Reward Month</label>
+        <input id="reward-month" name="reward-month" value={month} onChange={e=>setMonth(e.target.value)} style={{...input, width:160}} />
       </div>
 
       {msg && (
