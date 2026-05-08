@@ -7,6 +7,7 @@ import DuesSection from "./DuesSection";
 import ProbationSection from "./ProbationSection";
 import DivineCollectionSection from "./DivinecollectionSection";
 import GuideSection from "./GuideSection";
+import ApplicationsSection from "./ApplicationsSection";
 import HandbookSection from "./HandbookSection";
 import SistersVoice from "./SistersVoice";
 import { useEffect, useState, useCallback } from "react";
@@ -20,7 +21,7 @@ type Event   = { id:string; title:string; event_date:string; event_time:string; 
 type Post    = { id:string; title:string; content:string; posted_by_name:string; pinned:boolean; created_at:string };
 type Notif   = { id:string; title:string; message:string; is_read:boolean; created_at:string };
 
-type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation"|"collection"|"guide"|"handbook";
+type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation"|"collection"|"guide"|"handbook"|"applications";
 
 const ROLE_COLOUR: Record<string,string> = {
   Founder:"#D4AF37", President:"#ff6baa", Admin:"#7BA7D4", Member:"rgba(245,237,216,0.45)"
@@ -129,9 +130,10 @@ export default function Portal() {
     { id:"collection",     icon:"✦",   label:"Regalia" },
     { id:"handbook",      icon:"📖",  label:"The Handbook" },
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📖", label:"Orientation Guide" }] : []),
+    ...(["Founder","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }] : []),
   ];
 
-  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook" };
+  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications" };
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
@@ -466,6 +468,11 @@ export default function Portal() {
           )}
 
           {page==="guide" && member && ["Founder","Admin"].includes(member.role) && (
+            <GuideSection />
+          )}
+
+          {page==="applications" && member && ["Founder","DOP"].includes(member.role) && (
+            <ApplicationsSection />
             <GuideSection />
           )}
 
