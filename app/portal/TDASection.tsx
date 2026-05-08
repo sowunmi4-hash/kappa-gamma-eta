@@ -330,7 +330,6 @@ export default function TDASection({ member }: { member: Member }) {
                 </div>
               ) : (
                 <div>
-                  <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.3)", fontStyle:"italic", marginBottom:"0.6rem" }}>No tier yet — earn 100 points to reach Bronze Chalice</div>
                   <div style={{ height:5, background:"rgba(212,175,55,0.1)", borderRadius:3 }}>
                     <div style={{ height:"100%", borderRadius:3, background:"linear-gradient(90deg,#ff6baa,#D4AF37)", width:`${Math.min(100,((bal?.lifetime_points||0)/100)*100)}%` }} />
                   </div>
