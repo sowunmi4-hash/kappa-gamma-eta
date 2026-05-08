@@ -12,8 +12,8 @@ export async function GET(req: NextRequest) {
   const member = data[0];
   const { data: profile } = await sb.rpc("get_member_profile", { p_member_id: member.id });
 
-  // Lazy trigger: run auto probation check on last day of month
-  sb.rpc("run_auto_probation").then(() => {}).catch(() => {});
+  // Lazy trigger: fire and forget — wrapped in async IIFE to avoid TS Promise issues
+  void (async () => { try { await sb.rpc("run_auto_probation"); } catch { /* silent */ } })();
 
   return NextResponse.json({ member, profile: profile?.[0] || null });
 }
