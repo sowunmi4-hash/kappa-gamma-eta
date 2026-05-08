@@ -9,6 +9,7 @@ interface App {
   instagram_daily: boolean; why_kge: string; sisterhood_meaning: string
   can_pledge: boolean; brings_to_kge: string; status: string
   review_notes: string; reviewed_by: string; reviewed_at: string; submitted_at: string
+  interview_slots: string[]; interview_slot_picked: string
 }
 
 const STA: Record<string, { c: string; l: string }> = {
@@ -29,6 +30,8 @@ export default function ApplicationsSection() {
   const [notes, setNotes] = useState('')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+  const [slots, setSlots] = useState<string[]>([])
+  const [slotInput, setSlotInput] = useState('')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
@@ -46,6 +49,7 @@ export default function ApplicationsSection() {
 
   const open = (a: App) => {
     setSel(a); setNs(a.status); setNotes(a.review_notes || ''); setMsg('')
+    setSlots(a.interview_slots || []); setSlotInput('')
     document.body.style.overflow = 'hidden'
   }
   const close = () => {
@@ -59,7 +63,7 @@ export default function ApplicationsSection() {
     const res = await fetch('/api/applications', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: sel.id, status: ns, review_notes: notes }),
+      body: JSON.stringify({ id: sel.id, status: ns, review_notes: notes, interview_slots: ns === 'interview' ? slots : undefined }),
     })
     if (res.ok) { setMsg('Saved!'); setSel(s => s ? { ...s, status: ns, review_notes: notes } : s); load() }
     else { setMsg('Error saving') }
@@ -176,6 +180,41 @@ export default function ApplicationsSection() {
               <textarea style={{ ...inp, minHeight: '60px', resize: 'vertical' }} placeholder="Private notes for Founders & Admin..." value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
           </div>
+
+          {/* Interview slot builder */}
+          {ns === 'interview' && (
+            <div style={{ marginBottom: '1rem', background: 'rgba(117,255,255,0.04)', border: '1px solid rgba(117,255,255,0.15)', padding: '1rem 1.2rem' }}>
+              <div style={{ fontFamily: "'Cinzel',serif", fontSize: '0.42rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#75ffff', marginBottom: '0.8rem' }}>📅 Available Interview Slots</div>
+              {sel.interview_slot_picked && (
+                <div style={{ marginBottom: '0.8rem', fontSize: '0.82rem', color: '#35df24', fontStyle: 'italic' }}>✓ Applicant selected: <strong>{sel.interview_slot_picked}</strong></div>
+              )}
+              <div style={{ display: 'grid', gap: '0.4rem', marginBottom: '0.8rem' }}>
+                {slots.map((s, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(14,5,8,0.4)', padding: '0.5rem 0.8rem' }}>
+                    <span style={{ color: 'rgba(245,237,216,0.6)', fontSize: '0.9rem', flex: 1 }}>{s}</span>
+                    <button onClick={() => setSlots(slots.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: 'rgba(245,237,216,0.3)', cursor: 'pointer', fontSize: '0.8rem' }}>✕</button>
+                  </div>
+                ))}
+              </div>
+              {slots.length < 4 && (
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    style={{ ...inp, fontSize: '0.85rem', flex: 1 }}
+                    placeholder="e.g. Saturday May 10 · 3:00 PM SLT"
+                    value={slotInput}
+                    onChange={e => setSlotInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && slotInput.trim()) { setSlots([...slots, slotInput.trim()]); setSlotInput('') } }}
+                  />
+                  <button
+                    onClick={() => { if (slotInput.trim()) { setSlots([...slots, slotInput.trim()]); setSlotInput('') } }}
+                    style={{ background: 'rgba(117,255,255,0.1)', border: '1px solid rgba(117,255,255,0.3)', color: '#75ffff', padding: '0 1rem', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}
+                  >+ Add</button>
+                </div>
+              )}
+              <p style={{ color: 'rgba(245,237,216,0.3)', fontSize: '0.75rem', marginTop: '0.5rem', fontStyle: 'italic' }}>Up to 4 slots. Applicant picks one on the status page.</p>
+            </div>
+          )}
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button onClick={save} disabled={saving} style={{
               padding: '0.65rem 1.8rem', fontFamily: "'Cinzel',serif", fontSize: '0.55rem',
