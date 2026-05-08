@@ -129,7 +129,7 @@ export default function Home() {
       }}>
         <span className="font-cinzel-deco text-kge-gradient" style={{ fontSize:"1.2rem", letterSpacing:"0.1em" }}>ΚΓΗ</span>
         <ul style={{ display:"flex", gap:"2.2rem", listStyle:"none" }}>
-          {[["Home","#"],["Our Story","/our-story"],["Sisters","/sisters"],["Apply","/apply"],].map(([label,href]) => (
+          {[["Home","#"],["Our Story","/our-story"],["Sisters","/sisters"],["Apply","/apply"],["Check Status","/apply/status"],].map(([label,href]) => (
             <li key={label}>
               <a href={href} className="font-cinzel" style={{
                 fontSize:"0.68rem", letterSpacing:"0.2em", textTransform:"uppercase",
