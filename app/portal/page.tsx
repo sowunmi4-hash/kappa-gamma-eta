@@ -132,16 +132,16 @@ export default function Portal() {
     { id:"dashboard",     icon:"⚜",  label:"Dashboard" },
     { id:"sisterhood",    icon:"👑",  label:"Sisterhood" },
     { id:"events",        icon:"📅",  label:"Events" },
-    { id:"chalice",       icon:"🏺",  label:"The Chalice" },
+    { id:"chalice",       icon:"🏺",  label:"Chalice" },
     { id:"gallery",       icon:"🖼",  label:"Gallery" },
     { id:"notifications", icon:"🔔",  label:"Notifications" },
-    { id:"profile",       icon:"✦",   label:"My Profile" },
-    { id:"tda",           icon:"⚜",   label:"The Divine Accord" },
-    { id:"voice",          icon:"💙",   label:"Sister's Voice" },
+    { id:"profile",       icon:"✦",   label:"Profile" },
+    { id:"tda",           icon:"⚜",   label:"TDA" },
+    { id:"voice",          icon:"💙",   label:"Voice" },
     { id:"dues",           icon:"💰",   label:"Dues" },
-    { id:"collection",     icon:"✦",   label:"Regalia" },
-    { id:"handbook",      icon:"📖",  label:"The Handbook" },
-    ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📖", label:"Orientation Guide" }] : []),
+    { id:"collection",     icon:"💎",   label:"Regalia" },
+    { id:"handbook",      icon:"📖",  label:"Handbook" },
+    ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📋", label:"Guide" }] : []),
     ...(["Founder","Admin","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }, { id:"pledges" as Page, icon:"🌸", label:"Pledges" }] : []),
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"attendance" as Page, icon:"📡", label:"Attendance" }] : []),
   ];
@@ -154,7 +154,7 @@ export default function Portal() {
       <div className="ambient-orb" style={{ width:400, height:400, background:"rgba(255,107,170,0.12)", bottom:0, right:50, animationDelay:"6s" }} />
 
       {/* ── SIDEBAR ── */}
-      <aside className="sidebar-enter" style={{ width:230, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
+      <aside className="sidebar-enter" style={{ width:210, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
 
         {/* Logo */}
         <div style={{ padding:"1.5rem 1.4rem 1.2rem", borderBottom:"1px solid rgba(212,175,55,0.14)", display:"flex", alignItems:"center", gap:"0.7rem" }}>
@@ -165,30 +165,42 @@ export default function Portal() {
           </div>
         </div>
 
-        {/* Nav */}
-        <nav style={{ flex:1, padding:"1rem 0", overflowY:"auto", overflowX:"hidden" }}>
-          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.25em", textTransform:"uppercase", color:"rgba(212,175,55,0.28)", padding:"0.5rem 1.4rem 0.3rem" }}>Menu</div>
-          {navItems.map(item => (
-            <div key={item.id} onClick={() => setPage(item.id)} style={{
-              display:"flex", alignItems:"center", gap:"0.7rem",
-              padding:"0.65rem 1.4rem", cursor:"pointer",
-              borderLeft: page===item.id ? "3px solid #ff6baa" : "2px solid transparent",
-              background: page===item.id ? "rgba(255,107,170,0.12)" : "transparent",
-              transition:"all 0.2s",
-            }}
-            onMouseEnter={e=>{if(page!==item.id)(e.currentTarget as HTMLDivElement).style.background="rgba(255,107,170,0.05)";}}
-            onMouseLeave={e=>{if(page!==item.id)(e.currentTarget as HTMLDivElement).style.background="transparent";}}
-            >
-              <span style={{ fontSize:"0.9rem", width:18, textAlign:"center", color: page===item.id?"#ff6baa":"rgba(245,237,216,0.3)" }}>{item.icon}</span>
-              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", color: page===item.id?"#F5EDD8":"rgba(245,237,216,0.45)" }}>{item.label}</span>
-              {item.id==="notifications" && unread>0 && (
-                <div style={{ marginLeft:"auto", background:"var(--cyan)", color:"#fff", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>{unread}</div>
-              )}
-              {item.id==="chalice" && news.length>0 && (
-                <div style={{ marginLeft:"auto", background:"#D4AF37", color:"#0a0306", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", width:16, height:16, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>{news.length}</div>
-              )}
-            </div>
-          ))}
+        {/* Nav — 2-column icon grid */}
+        <nav style={{ flex:1, padding:"0.7rem 0.6rem", overflowY:"auto", overflowX:"hidden" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.4rem" }}>
+            {navItems.map(item => {
+              const isActive = page === item.id;
+              const hasNotif = item.id==="notifications" && unread>0;
+              const hasChalice = item.id==="chalice" && news.length>0;
+              const isAdmin = ["probation","guide","applications","pledges","attendance"].includes(item.id);
+              return (
+                <div key={item.id} onClick={() => setPage(item.id)}
+                  style={{
+                    display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+                    gap:"0.3rem", padding:"0.55rem 0.3rem", cursor:"pointer", position:"relative",
+                    borderRadius:4,
+                    background: isActive ? "rgba(212,175,55,0.14)" : "rgba(245,237,216,0.03)",
+                    border: isActive ? "1px solid rgba(212,175,55,0.35)" : "1px solid rgba(245,237,216,0.06)",
+                    transition:"all 0.15s",
+                  }}
+                  onMouseEnter={e=>{ if(!isActive)(e.currentTarget as HTMLDivElement).style.background="rgba(255,107,170,0.07)"; }}
+                  onMouseLeave={e=>{ if(!isActive)(e.currentTarget as HTMLDivElement).style.background="rgba(245,237,216,0.03)"; }}
+                >
+                  {isAdmin && <div style={{ position:"absolute", top:3, right:3, width:4, height:4, borderRadius:"50%", background:"rgba(212,175,55,0.5)" }} />}
+                  <span style={{ fontSize:"1rem", lineHeight:1 }}>{item.icon}</span>
+                  <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.38rem", letterSpacing:"0.1em", textTransform:"uppercase", textAlign:"center", lineHeight:1.3,
+                    color: isActive ? "#D4AF37" : "rgba(245,237,216,0.45)",
+                    fontWeight: isActive ? 600 : 400,
+                  }}>{item.label}</span>
+                  {(hasNotif || hasChalice) && (
+                    <div style={{ position:"absolute", top:3, left:3, background: hasNotif ? "#ff6baa" : "#D4AF37", color: hasNotif?"#fff":"#0a0306", fontFamily:"'Cinzel',serif", fontSize:"0.38rem", width:14, height:14, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      {hasNotif ? unread : news.length}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </nav>
 
         {/* Footer */}
@@ -209,7 +221,7 @@ export default function Portal() {
       </aside>
 
       {/* ── MAIN ── */}
-      <div style={{ marginLeft:230, flex:1, minHeight:"100vh" }}>
+      <div style={{ marginLeft:210, flex:1, minHeight:"100vh" }}>
 
         {/* Topbar */}
         <div style={{ position:"sticky", top:0, zIndex:40, background:"rgba(10,3,6,0.96)", borderBottom:"1px solid rgba(212,175,55,0.12)", backdropFilter:"blur(8px)", padding:"0.85rem 2rem", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
