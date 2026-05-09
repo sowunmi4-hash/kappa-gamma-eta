@@ -164,7 +164,7 @@ export default function Portal() {
         </div>
 
         {/* Nav */}
-        <nav style={{ flex:1, padding:"1rem 0" }}>
+        <nav style={{ flex:1, padding:"1rem 0", overflowY:"auto", overflowX:"hidden" }}>
           <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.25em", textTransform:"uppercase", color:"rgba(212,175,55,0.28)", padding:"0.5rem 1.4rem 0.3rem" }}>Menu</div>
           {navItems.map(item => (
             <div key={item.id} onClick={() => setPage(item.id)} style={{
