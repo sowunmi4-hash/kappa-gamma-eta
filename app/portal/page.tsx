@@ -70,8 +70,8 @@ export default function Portal() {
   const unread = notifs.filter(n=>!n.is_read).length;
 
   const load = useCallback(async () => {
-    const me = await fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) setEventAttendance(d); }).catch(()=>{});
-    fetch("/api/me");
+    fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) setEventAttendance(d); }).catch(()=>{});
+    const me = await fetch("/api/me");
     if (!me.ok) { router.push("/login"); return; }
     const { member: m, profile: p } = await me.json();
     setMember(m); setProfile(p);
