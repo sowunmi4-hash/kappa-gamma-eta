@@ -128,11 +128,19 @@ export default function DuesSection({ member }: { member: Member }) {
         />
         <div style={{ marginTop:"0.8rem" }}>
           {terminalLoc?.online && terminalLoc.region ? (
-            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.6rem 1.4rem" }}>
+            <div style={{ display:"inline-flex", alignItems:"center", gap:"0.8rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.6rem 1.4rem", flexWrap:"wrap" }}>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#35df24", display:"inline-block", flexShrink:0, boxShadow:"0 0 6px #35df24" }} />
               <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(212,175,55,0.85)" }}>
-                ✦ Dues Terminal — {terminalLoc.region}{terminalLoc.x != null ? ` (${terminalLoc.x}, ${terminalLoc.y}, ${terminalLoc.z})` : ""}
+                ✦ Dues Terminal — {terminalLoc.region}{terminalLoc.x != null ? ` (${Math.round(terminalLoc.x!)}, ${Math.round(terminalLoc.y!)}, ${Math.round(terminalLoc.z!)})` : ""}
               </span>
+              {terminalLoc.x != null && (
+                <a
+                  href={`https://maps.secondlife.com/secondlife/${encodeURIComponent(terminalLoc.region!)}/${Math.round(terminalLoc.x!)}/${Math.round(terminalLoc.y!)}/${Math.round(terminalLoc.z!)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ fontFamily:"'Cinzel',serif", fontSize:"0.58rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#75ffff", background:"rgba(117,255,255,0.08)", border:"1px solid rgba(117,255,255,0.25)", padding:"0.25rem 0.7rem", textDecoration:"none", whiteSpace:"nowrap" }}>
+                  🌐 Teleport
+                </a>
+              )}
             </div>
           ) : (
             <div style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", background:"rgba(123,3,35,0.15)", border:"1px solid rgba(212,175,55,0.1)", padding:"0.6rem 1.4rem" }}>
