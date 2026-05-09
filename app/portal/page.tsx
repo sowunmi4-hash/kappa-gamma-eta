@@ -154,7 +154,7 @@ export default function Portal() {
       <div className="ambient-orb" style={{ width:400, height:400, background:"rgba(255,107,170,0.12)", bottom:0, right:50, animationDelay:"6s" }} />
 
       {/* ── SIDEBAR ── */}
-      <aside className="sidebar-enter" style={{ width:210, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
+      <aside className="sidebar-enter" style={{ width:240, minHeight:"100vh", position:"fixed", top:0, left:0, zIndex:50, background:"#120709", borderRight:"1px solid rgba(212,175,55,0.14)", display:"flex", flexDirection:"column" }}>
 
         {/* Logo */}
         <div style={{ padding:"1.5rem 1.4rem 1.2rem", borderBottom:"1px solid rgba(212,175,55,0.14)", display:"flex", alignItems:"center", gap:"0.7rem" }}>
@@ -177,7 +177,7 @@ export default function Portal() {
                 <div key={item.id} onClick={() => setPage(item.id)}
                   style={{
                     display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-                    gap:"0.3rem", padding:"0.55rem 0.3rem", cursor:"pointer", position:"relative",
+                    gap:"0.4rem", padding:"0.75rem 0.3rem", cursor:"pointer", position:"relative",
                     borderRadius:4,
                     background: isActive ? "rgba(212,175,55,0.14)" : "rgba(245,237,216,0.03)",
                     border: isActive ? "1px solid rgba(212,175,55,0.35)" : "1px solid rgba(245,237,216,0.06)",
@@ -187,8 +187,8 @@ export default function Portal() {
                   onMouseLeave={e=>{ if(!isActive)(e.currentTarget as HTMLDivElement).style.background="rgba(245,237,216,0.03)"; }}
                 >
                   {isAdmin && <div style={{ position:"absolute", top:3, right:3, width:4, height:4, borderRadius:"50%", background:"rgba(212,175,55,0.5)" }} />}
-                  <span style={{ fontSize:"1rem", lineHeight:1 }}>{item.icon}</span>
-                  <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.38rem", letterSpacing:"0.1em", textTransform:"uppercase", textAlign:"center", lineHeight:1.3,
+                  <span style={{ fontSize:"1.3rem", lineHeight:1 }}>{item.icon}</span>
+                  <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.1em", textTransform:"uppercase", textAlign:"center", lineHeight:1.3,
                     color: isActive ? "#D4AF37" : "rgba(245,237,216,0.45)",
                     fontWeight: isActive ? 600 : 400,
                   }}>{item.label}</span>
@@ -221,7 +221,7 @@ export default function Portal() {
       </aside>
 
       {/* ── MAIN ── */}
-      <div style={{ marginLeft:210, flex:1, minHeight:"100vh" }}>
+      <div style={{ marginLeft:240, flex:1, minHeight:"100vh" }}>
 
         {/* Topbar */}
         <div style={{ position:"sticky", top:0, zIndex:40, background:"rgba(10,3,6,0.96)", borderBottom:"1px solid rgba(212,175,55,0.12)", backdropFilter:"blur(8px)", padding:"0.85rem 2rem", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
