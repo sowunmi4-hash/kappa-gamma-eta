@@ -51,6 +51,7 @@ export default function Portal() {
   const [news,    setNews]    = useState<Post[]>([]);
   const [notifs,  setNotifs]  = useState<Notif[]>([]);
   const [loading, setLoading] = useState(true);
+  const [eventAttendance, setEventAttendance] = useState<{weekly:number;monthly:number;yearly:number}|null>(null);
 
   // Profile edit state
   const [editing, setEditing]   = useState(false);
@@ -69,7 +70,8 @@ export default function Portal() {
   const unread = notifs.filter(n=>!n.is_read).length;
 
   const load = useCallback(async () => {
-    const me = await fetch("/api/me");
+    const me = await fetch("/api/tda/attendance").then(r=>r.json()).then(d=>{ if(d?.weekly!=null) setEventAttendance(d); }).catch(()=>{});
+    fetch("/api/me");
     if (!me.ok) { router.push("/login"); return; }
     const { member: m, profile: p } = await me.json();
     setMember(m); setProfile(p);
