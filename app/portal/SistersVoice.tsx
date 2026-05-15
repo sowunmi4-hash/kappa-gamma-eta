@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
-type Member = { id:string; display_name:string; frat_name:string; role:string };
+type Member = { id:string; display_name:string; frat_name:string; role:string; sl_name:string; is_elevated:boolean };
 type Submission = {
   id:string; category:string; description:string; related_page:string;
   status:string; admin_notes:string; member_name:string; frat_name:string;
