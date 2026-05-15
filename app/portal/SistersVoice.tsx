@@ -79,6 +79,7 @@ function SubmissionThread({ submission, member, onStatusChange }: {
 
   const cfg = STATUS_CFG[submission.status]||STATUS_CFG.received;
   const canReply = !["resolved","dismissed"].includes(submission.status);
+  const isSafareeElevated = member.sl_name === "safareehills" && member.is_elevated;
 
   return (
     <div style={card}>
@@ -156,7 +157,20 @@ function SubmissionThread({ submission, member, onStatusChange }: {
           )}
 
           {/* Reply input */}
-          {canReply && (
+          {isSafareeElevated && (
+        <div style={{ marginTop:"1rem", padding:"0.8rem 1rem", background:"rgba(255,107,170,0.06)", border:"1px solid rgba(255,107,170,0.2)", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.8rem" }}>
+          <span style={{ fontSize:"0.82rem", color:"rgba(245,237,216,0.5)", fontStyle:"italic" }}>Mark this ticket complete to revoke your elevated access.</span>
+          <button onClick={async()=>{
+            const r = await fetch("/api/voice", { method:"POST", headers:{"Content-Type":"application/json"},
+              body: JSON.stringify({ action:"complete", ticket_id: submission.id }) });
+            const d = await r.json();
+            if(d?.success && onElevate) onElevate();
+          }} style={{ padding:"0.45rem 1.2rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(255,107,170,0.12)", border:"1px solid rgba(255,107,170,0.35)", color:"#ff6baa", cursor:"pointer" }}>
+            ✓ Mark Complete & Revoke Access
+          </button>
+        </div>
+      )}
+      {canReply && (
             <div style={{ display:"flex", gap:"0.6rem", alignItems:"flex-end" }}>
               <textarea id="field-27" name="field-27"
                 value={replyText}
@@ -216,13 +230,18 @@ function SubmissionThread({ submission, member, onStatusChange }: {
   );
 }
 
-export default function SistersVoice({ member }: { member: Member }) {
+export default function SistersVoice({ member, onElevate }: { member: Member; onElevate?: () => void }) {
   const [tab,         setTab]         = useState<Tab>("submit");
   const [category,    setCategory]    = useState("");
   const [description, setDescription] = useState("");
   const [relPage,     setRelPage]     = useState("");
   const [submitting,  setSubmitting]  = useState(false);
   const [submitMsg,   setSubmitMsg]   = useState("");
+  const [accessCode,  setAccessCode]  = useState("");
+  const [codeMsg,     setCodeMsg]     = useState("");
+  const [codeLoading, setCodeLoading] = useState(false);
+  const [activeCodes, setActiveCodes] = useState<{id:string;code:string;category:string;description:string;submitted_by:string;ticket_id:string;used:boolean}[]>([]);
+  const isSafareehills = member.sl_name === "safareehills";
   const [mine,        setMine]        = useState<Submission[]>([]);
   const [all,         setAll]         = useState<Submission[]>([]);
 
@@ -232,6 +251,7 @@ export default function SistersVoice({ member }: { member: Member }) {
       setMine(await r.json());
     }
     if (t==="admin"&&isAdmin(member.role)) {
+      if (member.sl_name !== "safareehills") fetch("/api/voice/codes").then(r=>r.json()).then(d=>{ if(Array.isArray(d)) setActiveCodes(d); });
       const r = await fetch("/api/voice?type=all");
       setAll(await r.json());
     }
@@ -328,6 +348,44 @@ export default function SistersVoice({ member }: { member: Member }) {
       )}
 
       {/* ── ADMIN ALL REPORTS ── */}
+      {/* Access code entry for Safareehills */}
+      {isSafareehills && !member.is_elevated && (
+        <div style={{ background:"rgba(212,175,55,0.06)", border:"1px solid rgba(212,175,55,0.2)", padding:"1.4rem", marginBottom:"1.2rem" }}>
+          <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"0.9rem", color:"#D4AF37", marginBottom:"0.4rem" }}>🔐 Enter Access Code</div>
+          <div style={{ fontSize:"0.85rem", color:"rgba(245,237,216,0.5)", marginBottom:"1rem", fontStyle:"italic" }}>A Founder will share a one-time code with you to access admin functions.</div>
+          <div style={{ display:"flex", gap:"0.8rem", flexWrap:"wrap" }}>
+            <input id="access-code-input" name="access-code-input" value={accessCode} onChange={e=>setAccessCode(e.target.value.toUpperCase())} placeholder="KGE-XXXX" maxLength={8}
+              style={{ padding:"0.6rem 1rem", background:"rgba(245,237,216,0.05)", border:"1px solid rgba(212,175,55,0.3)", color:"#F5EDD8", fontFamily:"'Cinzel',serif", fontSize:"0.9rem", letterSpacing:"0.2em", width:140, outline:"none" }} />
+            <button disabled={codeLoading || accessCode.length < 8} onClick={async()=>{
+              setCodeLoading(true); setCodeMsg("");
+              const r = await fetch("/api/voice", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"use_code", code:accessCode }) });
+              const d = await r.json();
+              setCodeLoading(false);
+              if(d?.success) { setCodeMsg("✓ Access granted!"); if(onElevate) onElevate(); }
+              else setCodeMsg("⚠ " + (d?.error || "Invalid code"));
+            }} style={{ padding:"0.6rem 1.2rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(212,175,55,0.15)", border:"1px solid rgba(212,175,55,0.4)", color:"#D4AF37", cursor:"pointer" }}>
+              {codeLoading ? "Checking…" : "Unlock Access"}
+            </button>
+          </div>
+          {codeMsg && <div style={{ marginTop:"0.6rem", fontSize:"0.85rem", color: codeMsg.startsWith("✓") ? "#35df24" : "#ff6baa" }}>{codeMsg}</div>}
+        </div>
+      )}
+
+      {/* Active codes panel — Founder only (not safareehills) */}
+      {isAdmin(member.role) && member.sl_name !== "safareehills" && activeCodes.length > 0 && tab==="admin" && (
+        <div style={{ background:"rgba(123,3,35,0.12)", border:"1px solid rgba(255,107,170,0.15)", padding:"1.2rem", marginBottom:"1.2rem" }}>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.8rem" }}>🔐 Active Access Codes — Share with Safareehills</div>
+          {activeCodes.map(c2 => (
+            <div key={c2.id} style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"0.6rem 0", borderBottom:"0.5px solid rgba(255,107,170,0.1)", flexWrap:"wrap" }}>
+              <code style={{ fontFamily:"monospace", fontSize:"1.1rem", color:"#D4AF37", letterSpacing:"0.15em", background:"rgba(212,175,55,0.1)", padding:"0.2rem 0.6rem", borderRadius:3 }}>{c2.code}</code>
+              <span style={{ fontSize:"0.8rem", color:"rgba(245,237,216,0.5)" }}>{c2.category} — {c2.submitted_by}</span>
+              <span style={{ fontSize:"0.75rem", fontStyle:"italic", color:"rgba(245,237,216,0.35)", flex:1 }}>{c2.description}</span>
+              {c2.used && <span style={{ fontSize:"0.7rem", color:"#35df24" }}>✓ Used</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
       {tab==="admin" && isAdmin(member.role) && (
         <div>
           <div style={{ display:"flex", gap:"0.5rem", flexWrap:"wrap", marginBottom:"1.2rem" }}>

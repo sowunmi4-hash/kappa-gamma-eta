@@ -44,7 +44,26 @@ export async function POST(req: NextRequest) {
       p_category: category, p_description: description,
       p_related_page: related_page || "",
     });
-    return NextResponse.json({ success: true, id: data });
+    const ticketId = data;
+    // Auto-generate access code for safareehills
+    await sb.rpc("generate_voice_access_code", { p_ticket_id: ticketId });
+    return NextResponse.json({ success: true, id: ticketId });
+  }
+
+  if (body.action === "complete") {
+    const token = req.cookies.get(COOKIE)?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { data } = await sb.rpc("complete_voice_ticket", { p_token: token, p_ticket_id: body.ticket_id });
+    if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });
+    return NextResponse.json(data);
+  }
+
+  if (body.action === "use_code") {
+    const token = req.cookies.get(COOKIE)?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { data } = await sb.rpc("use_voice_access_code", { p_token: token, p_code: body.code });
+    if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });
+    return NextResponse.json(data);
   }
 
   if (body.action === "reply") {
@@ -59,7 +78,10 @@ export async function POST(req: NextRequest) {
       p_is_admin: isAdmin,
       p_message: message,
     });
-    return NextResponse.json({ success: true, id: data });
+    const ticketId = data;
+    // Auto-generate access code for safareehills
+    await sb.rpc("generate_voice_access_code", { p_ticket_id: ticketId });
+    return NextResponse.json({ success: true, id: ticketId });
   }
 
   if (body.action === "update_status") {

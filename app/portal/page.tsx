@@ -16,7 +16,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 // ─── Types ───────────────────────────────────────────
-type Member  = { id:string; sl_name:string; display_name:string; frat_name:string; role:string };
+type Member  = { id:string; sl_name:string; display_name:string; frat_name:string; role:string; is_elevated:boolean };
 type Profile = { bio:string; favourite_quote:string; hobbies:string; portrait_url:string; banner_url:string };
 type Sister  = Member;
 type Event   = { id:string; title:string; event_date:string; event_time:string; location:string; dress_code:string; description:string; status:string; rsvpd:boolean };
@@ -128,7 +128,12 @@ export default function Portal() {
     </div>
   );
 
-  const navItems: { id:Page; icon:string; label:string }[] = [
+  const isSafareehills = member?.sl_name === "safareehills";
+  const isRestricted   = isSafareehills && !member?.is_elevated;
+
+  const navItems: { id:Page; icon:string; label:string }[] = isRestricted ? [
+    { id:"voice" as Page, icon:"💙", label:"Voice" },
+  ] : [
     { id:"dashboard",     icon:"⚜",  label:"Dashboard" },
     { id:"sisterhood",    icon:"👑",  label:"Sisterhood" },
     { id:"events",        icon:"📅",  label:"Events" },
@@ -144,7 +149,7 @@ export default function Portal() {
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📋", label:"Guide" }] : []),
     ...(["Founder","Admin","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }, { id:"pledges" as Page, icon:"🌸", label:"Pledges" }] : []),
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"attendance" as Page, icon:"📡", label:"Attendance" }] : []),
-  ];
+  ] : [];
 
   const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications", pledges:"Pledges", attendance:"Attendance Monitor" };
 
@@ -478,7 +483,10 @@ export default function Portal() {
 
           {/* ══ SISTER'S VOICE ══ */}
           {page==="voice" && member && (
-            <SistersVoice member={member} />
+            <SistersVoice member={member} onElevate={async()=>{
+              const me = await fetch("/api/me");
+              if(me.ok){ const d=await me.json(); setMember(d.member); }
+            }} />
           )}
 
 
