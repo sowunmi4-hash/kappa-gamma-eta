@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { data: members } = await sb.rpc("get_session_member", { p_token: token });
   const m = members?.[0];
-  if (!m || !["Founder","Admin"].includes(m.role) || m.sl_name === "safareehills")
+  // Only Safareehills can fetch her own codes
+  if (!m || m.sl_name !== "safareehills")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { data } = await sb.rpc("get_active_voice_codes");
   return NextResponse.json(data || []);
