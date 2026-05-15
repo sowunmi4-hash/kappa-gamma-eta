@@ -130,11 +130,9 @@ export default function Portal() {
 
   const isSafareehills = member?.sl_name === "safareehills";
   const isRestricted   = isSafareehills && !member?.is_elevated;
+  const activePage     = isRestricted ? "voice" : page;
 
-  // Force Safareehills to Voice when restricted
-  useEffect(() => {
-    if (isRestricted && page !== "voice") setPage("voice");
-  }, [isRestricted]);
+
 
   const navItems: { id:Page; icon:string; label:string }[] = isRestricted ? [
     { id:"voice" as Page, icon:"💙", label:"Voice" },
@@ -248,7 +246,7 @@ export default function Portal() {
           <div key={page} className="page-enter">
 
           {/* ══ DASHBOARD ══ */}
-          {page==="dashboard" && (
+          {activePage==="dashboard" && (
             <div>
               {/* Welcome */}
               <div className="welcome-enter" style={{ background:"linear-gradient(135deg, rgba(255,107,170,0.12), rgba(212,175,55,0.06))", border:"1px solid rgba(255,107,170,0.2)", padding:"1.8rem 2rem", marginBottom:"1.4rem", position:"relative", overflow:"hidden" }}>
@@ -313,7 +311,7 @@ export default function Portal() {
           )}
 
           {/* ══ SISTERHOOD ══ */}
-          {page==="sisterhood" && (
+          {activePage==="sisterhood" && (
             <div>
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Kappa Gamma Eta</div>
@@ -346,22 +344,22 @@ export default function Portal() {
           )}
 
           {/* ══ EVENTS ══ */}
-          {page==="events" && member && (
+          {activePage==="events" && member && (
             <EventsSection member={member} />
           )}
 
           {/* ══ THE CHALICE ══ */}
-          {page==="chalice" && member && (
+          {activePage==="chalice" && member && (
             <ChaliceSection member={member} />
           )}
 
           {/* ══ GALLERY ══ */}
-          {page==="gallery" && member && (
+          {activePage==="gallery" && member && (
             <GallerySection member={member} />
           )}
 
           {/* ══ NOTIFICATIONS ══ */}
-          {page==="notifications" && (
+          {activePage==="notifications" && (
             <div>
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Activity</div>
@@ -389,7 +387,7 @@ export default function Portal() {
           )}
 
           {/* ══ PROFILE ══ */}
-          {page==="profile" && (
+          {activePage==="profile" && (
             <div>
               <div style={{ marginBottom:"1.6rem" }}>
                 <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.55rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"#ff6baa", marginBottom:"0.35rem" }}>Your Account</div>
@@ -482,12 +480,12 @@ export default function Portal() {
 
 
           {/* ══ TDA ══ */}
-          {page==="tda" && member && (
+          {activePage==="tda" && member && (
             <TDASection member={member} eventAttendance={eventAttendance} onAttendanceUpdate={setEventAttendance} />
           )}
 
           {/* ══ SISTER'S VOICE ══ */}
-          {page==="voice" && member && (
+          {activePage==="voice" && member && (
             <SistersVoice member={member} onElevate={async()=>{
               const me = await fetch("/api/me");
               if(me.ok){ const d=await me.json(); setMember(d.member); }
@@ -496,33 +494,33 @@ export default function Portal() {
 
 
           {/* ══ DUES ══ */}
-          {page==="dues" && member && (
+          {activePage==="dues" && member && (
             <DuesSection member={member} />
           )}
 
-          {page==="collection" && member && (
+          {activePage==="collection" && member && (
             <DivineCollectionSection member={member} />
           )}
 
-          {page==="probation" && member && ["Founder","Admin"].includes(member.role) && (
+          {activePage==="probation" && member && ["Founder","Admin"].includes(member.role) && (
             <ProbationSection member={member} />
           )}
 
-          {page==="handbook" && member && (
+          {activePage==="handbook" && member && (
             <HandbookSection />
           )}
 
-          {page==="guide" && member && ["Founder","Admin"].includes(member.role) && (
+          {activePage==="guide" && member && ["Founder","Admin"].includes(member.role) && (
             <GuideSection />
           )}
 
-          {page==="attendance" && member && ["Founder","Admin"].includes(member.role) && (
+          {activePage==="attendance" && member && ["Founder","Admin"].includes(member.role) && (
             <AttendanceMonitor />
           )}
-          {page==="pledges" && member && ["Founder","Admin","DOP"].includes(member.role) && (
+          {activePage==="pledges" && member && ["Founder","Admin","DOP"].includes(member.role) && (
             <PledgesSection member={member} />
           )}
-          {page==="applications" && member && ["Founder","Admin","DOP"].includes(member.role) && (
+          {activePage==="applications" && member && ["Founder","Admin","DOP"].includes(member.role) && (
             <ApplicationsSection />
           )}
 
