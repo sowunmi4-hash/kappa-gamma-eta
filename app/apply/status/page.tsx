@@ -311,7 +311,7 @@ export default function StatusPage() {
                     </div>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                       <span style={{ fontFamily: "'Cinzel',serif", fontSize: '0.5rem', letterSpacing: '0.12em', color: 'rgba(245,237,216,0.4)', textTransform: 'uppercase', minWidth: 80 }}>Login</span>
-                      <code style={{ background: 'rgba(245,237,216,0.08)', padding: '0.3rem 0.7rem', color: '#75ffff', fontSize: '0.85rem' }}>kappa-gamma-eta.vercel.app/login</code>
+                      <code style={{ background: 'rgba(245,237,216,0.08)', padding: '0.3rem 0.7rem', color: '#75ffff', fontSize: '0.85rem' }}>kappagammaeta.org/login</code>
                     </div>
                   </div>
                   <p style={{ margin: '0.8rem 0 0', fontSize: '0.8rem', color: 'rgba(245,237,216,0.35)', fontStyle: 'italic' }}>Save these credentials. You will be prompted to change your password on first login.</p>
