@@ -149,7 +149,7 @@ export default function Portal() {
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📋", label:"Guide" }] : []),
     ...(["Founder","Admin","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }, { id:"pledges" as Page, icon:"🌸", label:"Pledges" }] : []),
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"attendance" as Page, icon:"📡", label:"Attendance" }] : []),
-  ] : [];
+  ];
 
   const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications", pledges:"Pledges", attendance:"Attendance Monitor" };
 
