@@ -131,6 +131,11 @@ export default function Portal() {
   const isSafareehills = member?.sl_name === "safareehills";
   const isRestricted   = isSafareehills && !member?.is_elevated;
 
+  // Force Safareehills to Voice when restricted
+  useEffect(() => {
+    if (isRestricted && page !== "voice") setPage("voice");
+  }, [isRestricted]);
+
   const navItems: { id:Page; icon:string; label:string }[] = isRestricted ? [
     { id:"voice" as Page, icon:"💙", label:"Voice" },
   ] : [
