@@ -39,8 +39,8 @@ const lbl:   React.CSSProperties = { display:"block", fontFamily:"'Cinzel',serif
 type Tab = "submit"|"mine"|"admin";
 
 // Thread component — shown inline on each submission
-function SubmissionThread({ submission, member, onStatusChange }: {
-  submission: Submission; member: Member; onStatusChange?: () => void;
+function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
+  submission: Submission; member: Member; onStatusChange?: () => void; onElevate?: () => void;
 }) {
   const [messages,    setMessages]    = useState<Message[]>([]);
   const [replyText,   setReplyText]   = useState("");
@@ -344,7 +344,7 @@ export default function SistersVoice({ member, onElevate }: { member: Member; on
       {/* ── MY SUBMISSIONS ── */}
       {tab==="mine" && (
         mine.length ? mine.map(s=>(
-          <SubmissionThread key={s.id} submission={s} member={member} onStatusChange={()=>load("mine")} />
+          <SubmissionThread key={s.id} submission={s} member={member} onStatusChange={()=>load("mine")} onElevate={onElevate} />
         )) : (
           <div style={{ ...card, textAlign:"center", padding:"3rem" }}>
             <div style={{ fontSize:"2rem", marginBottom:"0.8rem" }}>💙</div>
@@ -391,7 +391,7 @@ export default function SistersVoice({ member, onElevate }: { member: Member; on
             ))}
           </div>
           {all.length ? all.map(s=>(
-            <SubmissionThread key={s.id} submission={s} member={member} onStatusChange={()=>load("admin")} />
+            <SubmissionThread key={s.id} submission={s} member={member} onStatusChange={()=>load("admin")} onElevate={onElevate} />
           )) : (
             <div style={{ ...card, textAlign:"center", padding:"3rem" }}>
               <div style={{ fontSize:"2rem", marginBottom:"0.8rem" }}>💙</div>
