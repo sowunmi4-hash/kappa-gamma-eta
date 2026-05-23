@@ -47,6 +47,15 @@ export async function POST(req: NextRequest) {
     const ticketId = data;
     // Auto-generate access code for safareehills
     await sb.rpc("generate_voice_access_code", { p_ticket_id: ticketId });
+    // Notify Safareehills of new ticket
+    const { data: safaree } = await sb.schema("members").from("roster").select("id").eq("sl_name","safareehills").single();
+    if (safaree) {
+      await sb.rpc("notify_sister", {
+        p_member_id: safaree.id,
+        p_title: `💙 New Voice Ticket — ${category}`,
+        p_message: `${m.display_name} submitted a new ${category} ticket. Check Sister's Voice to respond.`,
+      });
+    }
     return NextResponse.json({ success: true, id: ticketId });
   }
 
@@ -70,7 +79,7 @@ export async function POST(req: NextRequest) {
     const { submission_id, message } = body;
     if (!submission_id || !message) return NextResponse.json({ error: "Missing fields." }, { status: 400 });
     const isAdmin = ["Admin","Founder"].includes(m.role);
-    const { data } = await sb.rpc("add_voice_message", {
+    await sb.rpc("add_voice_message", {
       p_submission_id: submission_id,
       p_sender_id: m.id,
       p_sender_name: m.display_name,
@@ -78,10 +87,42 @@ export async function POST(req: NextRequest) {
       p_is_admin: isAdmin,
       p_message: message,
     });
-    const ticketId = data;
-    // Auto-generate access code for safareehills
-    await sb.rpc("generate_voice_access_code", { p_ticket_id: ticketId });
-    return NextResponse.json({ success: true, id: ticketId });
+
+    // Get ticket info to notify the right person(s)
+    const { data: ticket } = await sb
+      .schema("members")
+      .from("sisters_voice")
+      .select("member_id, member_name, category")
+      .eq("id", submission_id)
+      .single();
+
+    if (ticket) {
+      if (isAdmin) {
+        // Admin/Founder replied → notify the sister who submitted
+        await sb.rpc("notify_sister", {
+          p_member_id: ticket.member_id,
+          p_title: "💙 New Reply on Your Voice Ticket",
+          p_message: `${m.display_name} replied to your ${ticket.category} ticket. Check Sister's Voice for their response.`,
+        });
+      } else {
+        // Sister replied → notify Safareehills only
+        const { data: safaree } = await sb
+          .schema("members")
+          .from("roster")
+          .select("id")
+          .eq("sl_name", "safareehills")
+          .single();
+        if (safaree) {
+          await sb.rpc("notify_sister", {
+            p_member_id: safaree.id,
+            p_title: `💙 New Reply from ${m.display_name}`,
+            p_message: `${m.display_name} replied to their ${ticket.category} ticket. Check Sister's Voice to respond.`,
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true });
   }
 
   if (body.action === "update_status") {
