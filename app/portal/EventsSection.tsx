@@ -244,76 +244,84 @@ export default function EventsSection({ member }: { member: Member }) {
       {events.length ? (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
           {events.map(e=>(
-            <div key={e.id} style={card}>
-              {/* Flyer */}
-              {e.flyer_url && (
-                <div style={{ marginBottom:"1rem", borderRadius:"1px", overflow:"hidden", maxHeight:220 }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={e.flyer_url} alt={`${e.title} flyer`} style={{ width:"100%", objectFit:"cover", maxHeight:220, display:"block" }} />
-                </div>
-              )}
+            <div key={e.id} style={{ ...card, padding:0, overflow:"hidden" }}>
 
-              <div style={{ display:"flex", gap:"1.4rem", alignItems:"flex-start" }}>
-                {/* Date block */}
-                <div style={{ flexShrink:0, width:52, textAlign:"center", border:"1px solid rgba(212,175,55,0.25)", padding:"0.5rem 0.3rem", background:"rgba(212,175,55,0.04)" }}>
-                  <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#D4AF37", lineHeight:1 }}>
+              {/* ── Image overlay card ── */}
+              <div style={{ position:"relative", height: e.flyer_url ? 220 : 120, background:"#120709", overflow:"hidden" }}>
+                {/* Flyer image */}
+                {e.flyer_url && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={e.flyer_url} alt={e.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
+                )}
+                {/* Gradient overlay — always shown */}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(10,3,6,0.97) 0%, rgba(10,3,6,0.55) 55%, rgba(10,3,6,0.1) 100%)" }} />
+
+                {/* Date badge — top left */}
+                <div style={{ position:"absolute", top:12, left:14, background:"rgba(10,3,6,0.75)", border:"1px solid rgba(212,175,55,0.35)", padding:"4px 10px", textAlign:"center", backdropFilter:"blur(4px)" }}>
+                  <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.2rem", color:"#D4AF37", lineHeight:1 }}>
                     {new Date(e.event_date+"T12:00:00").getDate()}
                   </div>
-                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)" }}>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.4rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(212,175,55,0.6)" }}>
                     {MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}
                   </div>
                 </div>
 
-                {/* Details */}
-                <div style={{ flex:1 }}>
-                  <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.4rem", gap:"1rem" }}>
-                    <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.7rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#F5EDD8" }}>{e.title}</div>
-                    {e.status && e.status !== "upcoming" && (
-                      <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.18rem 0.5rem", border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)", flexShrink:0 }}>{e.status}</span>
-                    )}
+                {/* Status badge — top right */}
+                {e.status && e.status !== "upcoming" && (
+                  <div style={{ position:"absolute", top:12, right:14, background:"rgba(10,3,6,0.75)", border:"1px solid rgba(212,175,55,0.25)", padding:"3px 8px", backdropFilter:"blur(4px)" }}>
+                    <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(212,175,55,0.7)" }}>{e.status}</span>
                   </div>
+                )}
 
-                  <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                    {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>🕐 {fmtTime(e.event_time)}{e.event_end_time ? ` – ${fmtTime(e.event_end_time)}` : ""} SLT</span>}
-                    {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
-                    {e.dress_code && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.45)" }}>👗 {e.dress_code}</span>}
-                  </div>
-
-                  {e.description && <div style={{ fontSize:"0.88rem", color:"rgba(245,237,216,0.45)", lineHeight:1.7, marginBottom:"0.8rem" }}>{e.description}</div>}
-
-                  <div style={{ display:"flex", gap:"0.7rem", flexWrap:"wrap", alignItems:"center" }}>
-                    <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
-                      padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
-                      letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer",
-                      border: e.rsvpd?"1px solid rgba(117,255,255,0.35)":"1px solid rgba(255,107,170,0.35)",
-                      background: e.rsvpd?"rgba(117,255,255,0.08)":"rgba(255,107,170,0.1)",
-                      color: e.rsvpd?"var(--cyan)":"#ff9ec8", transition:"all 0.25s",
-                    }}>
-                      {e.rsvpd ? "✓ RSVP'd — Cancel" : "RSVP →"}
-                    </button>
-
-                    {e.sl_url && (
-                      <a href={e.sl_url} target="_blank" rel="noopener noreferrer" style={{
-                        padding:"0.4rem 1rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem",
-                        letterSpacing:"0.15em", textTransform:"uppercase",
-                        border:"1px solid rgba(212,175,55,0.25)", color:"rgba(212,175,55,0.6)",
-                        textDecoration:"none", background:"transparent",
+                {/* Title + meta — bottom overlay */}
+                <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"10px 14px 12px" }}>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.75rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"#F5EDD8", marginBottom:"5px" }}>{e.title}</div>
+                  <div style={{ display:"flex", gap:"10px", flexWrap:"wrap", alignItems:"center", justifyContent:"space-between" }}>
+                    <div style={{ display:"flex", gap:"10px", flexWrap:"wrap" }}>
+                      {e.event_time && <span style={{ fontSize:"0.75rem", color:"rgba(245,237,216,0.55)" }}>🕐 {fmtTime(e.event_time)}{e.event_end_time ? ` – ${fmtTime(e.event_end_time)}` : ""} SLT</span>}
+                      {e.dress_code && <span style={{ fontSize:"0.75rem", color:"rgba(245,237,216,0.55)" }}>👗 {e.dress_code}</span>}
+                      {e.location   && <span style={{ fontSize:"0.75rem", color:"rgba(245,237,216,0.45)" }}>📍 {e.location}</span>}
+                    </div>
+                    {/* Action buttons — bottom right */}
+                    <div style={{ display:"flex", gap:"6px", alignItems:"center" }}>
+                      <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
+                        padding:"0.3rem 0.9rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem",
+                        letterSpacing:"0.14em", textTransform:"uppercase", cursor:"pointer",
+                        border: e.rsvpd?"1px solid rgba(117,255,255,0.4)":"1px solid rgba(255,107,170,0.4)",
+                        background: e.rsvpd?"rgba(117,255,255,0.1)":"rgba(255,107,170,0.12)",
+                        color: e.rsvpd?"#75ffff":"#ff9ec8",
                       }}>
-                        Teleport →
-                      </a>
-                    )}
-
-                    {isOfficer(member.role) && (
-                      <button onClick={()=>handleDelete(e.id)} style={{
-                        padding:"0.4rem 0.8rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem",
-                        letterSpacing:"0.12em", textTransform:"uppercase", cursor:"pointer",
-                        border:"1px solid rgba(192,57,43,0.3)", background:"rgba(192,57,43,0.08)",
-                        color:"rgba(192,57,43,0.7)", marginLeft:"auto",
-                      }}>
-                        Delete
+                        {e.rsvpd ? "✓ RSVP'd" : "RSVP →"}
                       </button>
-                    )}
+                      {e.sl_url && (
+                        <a href={e.sl_url} target="_blank" rel="noopener noreferrer" style={{
+                          padding:"0.3rem 0.9rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem",
+                          letterSpacing:"0.14em", textTransform:"uppercase",
+                          border:"1px solid rgba(212,175,55,0.3)", color:"rgba(212,175,55,0.7)",
+                          textDecoration:"none", background:"rgba(212,175,55,0.06)",
+                        }}>
+                          Teleport →
+                        </a>
+                      )}
+                      {isOfficer(member.role) && (
+                        <button onClick={()=>handleDelete(e.id)} style={{
+                          padding:"0.3rem 0.7rem", fontFamily:"'Cinzel',serif", fontSize:"0.46rem",
+                          letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer",
+                          border:"1px solid rgba(192,57,43,0.3)", background:"rgba(192,57,43,0.08)",
+                          color:"rgba(192,57,43,0.6)",
+                        }}>
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Description + created by — below image */}
+              {(e.description || e.created_by_name) && (
+                <div style={{ padding:"10px 14px", borderTop:"1px solid rgba(212,175,55,0.08)" }}>
+                  {e.description && <div style={{ fontSize:"0.85rem", color:"rgba(245,237,216,0.4)", lineHeight:1.7, marginBottom: e.created_by_name ? "0.4rem" : 0 }}>{e.description}</div>}
 
                   {e.created_by_name && (
                     <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.2)", marginTop:"0.6rem" }}>
@@ -321,7 +329,7 @@ export default function EventsSection({ member }: { member: Member }) {
                     </div>
                   )}
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
