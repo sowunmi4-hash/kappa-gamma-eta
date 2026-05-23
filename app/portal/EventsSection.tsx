@@ -320,7 +320,7 @@ export default function EventsSection({ member }: { member: Member }) {
 
               {/* ── RIGHT: Flyer thumbnail ── */}
               {e.flyer_url ? (
-                <div style={{ width:160, flexShrink:0, borderLeft:"1px solid rgba(212,175,55,0.1)", position:"relative", overflow:"hidden" }}>
+                <div style={{ width:220, flexShrink:0, borderLeft:"1px solid rgba(212,175,55,0.1)", position:"relative", overflow:"hidden" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={e.flyer_url} alt={e.title} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block", minHeight:180 }} />
                 </div>
