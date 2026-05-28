@@ -28,6 +28,7 @@ export default function EventsSection({ member }: { member: Member }) {
   const [showForm,  setShowForm]  = useState(false);
   const [saving,    setSaving]    = useState(false);
   const [msg,       setMsg]       = useState("");
+  const [showPast,  setShowPast]  = useState(false);
 
   const [title,     setTitle]     = useState("");
   const [date,      setDate]      = useState("");
@@ -116,6 +117,17 @@ export default function EventsSection({ member }: { member: Member }) {
   };
 
   const card: React.CSSProperties = { background:"#221018", border:"1px solid rgba(212,175,55,0.14)", padding:"1.4rem 1.6rem" };
+
+  // Split events into upcoming vs past based on event end time (SLT = UTC-7)
+  const SLT_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const isPastEvent = (ev: Event) => {
+    const endStr = ev.event_end_time || "23:59:00";
+    const naive = new Date(`${ev.event_date}T${endStr}`);
+    const utc = new Date(naive.getTime() + SLT_OFFSET_MS);
+    return utc < new Date();
+  };
+  const upcoming = events.filter(ev => !isPastEvent(ev));
+  const past     = events.filter(ev =>  isPastEvent(ev));
 
   return (
     <div>
@@ -240,10 +252,10 @@ export default function EventsSection({ member }: { member: Member }) {
         </form>
       )}
 
-      {/* Events list */}
-      {events.length ? (
+      {/* ── UPCOMING EVENTS ── */}
+      {upcoming.length ? (
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-          {events.map(e=>(
+          {upcoming.map(e=>(
             <div key={e.id} style={{ ...card, padding:0, overflow:"hidden", display:"flex" }}>
 
               {/* ── LEFT: Info ── */}
@@ -277,7 +289,7 @@ export default function EventsSection({ member }: { member: Member }) {
                   {e.description && <div style={{ fontSize:"0.85rem", color:"rgba(245,237,216,0.35)", lineHeight:1.7, marginBottom:"0.6rem" }}>{e.description}</div>}
                 </div>
 
-                {/* Buttons + created by */}
+                {/* Buttons */}
                 <div>
                   <div style={{ display:"flex", gap:"0.6rem", flexWrap:"wrap", alignItems:"center", marginBottom:"0.5rem" }}>
                     <button onClick={()=>handleRsvp(e.id, e.rsvpd)} style={{
@@ -318,7 +330,7 @@ export default function EventsSection({ member }: { member: Member }) {
                 </div>
               </div>
 
-              {/* ── RIGHT: Flyer thumbnail ── */}
+              {/* ── RIGHT: Flyer ── */}
               {e.flyer_url ? (
                 <div style={{ width:220, flexShrink:0, borderLeft:"1px solid rgba(212,175,55,0.1)", position:"relative", overflow:"hidden" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -329,7 +341,6 @@ export default function EventsSection({ member }: { member: Member }) {
                   <span style={{ fontSize:"1.8rem", opacity:0.15 }}>📅</span>
                 </div>
               )}
-
             </div>
           ))}
         </div>
@@ -344,6 +355,84 @@ export default function EventsSection({ member }: { member: Member }) {
               background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)",
               color:"#ff9ec8", cursor:"pointer",
             }}>+ Create the first event</button>
+          )}
+        </div>
+      )}
+
+      {/* ── PAST EVENTS ── */}
+      {past.length > 0 && (
+        <div style={{ marginTop:"2rem" }}>
+          <button onClick={()=>setShowPast(p=>!p)} style={{
+            display:"flex", alignItems:"center", gap:"0.6rem", width:"100%",
+            background:"none", border:"none", borderBottom:"1px solid rgba(212,175,55,0.1)",
+            paddingBottom:"0.8rem", cursor:"pointer", marginBottom: showPast?"1rem":"0",
+          }}>
+            <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.25em", textTransform:"uppercase", color:"rgba(245,237,216,0.35)" }}>
+              Past Events
+            </span>
+            <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.44rem", color:"rgba(212,175,55,0.4)", background:"rgba(212,175,55,0.08)", border:"1px solid rgba(212,175,55,0.15)", padding:"0.1rem 0.45rem" }}>
+              {past.length}
+            </span>
+            <span style={{ marginLeft:"auto", color:"rgba(245,237,216,0.25)", fontSize:"0.8rem" }}>{showPast ? "▲" : "▼"}</span>
+          </button>
+
+          {showPast && (
+            <div style={{ display:"flex", flexDirection:"column", gap:"0.8rem" }}>
+              {past.map(e=>(
+                <div key={e.id} style={{ ...card, padding:0, overflow:"hidden", display:"flex", opacity:0.65 }}>
+
+                  {/* LEFT */}
+                  <div style={{ flex:1, padding:"1rem 1.2rem", display:"flex", flexDirection:"column", justifyContent:"space-between", minWidth:0 }}>
+                    <div>
+                      <div style={{ display:"flex", alignItems:"flex-start", gap:"0.8rem", marginBottom:"0.6rem" }}>
+                        <div style={{ flexShrink:0, textAlign:"center", border:"1px solid rgba(245,237,216,0.1)", padding:"0.3rem 0.45rem", background:"rgba(245,237,216,0.02)", minWidth:40 }}>
+                          <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.1rem", color:"rgba(245,237,216,0.4)", lineHeight:1 }}>
+                            {new Date(e.event_date+"T12:00:00").getDate()}
+                          </div>
+                          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.38rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.25)" }}>
+                            {MONTHS[new Date(e.event_date+"T12:00:00").getMonth()]}
+                          </div>
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.5)", marginBottom:"0.3rem" }}>{e.title}</div>
+                          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.12rem 0.45rem", border:"1px solid rgba(77,184,122,0.25)", color:"rgba(77,184,122,0.6)", background:"rgba(77,184,122,0.06)" }}>
+                            ✓ Completed
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:"0.25rem" }}>
+                        {e.event_time && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.3)" }}>🕐 {fmtTime(e.event_time)}{e.event_end_time ? ` – ${fmtTime(e.event_end_time)}` : ""} SLT</span>}
+                        {e.location   && <span style={{ fontSize:"0.78rem", color:"rgba(245,237,216,0.28)" }}>📍 {e.location}</span>}
+                      </div>
+                    </div>
+                    {isOfficer(member.role) && (
+                      <div style={{ marginTop:"0.6rem" }}>
+                        <button onClick={()=>handleDelete(e.id)} style={{
+                          padding:"0.3rem 0.7rem", fontFamily:"'Cinzel',serif", fontSize:"0.44rem",
+                          letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer",
+                          border:"1px solid rgba(192,57,43,0.2)", background:"rgba(192,57,43,0.05)",
+                          color:"rgba(192,57,43,0.45)",
+                        }}>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* RIGHT: flyer (smaller) */}
+                  {e.flyer_url ? (
+                    <div style={{ width:120, flexShrink:0, borderLeft:"1px solid rgba(245,237,216,0.05)", position:"relative", overflow:"hidden" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={e.flyer_url} alt={e.title} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block", minHeight:120, filter:"grayscale(40%)" }} />
+                    </div>
+                  ) : (
+                    <div style={{ width:60, flexShrink:0, borderLeft:"1px solid rgba(245,237,216,0.04)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontSize:"1.4rem", opacity:0.08 }}>📅</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
