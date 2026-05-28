@@ -304,9 +304,24 @@ export default function DuesSection({ member }: { member: Member }) {
                       </div>
                     )}
                     {statusTag(r.status)}
+                    {member.role === "Founder" && r.status !== "paid" && (
+                      <button disabled={markingPaid} onClick={async () => {
+                        if (!confirm("Mark " + r.frat_name + "'s dues as paid for " + r.period + "?")) return;
+                        setMarkingPaid(true); setMarkMsg("");
+                        const res = await fetch("/api/dues/founder-mark-paid", { method:"POST",
+                          headers:{"Content-Type":"application/json"},
+                          body: JSON.stringify({ member_id: r.member_id }) }).then(x=>x.json());
+                        setMarkingPaid(false);
+                        if (res.success) { setMarkMsg("✓ " + r.frat_name + " marked as paid!"); loadReport(selPeriod); }
+                        else setMarkMsg("⚠ " + (res.error || "Something went wrong"));
+                      }} style={{ padding:"0.4rem 0.9rem", fontFamily:"'Cinzel',serif", fontSize:"0.44rem", letterSpacing:"0.12em", textTransform:"uppercase", background:"rgba(77,184,122,0.1)", border:"1px solid rgba(77,184,122,0.3)", color:"#4DB87A", cursor:"pointer", whiteSpace:"nowrap" }}>
+                        {markingPaid ? "…" : "✓ Mark Paid"}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
+              {markMsg && <div style={{ marginTop:"0.8rem", fontSize:"0.85rem", color: markMsg.startsWith("✓") ? "#4DB87A" : "#ff6baa" }}>{markMsg}</div>}
             </div>
           ) : (
             <div style={{ ...card, textAlign:"center", padding:"3rem" }}>
