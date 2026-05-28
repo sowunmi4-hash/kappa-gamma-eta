@@ -5,13 +5,19 @@ export async function register() {
     process.env.NEXT_RUNTIME === "edge"
   ) return;
 
-  const commitMessage = process.env.VERCEL_GIT_COMMIT_MESSAGE;
+  const commitMessage = process.env.VERCEL_GIT_COMMIT_MESSAGE || "";
   const deploymentId  = process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_URL || null;
   const branch        = process.env.VERCEL_GIT_COMMIT_REF || "main";
   const supabaseUrl   = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey   = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!commitMessage || !supabaseUrl || !supabaseKey) return;
+  if (!supabaseUrl || !supabaseKey) return;
+
+  // Only log commits that contain [update: your message here]
+  const match = commitMessage.match(/\[update:\s*(.+?)\]/i);
+  if (!match) return;
+
+  const friendlyMessage = match[1].trim();
 
   try {
     await fetch(`${supabaseUrl}/rest/v1/rpc/log_deployment_changelog`, {
@@ -23,7 +29,7 @@ export async function register() {
       },
       body: JSON.stringify({
         p_secret:         "KGE-CHANGELOG-2026",
-        p_commit_message: commitMessage,
+        p_commit_message: friendlyMessage,
         p_deployment_id:  deploymentId,
         p_branch:         branch,
       }),
