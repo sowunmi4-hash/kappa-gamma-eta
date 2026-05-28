@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 type Member = { id:string; display_name:string; frat_name:string; role:string; sl_name:string };
 type DueRow  = { period:string; amount_due:number; total_paid:number; remaining:number; credit:number; status:string; due_date:string; payments:Payment[] };
 type Payment = { amount:number; date:string; method:string };
-type Report  = { member_name:string; frat_name:string; sl_name:string; period:string; amount_due:number; total_paid:number; remaining:number; status:string; due_date:string };
+type Report  = { member_id:string; member_name:string; frat_name:string; sl_name:string; period:string; amount_due:number; total_paid:number; remaining:number; status:string; due_date:string };
 type Period  = { period:string; amount:number; description:string; due_date:string };
 type PeriodSummary = { id:string; period:string; amount:number; is_active:boolean };
 
