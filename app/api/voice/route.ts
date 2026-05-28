@@ -132,6 +132,11 @@ export async function POST(req: NextRequest) {
       p_admin_notes: body.admin_notes || "",
       p_reviewer_id: m.id, p_reviewer_name: m.display_name,
     });
+    // If resolved, also complete the ticket to revoke any elevated access
+    if (body.status === "resolved") {
+      const token = req.cookies.get(COOKIE)?.value;
+      if (token) await sb.rpc("complete_voice_ticket", { p_token: token, p_ticket_id: body.id });
+    }
     return NextResponse.json({ success: true });
   }
 

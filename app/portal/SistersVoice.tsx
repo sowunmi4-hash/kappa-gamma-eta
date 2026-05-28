@@ -75,6 +75,8 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
       body: JSON.stringify({ action:"update_status", id:submission.id, status:editStatus, admin_notes:editNotes }) });
     setEditId(false); setUpdating(false);
     if (onStatusChange) onStatusChange();
+    // If resolved, also refresh elevation state (revokes break-glass access)
+    if (editStatus === "resolved" && onElevate) onElevate();
   };
 
   const cfg = STATUS_CFG[submission.status]||STATUS_CFG.received;
