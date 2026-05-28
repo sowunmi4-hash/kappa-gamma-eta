@@ -35,6 +35,24 @@ export async function POST(req: NextRequest) {
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (data?.error) return NextResponse.json({ error: data.error }, { status: 409 });
+
+  // Notify all Founders that a new application has been submitted
+  const { data: founders } = await sb
+    .schema("members")
+    .from("roster")
+    .select("id")
+    .eq("role", "Founder");
+
+  if (founders && founders.length > 0) {
+    await Promise.all(founders.map((f: { id: string }) =>
+      sb.rpc("notify_sister", {
+        p_member_id: f.id,
+        p_title: "📋 New Sorority Application",
+        p_message: `${b.iw_name.trim()} has submitted an application to join KGΗ. Review it in the Applications tab.`,
+      })
+    ));
+  }
+
   return NextResponse.json(data, { status: 201 });
 }
 
