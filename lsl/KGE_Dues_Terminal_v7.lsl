@@ -168,6 +168,9 @@ default {
             gBasePos = llGetPos();
             llResetScript();
         }
+        if (change & CHANGED_POSITION) {
+            gBasePos = llGetPos();
+        }
     }
 
     run_time_permissions(integer perm) {
