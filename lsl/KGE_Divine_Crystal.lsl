@@ -16,6 +16,7 @@
 string  BASE_URL       = "https://kappagammaeta.org";
 string  WEBHOOK_SECRET = "KGE-DUES-2026";
 integer LISTEN_CH      = -74829301;
+integer CHANGED_POSITION = 512;   // not available in all sim versions — define manually
 
 // ── Visuals ───────────────────────────────────────────────────
 vector GLOW_COLOR  = <0.486, 0.012, 0.137>;   // deep wine
