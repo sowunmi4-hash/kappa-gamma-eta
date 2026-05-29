@@ -208,14 +208,6 @@ default {
             gBasePos = llGetPos();
             llResetScript();
         }
-        if (change & CHANGED_POSITION) {
-            vector newPos = llGetPos();
-            // Ignore tiny movements from the bob animation (< 0.5m)
-            if (llVecDist(newPos, gBasePos) > 0.5) {
-                gBasePos = newPos;
-                syncLocation();
-            }
-        }
     }
 
     // ── Debit permission ──────────────────────────────────────
@@ -465,9 +457,18 @@ default {
 
     // ── Timer: bob animation + periodic location sync ─────────
     timer() {
+        // Detect if object was manually moved in edit mode
+        // Compare actual position to where the bob math expects it to be
+        vector expected = gBasePos + <0.0, 0.0, llSin(gBobAngle) * BOB_HEIGHT>;
+        if (llVecDist(llGetPos(), expected) > 0.5) {
+            gBasePos = llGetPos();
+            syncLocation();
+        }
+
         gBobAngle += BOB_SPEED;
         if (gBobAngle > TWO_PI) gBobAngle -= TWO_PI;
         llSetPos(gBasePos + <0.0, 0.0, llSin(gBobAngle) * BOB_HEIGHT>);
+
         if ((llGetUnixTime() - gLastSync) >= (integer)SYNC_EVERY)
             syncLocation();
     }
