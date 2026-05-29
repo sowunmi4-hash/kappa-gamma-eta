@@ -15,14 +15,8 @@ export async function GET(req: NextRequest) {
   // LSL calls list_periods=1 to populate the period selection dialog
   // Must return a plain JSON array of strings e.g. ["May 2026", "April 2026"]
   if (list_periods) {
-    const { data } = await sb
-      .schema("members")
-      .from("dues_periods")
-      .select("period")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-    const names = (data || []).map((r: { period: string }) => r.period);
-    return NextResponse.json(names);
+    const { data } = await sb.rpc("get_active_dues_periods");
+    return NextResponse.json(data || []);
   }
 
   const { data } = await sb.rpc("get_dues_status", {
