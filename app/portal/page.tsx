@@ -27,7 +27,7 @@ type Notif   = { id:string; title:string; message:string; is_read:boolean; creat
 type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation"|"collection"|"guide"|"handbook"|"applications"|"pledges"|"attendance"|"activity";
 
 const ROLE_COLOUR: Record<string,string> = {
-  Founder:"#D4AF37", President:"#ff6baa", Admin:"#7BA7D4", Member:"rgba(245,237,216,0.45)"
+  Founder:"#D4AF37", "Co-Founder":"#C0C0C0", President:"#ff6baa", Admin:"#7BA7D4", Member:"rgba(245,237,216,0.45)"
 };
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -325,9 +325,10 @@ export default function Portal() {
                   <div key={s.id} className="anim-card" style={{ ...S.card, textAlign:"center", transition:"all 0.3s", cursor:"default" }}
                     onMouseEnter={e=>{(e.currentTarget as HTMLDivElement).style.borderColor="rgba(255,107,170,0.35)";(e.currentTarget as HTMLDivElement).style.transform="translateY(-3px)";}}
                     onMouseLeave={e=>{(e.currentTarget as HTMLDivElement).style.borderColor="rgba(212,175,55,0.14)";(e.currentTarget as HTMLDivElement).style.transform="translateY(0)";}}>
-                    <div style={{ width:68, height:68, borderRadius:"50%", border:`1.5px solid ${ROLE_COLOUR[s.role]}50`, margin:"0 auto 0.9rem", display:"flex", alignItems:"center", justifyContent:"center", background:`radial-gradient(circle, ${ROLE_COLOUR[s.role]}15, rgba(10,3,6,0.9))`, fontSize:"1.3rem", position:"relative" }}>
+                    <div style={{ width:68, height:68, borderRadius:"50%", border: s.role==="Co-Founder" ? "1.5px solid #C0C0C0" : `1.5px solid ${ROLE_COLOUR[s.role]}50`, boxShadow: s.role==="Co-Founder" ? "0 0 8px rgba(192,192,192,0.25)" : "none", margin:"0 auto 0.9rem", display:"flex", alignItems:"center", justifyContent:"center", background:`radial-gradient(circle, ${(ROLE_COLOUR[s.role]||"rgba(245,237,216,0.45)")}15, rgba(10,3,6,0.9))`, fontSize:"1.3rem", position:"relative" }}>
                       🌸
-                      {s.role==="Founder"&&<span style={{ position:"absolute", top:-8, left:"50%", transform:"translateX(-50%)", fontSize:"0.8rem" }}>👑</span>}
+                      {s.role==="Founder"    && <span style={{ position:"absolute", top:-8, left:"50%", transform:"translateX(-50%)", fontSize:"0.8rem" }}>👑</span>}
+                      {s.role==="Co-Founder" && <span style={{ position:"absolute", top:-8, left:"50%", transform:"translateX(-50%)", fontSize:"0.8rem" }}>💎</span>}
                     </div>
                     <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"#ff9ec8", marginBottom:"0.3rem", lineHeight:1.3 }}>{s.frat_name}</div>
                     <div style={{ fontSize:"0.82rem", color:"#F5EDD8", marginBottom:"0.5rem", lineHeight:1.3 }}>{s.display_name}</div>
