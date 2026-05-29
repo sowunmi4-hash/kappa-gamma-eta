@@ -209,8 +209,12 @@ default {
             llResetScript();
         }
         if (change & CHANGED_POSITION) {
-            gBasePos = llGetPos();
-            syncLocation();
+            vector newPos = llGetPos();
+            // Ignore tiny movements from the bob animation (< 0.5m)
+            if (llVecDist(newPos, gBasePos) > 0.5) {
+                gBasePos = newPos;
+                syncLocation();
+            }
         }
     }
 
