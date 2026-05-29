@@ -7,8 +7,24 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   if (searchParams.get("secret") !== SECRET)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const sl_username = searchParams.get("sl_username") || "";
-  const period      = searchParams.get("period") || null;
+
+  const sl_username  = searchParams.get("sl_username") || "";
+  const period       = searchParams.get("period") || null;
+  const list_periods = searchParams.get("list_periods") === "1";
+
+  // LSL calls list_periods=1 to populate the period selection dialog
+  // Must return a plain JSON array of strings e.g. ["May 2026", "April 2026"]
+  if (list_periods) {
+    const { data } = await sb
+      .schema("members")
+      .from("dues_periods")
+      .select("period")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+    const names = (data || []).map((r: { period: string }) => r.period);
+    return NextResponse.json(names);
+  }
+
   const { data } = await sb.rpc("get_dues_status", {
     p_sl_name: sl_username,
     p_period:  period,
