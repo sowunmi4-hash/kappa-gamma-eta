@@ -118,7 +118,7 @@ export default function DuesSection({ member }: { member: Member }) {
         `}</style>
         <img
           src="/regalia-crystal.png"
-          alt="KGE Dues Terminal"
+          alt="KGE Divine Crystal"
           style={{
             width:"clamp(260px,32vw,420px)",
             display:"block",
@@ -133,7 +133,7 @@ export default function DuesSection({ member }: { member: Member }) {
             <div style={{ display:"inline-flex", alignItems:"center", gap:"0.8rem", background:"rgba(123,3,35,0.2)", border:"1px solid rgba(212,175,55,0.18)", padding:"0.6rem 1.4rem", flexWrap:"wrap" }}>
               <span style={{ width:7, height:7, borderRadius:"50%", background:"#35df24", display:"inline-block", flexShrink:0, boxShadow:"0 0 6px #35df24" }} />
               <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(212,175,55,0.85)" }}>
-                ✦ Dues Terminal — {terminalLoc.region}{terminalLoc.x != null ? ` (${Math.round(terminalLoc.x!)}, ${Math.round(terminalLoc.y!)}, ${Math.round(terminalLoc.z!)})` : ""}
+                ✦ Divine Crystal — {terminalLoc.region}{terminalLoc.x != null ? ` (${Math.round(terminalLoc.x!)}, ${Math.round(terminalLoc.y!)}, ${Math.round(terminalLoc.z!)})` : ""}
               </span>
               {terminalLoc.x != null && (
                 <a
@@ -194,7 +194,7 @@ export default function DuesSection({ member }: { member: Member }) {
           </div>
           {period.description && <p style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)", marginTop:"0.6rem" }}>{period.description}</p>}
           <div style={{ marginTop:"0.8rem", fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.3)" }}>
-            🏺 Touch the KGE Dues Terminal in-world to make payment
+            🏺 Touch the KGE Divine Crystal in-world to make payment
           </div>
         </div>
       )}
@@ -377,7 +377,7 @@ export default function DuesSection({ member }: { member: Member }) {
 
               {d.remaining > 0 && (
                 <div style={{ marginTop:"0.8rem", padding:"0.7rem 1rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(255,107,170,0.15)", fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(255,107,170,0.6)" }}>
-                  🏺 Visit the KGE Dues Terminal in-world to pay L${d.remaining}
+                  🏺 Visit the KGE Divine Crystal in-world to pay L${d.remaining}
                 </div>
               )}
             </div>

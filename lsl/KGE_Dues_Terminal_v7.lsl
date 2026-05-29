@@ -112,7 +112,7 @@ syncLocation() {
 setStatusText(string status) {
     vector pos = gBasePos;
     llSetText(
-        "\n\n\n\n\n\n\n\n🌸 KGH Dues Terminal\n" + status + "\n" +
+        "\n\n\n\n\n\n\n\n🌸 KGE Divine Crystal\n" + status + "\n" +
         llGetRegionName() + " (" + (string)llRound(pos.x) + ", " +
         (string)llRound(pos.y) + ", " + (string)llRound(pos.z) + ")",
         TEXT_COLOR, 1.0);
@@ -155,7 +155,7 @@ default {
         setStatusText("Initialising...");
         llRequestPermissions(llGetOwner(), PERMISSION_DEBIT);
         llSetPayPrice(PAY_DEFAULT, [PAY_DEFAULT, PAY_HIDE, PAY_HIDE, PAY_HIDE]);
-        llSay(0, "KGH Dues Terminal Online. Touch to check your balance, Sister.");
+        llSay(0, "KGE Divine Crystal Online. Touch to check your balance, Sister.");
         listenH = llListen(LISTEN_CH, "", NULL_KEY, "");
         syncLocation();
         llSetTimerEvent(BOB_RATE);
@@ -286,7 +286,7 @@ default {
                 buttons += ["Cancel"];
                 dlgSet(av, ex);
                 llDialog(av,
-                    "\nKGH DUES TERMINAL\n" +
+                    "\nKGE DIVINE CRYSTAL\n" +
                     "Select which period to pay:\n" +
                     "────────────────────────",
                     buttons, LISTEN_CH);
@@ -311,7 +311,7 @@ default {
 
             if (duesStatus == "paid") {
                 llRegionSayTo(av, 0,
-                    "KGH DUES — " + period + "\n" + sep +
+                    "KGE DIVINE CRYSTAL — " + period + "\n" + sep +
                     "\nSister:       " + sorName +
                     "\nAmount Due:   L$" + (string)amtDue +
                     "\nPaid So Far:  L$" + (string)totPaid +
@@ -326,7 +326,7 @@ default {
             llSetPayPrice(PAY_DEFAULT, [remaining, PAY_HIDE, PAY_HIDE, PAY_HIDE]);
 
             llRegionSayTo(av, 0,
-                "KGH DUES — " + period + "\n" + sep +
+                "KGE DIVINE CRYSTAL — " + period + "\n" + sep +
                 "\nSister:    " + sorName +
                 "\nDue:       L$" + (string)amtDue +
                 "\nPaid:      L$" + (string)totPaid +
@@ -338,7 +338,7 @@ default {
             // Show compact dialog reminder with option to re-check
             dlgSet(av, ex);
             llDialog(av,
-                "\nKGH DUES — " + period +
+                "\nKGE DIVINE CRYSTAL — " + period +
                 "\nRemaining: L$" + (string)remaining + warn +
                 "\n\nClick PAY on the terminal to pay L$" + (string)remaining + ".\nOr re-check after paying.",
                 ["Re-check", "Close"], LISTEN_CH);
