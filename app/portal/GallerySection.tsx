@@ -23,7 +23,15 @@ export default function GallerySection({ member }: { member: Member }) {
   const [msg,       setMsg]       = useState("");
   const [preview,   setPreview]   = useState<string|null>(null);
   const [file,      setFile]      = useState<File|null>(null);
+  const [lightbox,  setLightbox]  = useState<Post|null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(null); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   const load = useCallback(async (t:Tab) => {
     setLoading(true);
@@ -186,7 +194,7 @@ export default function GallerySection({ member }: { member: Member }) {
           {posts.map(p=>(
             <div key={p.id} style={{ ...card, overflow:"hidden", position:"relative" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.image_url} alt={p.caption||"Gallery photo"} style={{ width:"100%", aspectRatio:"1", objectFit:"cover", display:"block" }} />
+              <img src={p.image_url} alt={p.caption||"Gallery photo"} onClick={()=>setLightbox(p)} style={{ width:"100%", aspectRatio:"1", objectFit:"cover", display:"block", cursor:"pointer" }} />
 
               <div style={{ padding:"0.8rem" }}>
                 {(tab==="public"||tab==="repday") && p.frat_name && (
@@ -252,6 +260,53 @@ export default function GallerySection({ member }: { member: Member }) {
              tab==="private" ? "No private photos yet." :
              isAdmin ? "No rep day submissions yet — sisters haven't uploaded yet." : "You haven't submitted your rep day photo yet."}
           </p>
+        </div>
+      )}
+
+      {/* ── Lightbox ── */}
+      {lightbox && (
+        <div onClick={()=>setLightbox(null)} style={{
+          position:"fixed", inset:0, zIndex:9999,
+          background:"rgba(0,0,0,0.92)",
+          display:"flex", flexDirection:"column",
+          alignItems:"center", justifyContent:"center",
+          cursor:"zoom-out", padding:"1rem",
+        }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={lightbox.image_url}
+            alt={lightbox.caption||"Gallery photo"}
+            onClick={e=>e.stopPropagation()}
+            style={{
+              maxWidth:"90vw", maxHeight:"82vh",
+              objectFit:"contain", display:"block",
+              boxShadow:"0 0 60px rgba(0,0,0,0.8)",
+              cursor:"default",
+            }}
+          />
+          {/* Caption + meta */}
+          <div style={{ marginTop:"1rem", textAlign:"center" }} onClick={e=>e.stopPropagation()}>
+            {lightbox.caption && (
+              <p style={{ fontStyle:"italic", fontSize:"0.95rem", color:"rgba(245,237,216,0.7)", marginBottom:"0.3rem" }}>
+                {lightbox.caption}
+              </p>
+            )}
+            <div style={{ display:"flex", gap:"1rem", justifyContent:"center", alignItems:"center" }}>
+              {lightbox.frat_name && (
+                <span style={{ fontFamily:"'Cormorant Garamond',serif", fontStyle:"italic", fontSize:"0.85rem", color:"#ff9ec8" }}>
+                  {lightbox.frat_name}
+                </span>
+              )}
+              <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.25)" }}>
+                {fmt(lightbox.created_at)}
+              </span>
+            </div>
+          </div>
+          {/* Close hint */}
+          <div style={{ position:"fixed", top:"1.2rem", right:"1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.3)", cursor:"pointer" }}
+            onClick={()=>setLightbox(null)}>
+            ✕ Close
+          </div>
         </div>
       )}
     </div>
