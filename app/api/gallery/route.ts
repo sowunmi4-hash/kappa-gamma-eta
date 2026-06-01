@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
 
   if (type === "public") {
     const { data } = await sb.rpc("get_public_gallery");
-    // Clean up storage files for any auto-expired posts
-    const { data: deletedUrls } = await sb.rpc("pop_deleted_gallery_urls");
-    if (deletedUrls && deletedUrls.length > 0) {
+    // Run cleanup separately and remove expired files from storage
+    const { data: deletedUrls } = await sb.rpc("cleanup_expired_gallery");
+    if (deletedUrls && (deletedUrls as string[]).length > 0) {
       const paths = (deletedUrls as string[]).map((url: string) => {
         const marker = "/public/gallery/";
         const idx = url.indexOf(marker);
