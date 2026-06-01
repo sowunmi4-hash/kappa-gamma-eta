@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { getSupabaseClient } from "@/lib/supabase-client";
 
 const sb = getSupabaseClient();
@@ -264,9 +265,9 @@ export default function GallerySection({ member }: { member: Member }) {
       )}
 
       {/* ── Lightbox ── */}
-      {lightbox && (
+      {lightbox && typeof document !== "undefined" && createPortal(
         <div onClick={()=>setLightbox(null)} style={{
-          position:"fixed", inset:0, zIndex:9999,
+          position:"fixed", inset:0, zIndex:99999,
           background:"rgba(0,0,0,0.92)",
           display:"flex", flexDirection:"column",
           alignItems:"center", justifyContent:"center",
@@ -284,7 +285,6 @@ export default function GallerySection({ member }: { member: Member }) {
               cursor:"default",
             }}
           />
-          {/* Caption + meta */}
           <div style={{ marginTop:"1rem", textAlign:"center" }} onClick={e=>e.stopPropagation()}>
             {lightbox.caption && (
               <p style={{ fontStyle:"italic", fontSize:"0.95rem", color:"rgba(245,237,216,0.7)", marginBottom:"0.3rem" }}>
@@ -302,12 +302,12 @@ export default function GallerySection({ member }: { member: Member }) {
               </span>
             </div>
           </div>
-          {/* Close hint */}
-          <div style={{ position:"fixed", top:"1.2rem", right:"1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.3)", cursor:"pointer" }}
+          <div style={{ position:"fixed", top:"1.2rem", right:"1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(245,237,216,0.5)", cursor:"pointer", padding:"0.5rem", background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)" }}
             onClick={()=>setLightbox(null)}>
             ✕ Close
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
