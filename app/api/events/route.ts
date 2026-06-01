@@ -78,10 +78,20 @@ ${description}` : ""}`,
   }
 
   if (action === "delete") {
-    if (!["Admin","Founder","President"].includes(m.role)) {
+    if (!["Admin","Founder","Co-Founder","President"].includes(m.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
+    // Grab flyer URL before deleting so we can clean up storage
+    const { data: ev } = await sb.schema("members").from("events")
+      .select("flyer_url").eq("id", body.event_id).single();
     await sb.rpc("delete_event", { p_event_id: body.event_id });
+    if (ev?.flyer_url) {
+      const marker = "/public/flyers/";
+      const idx = (ev.flyer_url as string).indexOf(marker);
+      if (idx !== -1) {
+        await sb.storage.from("flyers").remove([(ev.flyer_url as string).substring(idx + marker.length)]);
+      }
+    }
     return NextResponse.json({ success: true });
   }
 

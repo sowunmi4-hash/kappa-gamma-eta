@@ -17,6 +17,16 @@ export async function GET(req: NextRequest) {
 
   if (type === "public") {
     const { data } = await sb.rpc("get_public_gallery");
+    // Clean up storage files for any auto-expired posts
+    const { data: deletedUrls } = await sb.rpc("pop_deleted_gallery_urls");
+    if (deletedUrls && deletedUrls.length > 0) {
+      const paths = (deletedUrls as string[]).map((url: string) => {
+        const marker = "/public/gallery/";
+        const idx = url.indexOf(marker);
+        return idx !== -1 ? url.substring(idx + marker.length) : null;
+      }).filter(Boolean) as string[];
+      if (paths.length > 0) await sb.storage.from("gallery").remove(paths);
+    }
     return NextResponse.json(data || []);
   }
   if (type === "private") {
@@ -50,7 +60,17 @@ export async function POST(req: NextRequest) {
   }
 
   if (body.action === "delete") {
+    // Grab image URL before deleting so we can clean up storage
+    const { data: post } = await sb.schema("members").from("gallery_posts")
+      .select("image_url").eq("id", body.id).single();
     await sb.rpc("delete_gallery_post", { p_id: body.id, p_member_id: m.id });
+    if (post?.image_url) {
+      const marker = "/public/gallery/";
+      const idx = (post.image_url as string).indexOf(marker);
+      if (idx !== -1) {
+        await sb.storage.from("gallery").remove([(post.image_url as string).substring(idx + marker.length)]);
+      }
+    }
     return NextResponse.json({ success: true });
   }
 
