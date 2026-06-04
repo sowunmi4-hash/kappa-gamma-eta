@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const sl_username  = searchParams.get("sl_username") || "";
+  const sl_uuid      = searchParams.get("sl_uuid") || "";
   const period       = searchParams.get("period") || null;
   const list_periods = searchParams.get("list_periods") === "1";
 
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
 
   const { data } = await sb.rpc("get_dues_status", {
     p_sl_name: sl_username,
+    p_sl_uuid: sl_uuid || null,
     p_period:  period,
   });
   return NextResponse.json(data || { found: "no" });

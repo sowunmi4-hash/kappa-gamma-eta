@@ -154,9 +154,11 @@ setHoverText(string line) {
 }
 
 // Fetch dues balance — leave period empty to auto-select
+// Uses avatar UUID as primary identifier — never wrong
 fetchBalance(key av, string username, string period) {
     string url = BASE_URL + "/api/dues/status"
-               + "?sl_username=" + llEscapeURL(username)
+               + "?sl_uuid="    + llEscapeURL((string)av)
+               + "&sl_username=" + llEscapeURL(username)
                + "&secret="      + llEscapeURL(WEBHOOK_SECRET);
     if (period != "") url += "&period=" + llEscapeURL(period);
     key rk = llHTTPRequest(url, [HTTP_METHOD, "GET"], "");
@@ -445,8 +447,8 @@ default {
             BASE_URL + "/api/dues/terminal-payment",
             [HTTP_METHOD, "POST", HTTP_MIMETYPE, "application/json"],
             llList2Json(JSON_OBJECT, [
-                "sl_username", username,
                 "sl_uuid",     (string)payer,
+                "sl_username", username,
                 "amount_ls",   amount,
                 "secret",      WEBHOOK_SECRET,
                 "period",      period
