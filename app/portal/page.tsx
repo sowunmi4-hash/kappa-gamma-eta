@@ -155,7 +155,7 @@ export default function Portal() {
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"probation" as Page, icon:"⚠", label:"Probation" }, { id:"guide" as Page, icon:"📋", label:"Guide" }] : []),
     ...(["Founder","Admin","DOP"].includes(member?.role||"") ? [{ id:"applications" as Page, icon:"📋", label:"Applications" }, { id:"pledges" as Page, icon:"🌸", label:"Pledges" }] : []),
     ...(["Founder","Admin"].includes(member?.role||"") ? [{ id:"attendance" as Page, icon:"📡", label:"Attendance" }] : []),
-    ...(["Founder","Admin","Co-Founder"].includes(member?.role||"") ? [{ id:"audit" as Page, icon:"🔍", label:"Audit Log" }] : []),
+    ...(member?.role==="Admin" ? [{ id:"audit" as Page, icon:"🔍", label:"Audit Log" }] : []),
   ];
 
   const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications", pledges:"Pledges", attendance:"Attendance Monitor", activity:"Updates", audit:"Audit Log" };
@@ -525,7 +525,7 @@ export default function Portal() {
           {activePage==="attendance" && member && ["Founder","Admin"].includes(member.role) && (
             <AttendanceMonitor />
           )}
-          {activePage==="audit" && member && ["Founder","Admin","Co-Founder"].includes(member.role) && (
+          {activePage==="audit" && member?.role==="Admin" && (
             <AuditLogSection />
           )}
           {activePage==="pledges" && member && ["Founder","Admin","DOP"].includes(member.role) && (
