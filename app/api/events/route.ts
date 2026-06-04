@@ -1,3 +1,4 @@
+import { audit } from "@/lib/audit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
@@ -74,6 +75,7 @@ ${description}` : ""}`,
       p_posted_by: m.display_name,
     });
 
+    await audit(req, "Created event", "Events", title, { event_date, location });
     return NextResponse.json({ success: true, id: eventId });
   }
 
@@ -84,6 +86,7 @@ ${description}` : ""}`,
     // Grab flyer URL before deleting so we can clean up storage
     const { data: ev } = await sb.schema("members").from("events")
       .select("flyer_url").eq("id", body.event_id).single();
+    await audit(req, "Deleted event", "Events", body.title || body.event_id, { event_id: body.event_id });
     await sb.rpc("delete_event", { p_event_id: body.event_id });
     if (ev?.flyer_url) {
       const marker = "/public/flyers/";

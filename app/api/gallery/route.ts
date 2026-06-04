@@ -59,11 +59,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, id: data });
   }
 
+import { audit } from "@/lib/audit";
+
   if (body.action === "delete") {
-    // Grab image URL before deleting so we can clean up storage
     const { data: post } = await sb.schema("members").from("gallery_posts")
       .select("image_url").eq("id", body.id).single();
     await sb.rpc("delete_gallery_post", { p_id: body.id, p_member_id: m.id });
+    await audit(req, "Deleted gallery photo", "Gallery", body.caption || body.id, { post_id: body.id });
     if (post?.image_url) {
       const marker = "/public/gallery/";
       const idx = (post.image_url as string).indexOf(marker);

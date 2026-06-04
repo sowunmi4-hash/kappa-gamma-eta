@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { audit } from "@/lib/audit";
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const COOKIE = process.env.SESSION_COOKIE_NAME || "kge_session";
 
@@ -29,17 +30,20 @@ export async function POST(req: NextRequest) {
       p_pinned: pinned || false,
       p_member_id: m.id, p_member_name: m.display_name,
     });
+    await audit(req, "Created Chalice post", "Chalice", title);
     return NextResponse.json({ success: true, id: data });
   }
 
   if (action === "delete") {
-    if (!["Admin","Founder","President"].includes(m.role))
+    if (!["Admin","Founder","Co-Founder","President"].includes(m.role))
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    await audit(req, "Deleted Chalice post", "Chalice", body.title || body.id, { post_id: body.id });
     await sb.rpc("delete_news_post", { p_id: body.id });
     return NextResponse.json({ success: true });
   }
 
   if (action === "toggle_pin") {
+    await audit(req, body.pinned ? "Pinned Chalice post" : "Unpinned Chalice post", "Chalice", body.title || body.id);
     await sb.rpc("toggle_pin_post", { p_id: body.id, p_pinned: body.pinned });
     return NextResponse.json({ success: true });
   }

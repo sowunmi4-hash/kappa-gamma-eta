@@ -56,10 +56,12 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data, { status: 201 });
 }
 
+import { audit } from "@/lib/audit";
+
 export async function PATCH(req: NextRequest) {
   const token = req.cookies.get(COOKIE)?.value;
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id, status, review_notes, interview_slots } = await req.json();
+  const { id, status, review_notes, interview_slots, applicant_name } = await req.json();
   if (!id || !status) return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
   const { data, error } = await sb.rpc("review_application", {
     p_token: token,
@@ -70,5 +72,6 @@ export async function PATCH(req: NextRequest) {
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });
+  await audit(req, `Application ${status}`, "Applications", applicant_name || id, { status, review_notes });
   return NextResponse.json(data);
 }

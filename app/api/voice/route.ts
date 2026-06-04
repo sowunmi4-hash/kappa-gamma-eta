@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { audit } from "@/lib/audit";
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const COOKIE = process.env.SESSION_COOKIE_NAME || "kge_session";
 
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { data } = await sb.rpc("complete_voice_ticket", { p_token: token, p_ticket_id: body.ticket_id });
     if (data?.error) return NextResponse.json({ error: data.error }, { status: 403 });
+    await audit(req, "Completed Voice ticket", "Voice", body.ticket_title || body.ticket_id, { ticket_id: body.ticket_id });
     return NextResponse.json(data);
   }
 
@@ -132,7 +134,7 @@ export async function POST(req: NextRequest) {
       p_admin_notes: body.admin_notes || "",
       p_reviewer_id: m.id, p_reviewer_name: m.display_name,
     });
-    // If resolved, also complete the ticket to revoke any elevated access
+    await audit(req, `Voice ticket marked ${body.status}`, "Voice", body.ticket_title || body.id, { status: body.status, ticket_id: body.id });
     if (body.status === "resolved") {
       const token = req.cookies.get(COOKIE)?.value;
       if (token) await sb.rpc("complete_voice_ticket", { p_token: token, p_ticket_id: body.id });
