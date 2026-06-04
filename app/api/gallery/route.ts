@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { audit } from "@/lib/audit";
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const COOKIE = process.env.SESSION_COOKIE_NAME || "kge_session";
 
@@ -58,8 +59,6 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ success: true, id: data });
   }
-
-import { audit } from "@/lib/audit";
 
   if (body.action === "delete") {
     const { data: post } = await sb.schema("members").from("gallery_posts")
