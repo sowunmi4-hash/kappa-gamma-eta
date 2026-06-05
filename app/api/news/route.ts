@@ -37,6 +37,11 @@ export async function POST(req: NextRequest) {
   if (action === "delete") {
     if (!["Admin","Founder","Co-Founder","President"].includes(m.role))
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    // If the post was created by an Admin, only Admin can delete it
+    const { data: post } = await sb.schema("members").from("kge_news")
+      .select("posted_by_name").eq("id", body.id).single();
+    if (post?.posted_by_name?.toLowerCase().includes("admin") && m.role !== "Admin")
+      return NextResponse.json({ error: "Only the Admin can delete this post." }, { status: 403 });
     await audit(req, "Deleted Chalice post", "Chalice", body.title || body.id, { post_id: body.id });
     await sb.rpc("delete_news_post", { p_id: body.id });
     return NextResponse.json({ success: true });
