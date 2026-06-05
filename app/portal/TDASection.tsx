@@ -134,7 +134,7 @@ function TDARewards({ member }: { member: Member }) {
 
 export default function TDASection({ member, eventAttendance, onAttendanceUpdate }: { member: Member; eventAttendance: {weekly:number;monthly:number;yearly:number}|null; onAttendanceUpdate: (a:{weekly:number;monthly:number;yearly:number})=>void }) {
   const [tab, setTab]                 = useState<Tab>("overview");
-  const [activities, setActivities]   = useState<{id:string;name:string;category:string;point_value:number;requires_proof:boolean;is_active:boolean}[]>([]);
+  const [activityList, setActivityList] = useState<{id:string;name:string;category:string;point_value:number;requires_proof:boolean;is_active:boolean}[]>([]);
   const [actName,    setActName]      = useState("");
   const [actCat,     setActCat]       = useState("Sisterhood");
   const [actPts,     setActPts]       = useState(10);
@@ -192,7 +192,7 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
     if (t === "admin_activities") {
       const r = await fetch("/api/tda/activities");
       const d = await r.json();
-      setActivities(d.activities || []);
+      setActivityList(d.activities || []);
     }
     if (t==="my_submissions")  fetch_("my_submissions").then(setMySubs);
     if (t==="admin_review")    fetch_("pending").then(setPending);
@@ -761,7 +761,7 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
               setActName(""); setActPts(10); setActProof(false);
               const r2 = await fetch("/api/tda/activities");
               const d2 = await r2.json();
-              setActivities(d2.activities || []);
+              setActivityList(d2.activities || []);
             }} style={{ padding:"0.55rem 1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)", color:"#ff9ec8", cursor:"pointer" }}>
               + Add Activity
             </button>
@@ -769,7 +769,7 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
 
           {/* Existing activities grouped by category */}
           {["Sisterhood","Event","Campaign","Collab"].map(cat => {
-            const catActs = activities.filter(a=>a.category===cat);
+            const catActs = activityList.filter(a=>a.category===cat);
             if (!catActs.length) return null;
             return (
               <div key={cat} style={{ marginBottom:"1.4rem" }}>
@@ -787,7 +787,7 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
                           const r = await fetch("/api/tda/activities", { method:"PATCH", headers:{"Content-Type":"application/json"},
                             body: JSON.stringify({ activity_id:a.id, is_active:!a.is_active, activity_name:a.name }) });
                           const d = await r.json();
-                          if (!d.error) setActivities(prev=>prev.map(x=>x.id===a.id?{...x,is_active:!a.is_active}:x));
+                          if (!d.error) setActivityList(prev=>prev.map(x=>x.id===a.id?{...x,is_active:!a.is_active}:x));
                         }} style={{ padding:"0.3rem 0.7rem", fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer", border:`1px solid ${a.is_active?"rgba(192,57,43,0.3)":"rgba(77,184,122,0.3)"}`, background:a.is_active?"rgba(192,57,43,0.08)":"rgba(77,184,122,0.08)", color:a.is_active?"rgba(192,57,43,0.7)":"#4DB87A" }}>
                           {a.is_active ? "Deactivate" : "Activate"}
                         </button>
