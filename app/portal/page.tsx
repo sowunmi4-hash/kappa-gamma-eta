@@ -138,6 +138,7 @@ export default function Portal() {
 
   const navItems: { id:Page; icon:string; label:string }[] = isRestricted ? [
     { id:"voice" as Page, icon:"💙", label:"Voice" },
+    { id:"audit" as Page, icon:"🔍", label:"Audit Log" },
   ] : [
     { id:"dashboard",     icon:"⚜",  label:"Dashboard" },
     { id:"sisterhood",    icon:"👑",  label:"Sisterhood" },
