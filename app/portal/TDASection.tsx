@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-type Tab = "overview"|"leaderboard"|"submit"|"my_submissions"|"campaign"|"goals"|"admin_review"|"admin_adjust"|"admin_titles"|"admin_rewards";
+type Tab = "overview"|"leaderboard"|"submit"|"my_submissions"|"campaign"|"goals"|"admin_review"|"admin_adjust"|"admin_titles"|"admin_rewards"|"admin_activities";
 type Member = { id:string; display_name:string; frat_name:string; role:string };
 type Activity = { id:string; name:string; category:string; point_value:number; requires_proof:boolean };
 type Submission = { id:string; activity_name:string; category:string; point_value:number; status:string; description:string; review_notes:string; created_at:string; member_name:string; proof_url:string; event_name:string };
@@ -134,6 +134,12 @@ function TDARewards({ member }: { member: Member }) {
 
 export default function TDASection({ member, eventAttendance, onAttendanceUpdate }: { member: Member; eventAttendance: {weekly:number;monthly:number;yearly:number}|null; onAttendanceUpdate: (a:{weekly:number;monthly:number;yearly:number})=>void }) {
   const [tab, setTab]                 = useState<Tab>("overview");
+  const [activities, setActivities]   = useState<{id:string;name:string;category:string;point_value:number;requires_proof:boolean;is_active:boolean}[]>([]);
+  const [actName,    setActName]      = useState("");
+  const [actCat,     setActCat]       = useState("Sisterhood");
+  const [actPts,     setActPts]       = useState(10);
+  const [actProof,   setActProof]     = useState(false);
+  const [actMsg,     setActMsg]       = useState("");
   const [overview, setOverview]       = useState<Record<string,unknown>|null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderRow[]>([]);
   const [activities, setActivities]   = useState<Activity[]>([]);
@@ -183,6 +189,11 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
 
   const loadTab = useCallback(async (t:Tab) => {
     setTab(t);
+    if (t === "admin_activities") {
+      const r = await fetch("/api/tda/activities");
+      const d = await r.json();
+      setActivities(d.activities || []);
+    }
     if (t==="my_submissions")  fetch_("my_submissions").then(setMySubs);
     if (t==="admin_review")    fetch_("pending").then(setPending);
     if (t==="admin_adjust")  { fetch_("sisters").then(setSisters); }
@@ -246,10 +257,11 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
     { id:"campaign",      label:"Campaign" },
     { id:"goals",         label:"Chapter Goals" },
     ...(isAdmin(member.role) ? [
-      { id:"admin_review"  as Tab, label:"⚙ Review",   adminOnly:true },
-      { id:"admin_adjust"  as Tab, label:"⚙ Adjust",   adminOnly:true },
-      { id:"admin_titles"  as Tab, label:"⚙ Titles",   adminOnly:true },
-      { id:"admin_rewards" as Tab, label:"⚙ Monthly Reward", adminOnly:true },
+      { id:"admin_review"      as Tab, label:"⚙ Review",      adminOnly:true },
+      { id:"admin_adjust"      as Tab, label:"⚙ Adjust",      adminOnly:true },
+      { id:"admin_titles"      as Tab, label:"⚙ Titles",      adminOnly:true },
+      { id:"admin_rewards"     as Tab, label:"⚙ Monthly Reward", adminOnly:true },
+      { id:"admin_activities"  as Tab, label:"⚙ Activities",  adminOnly:true },
     ] : []),
   ];
 
@@ -700,6 +712,92 @@ export default function TDASection({ member, eventAttendance, onAttendanceUpdate
               </div>
             )) : <p style={{ fontStyle:"italic", fontSize:"0.85rem", color:"rgba(245,237,216,0.3)" }}>No titles assigned yet.</p>}
           </div>
+        </div>
+      )}
+
+      {/* ── ADMIN: ACTIVITIES ── */}
+      {tab==="admin_activities" && isAdmin(member.role) && (
+        <div>
+          <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8", marginBottom:"0.4rem" }}>Manage Activities</div>
+          <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)", marginBottom:"1.6rem" }}>Add new activities sisters can earn points for</div>
+
+          {/* Add form */}
+          <div style={{ background:"#120709", border:"1px solid rgba(212,175,55,0.15)", padding:"1.4rem", marginBottom:"1.8rem" }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.6)", marginBottom:"1rem" }}>Add New Activity</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1rem" }}>
+              <div>
+                <label style={{ display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginBottom:"0.4rem" }}>Activity Name</label>
+                <input value={actName} onChange={e=>setActName(e.target.value)} placeholder="e.g. Post on Social Media" style={{ width:"100%", background:"rgba(245,237,216,0.04)", border:"1px solid rgba(212,175,55,0.2)", color:"#F5EDD8", padding:"0.55rem 0.8rem", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", boxSizing:"border-box" }} />
+              </div>
+              <div>
+                <label style={{ display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginBottom:"0.4rem" }}>Category</label>
+                <select value={actCat} onChange={e=>setActCat(e.target.value)} style={{ width:"100%", background:"#120709", border:"1px solid rgba(212,175,55,0.2)", color:"#F5EDD8", padding:"0.55rem 0.8rem", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", boxSizing:"border-box" }}>
+                  {["Sisterhood","Event","Campaign","Collab"].map(c=><option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem", marginBottom:"1.2rem" }}>
+              <div>
+                <label style={{ display:"block", fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.4)", marginBottom:"0.4rem" }}>Points</label>
+                <input type="number" min={1} max={100} value={actPts} onChange={e=>setActPts(parseInt(e.target.value)||0)} style={{ width:"100%", background:"rgba(245,237,216,0.04)", border:"1px solid rgba(212,175,55,0.2)", color:"#F5EDD8", padding:"0.55rem 0.8rem", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", boxSizing:"border-box" }} />
+              </div>
+              <div style={{ display:"flex", alignItems:"flex-end", paddingBottom:"0.1rem" }}>
+                <label style={{ display:"flex", alignItems:"center", gap:"0.6rem", cursor:"pointer" }}>
+                  <input type="checkbox" checked={actProof} onChange={e=>setActProof(e.target.checked)} />
+                  <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(245,237,216,0.5)" }}>Requires Proof</span>
+                </label>
+              </div>
+            </div>
+            {actMsg && <p style={{ fontSize:"0.85rem", color:actMsg.startsWith("✓")?"#4DB87A":"#C0392B", fontStyle:"italic", marginBottom:"0.8rem" }}>{actMsg}</p>}
+            <button onClick={async ()=>{
+              if (!actName.trim()) { setActMsg("⚠ Activity name is required"); return; }
+              if (actPts < 1)      { setActMsg("⚠ Points must be at least 1"); return; }
+              setActMsg("");
+              const r = await fetch("/api/tda/activities", { method:"POST", headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({ name:actName.trim(), category:actCat, point_value:actPts, requires_proof:actProof }) });
+              const d = await r.json();
+              if (d.error) { setActMsg("⚠ " + d.error); return; }
+              setActMsg("✓ Activity added!");
+              setActName(""); setActPts(10); setActProof(false);
+              const r2 = await fetch("/api/tda/activities");
+              const d2 = await r2.json();
+              setActivities(d2.activities || []);
+            }} style={{ padding:"0.55rem 1.4rem", fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(255,107,170,0.15)", border:"1px solid rgba(255,107,170,0.4)", color:"#ff9ec8", cursor:"pointer" }}>
+              + Add Activity
+            </button>
+          </div>
+
+          {/* Existing activities grouped by category */}
+          {["Sisterhood","Event","Campaign","Collab"].map(cat => {
+            const catActs = activities.filter(a=>a.category===cat);
+            if (!catActs.length) return null;
+            return (
+              <div key={cat} style={{ marginBottom:"1.4rem" }}>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", borderBottom:"1px solid rgba(212,175,55,0.1)", paddingBottom:"0.5rem", marginBottom:"0.8rem" }}>{cat}</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:"0.5rem" }}>
+                  {catActs.map(a=>(
+                    <div key={a.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", background:"#120709", border:`1px solid ${a.is_active?"rgba(212,175,55,0.12)":"rgba(245,237,216,0.05)"}`, padding:"0.7rem 1rem", opacity:a.is_active?1:0.5 }}>
+                      <div style={{ flex:1 }}>
+                        <span style={{ fontSize:"0.9rem", color:a.is_active?"#F5EDD8":"rgba(245,237,216,0.4)" }}>{a.name}</span>
+                        {a.requires_proof && <span style={{ marginLeft:"0.6rem", fontFamily:"'Cinzel',serif", fontSize:"0.38rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(117,255,255,0.5)", border:"1px solid rgba(117,255,255,0.2)", padding:"0.1rem 0.4rem" }}>Proof</span>}
+                      </div>
+                      <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+                        <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.5rem", color:"#D4AF37" }}>{a.point_value} pts</span>
+                        <button onClick={async ()=>{
+                          const r = await fetch("/api/tda/activities", { method:"PATCH", headers:{"Content-Type":"application/json"},
+                            body: JSON.stringify({ activity_id:a.id, is_active:!a.is_active, activity_name:a.name }) });
+                          const d = await r.json();
+                          if (!d.error) setActivities(prev=>prev.map(x=>x.id===a.id?{...x,is_active:!a.is_active}:x));
+                        }} style={{ padding:"0.3rem 0.7rem", fontFamily:"'Cinzel',serif", fontSize:"0.42rem", letterSpacing:"0.1em", textTransform:"uppercase", cursor:"pointer", border:`1px solid ${a.is_active?"rgba(192,57,43,0.3)":"rgba(77,184,122,0.3)"}`, background:a.is_active?"rgba(192,57,43,0.08)":"rgba(77,184,122,0.08)", color:a.is_active?"rgba(192,57,43,0.7)":"#4DB87A" }}>
+                          {a.is_active ? "Deactivate" : "Activate"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
