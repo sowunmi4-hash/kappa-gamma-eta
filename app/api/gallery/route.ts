@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
 
   if (type === "public") {
     const { data } = await sb.rpc("get_public_gallery");
-    // Run cleanup separately and remove expired files from storage
     const { data: deletedUrls } = await sb.rpc("cleanup_expired_gallery");
     if (deletedUrls && (deletedUrls as string[]).length > 0) {
       const paths = (deletedUrls as string[]).map((url: string) => {
@@ -30,18 +29,20 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(data || []);
   }
+
   if (type === "receipts") {
-    const { data } = await sb.rpc("get_private_gallery", { p_member_id: m.id });
-    // Fetch all receipts (not member-filtered — all Founders can see all receipts)
     const { data: receipts } = await sb.schema("members").from("gallery_posts")
       .select("id, member_name, frat_name, image_url, caption, created_at")
       .eq("gallery_type", "receipts")
       .order("created_at", { ascending: false });
     return NextResponse.json(Array.isArray(receipts) ? receipts : []);
   }
+
+  if (type === "private") {
     const { data } = await sb.rpc("get_private_gallery", { p_member_id: m.id });
     return NextResponse.json(data || []);
   }
+
   if (type === "repday") {
     if (["Founder","Admin"].includes(m.role)) {
       const { data } = await sb.rpc("get_repday_submissions");
@@ -50,6 +51,7 @@ export async function GET(req: NextRequest) {
     const { data } = await sb.rpc("get_my_repday", { p_member_id: m.id });
     return NextResponse.json({ isAdmin: false, posts: data || [] });
   }
+
   return NextResponse.json([]);
 }
 
