@@ -39,7 +39,7 @@ export default function GallerySection({ member }: { member: Member }) {
     const r = await fetch(`/api/gallery?type=${t}`);
     const d = await r.json();
     if (t==="repday") { setIsAdmin(d.isAdmin); setPosts(d.posts||[]); }
-    else if (t==="receipts") { setPosts(d.posts||[]); }
+    else if (t==="receipts") { setPosts(Array.isArray(d) ? d : (d.posts||[])); }
     else setPosts(d || []);
     setLoading(false);
   }, []);
