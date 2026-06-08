@@ -31,10 +31,7 @@ export async function GET(req: NextRequest) {
   }
 
   if (type === "receipts") {
-    const { data: receipts } = await sb.schema("members").from("gallery_posts")
-      .select("id, member_name, frat_name, image_url, caption, created_at")
-      .eq("gallery_type", "receipts")
-      .order("created_at", { ascending: false });
+    const { data: receipts } = await sb.rpc("get_receipts");
     return NextResponse.json(Array.isArray(receipts) ? receipts : []);
   }
 
