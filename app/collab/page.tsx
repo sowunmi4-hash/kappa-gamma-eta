@@ -46,7 +46,7 @@ export default function CollabWallPage() {
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(8,3,6,0.92)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(123,3,35,0.3)", padding: "0 2rem", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <a href="/" style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: "1rem", color: "#D4AF37", textDecoration: "none", letterSpacing: "0.05em" }}>ΚΓΗ</a>
         <div style={{ display: "flex", gap: "2rem" }}>
-          {[["Home", "/"], ["Collab Wall", "/collab"], ["Apply", "/apply"]].map(([label, href]) => (
+          {[["Home", "/"], ["The Chronicles", "/collab"], ["Apply", "/apply"]].map(([label, href]) => (
             <a key={label} href={href} style={{ fontFamily: "'Cinzel', serif", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: href === "/collab" ? "#D4AF37" : "rgba(245,237,216,0.5)", textDecoration: "none" }}>{label}</a>
           ))}
         </div>
@@ -58,10 +58,10 @@ export default function CollabWallPage() {
         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 300, background: "radial-gradient(ellipse, rgba(123,3,35,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ fontFamily: "'Cinzel', serif", fontSize: "0.6rem", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(212,175,55,0.5)", marginBottom: "1rem" }}>Kappa Gamma Eta</div>
         <h1 style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "#F5EDD8", margin: "0 0 1rem", lineHeight: 1.15, fontWeight: 400 }}>
-          The Collab Wall
+          The The Chronicles
         </h1>
         <p style={{ fontStyle: "italic", fontSize: "1.1rem", color: "rgba(245,237,216,0.4)", maxWidth: 520, margin: "0 auto", lineHeight: 1.8 }}>
-          Moments of sisterhood, solidarity, and community — captured and shared with the world.
+          A living record of every collab, every cause, and every moment KGH showed up for the world.
         </p>
 
         {/* Decorative line */}
