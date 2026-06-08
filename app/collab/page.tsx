@@ -11,7 +11,7 @@ type Post = {
   created_at: string;
 };
 
-type Tab = "repday" | "campaign";
+type Tab = "repday" | "campaign" | "receipts";
 
 function fmtDate(ts: string) {
   return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -74,7 +74,7 @@ export default function CollabWallPage() {
 
       {/* ── Tabs ── */}
       <div style={{ display: "flex", justifyContent: "center", gap: "0", marginBottom: "3rem", padding: "0 2rem" }}>
-        {([["repday", "🌸 Rep Day", "Joint photos with our collab partners"], ["campaign", "💜 Campaign Support", "Sisters showing up for the community"]] as [Tab, string, string][]).map(([id, label, sub]) => (
+        {([["repday", "🌸 Rep Day", "Joint photos with our collab partners"], ["campaign", "💜 Campaign Support", "Sisters showing up for the community"], ["receipts", "🧾 Receipts", "Proof of charity donations sent"]] as [Tab, string, string][]).map(([id, label, sub]) => (
           <button key={id} onClick={() => setTab(id)} style={{
             padding: "1rem 2.5rem",
             fontFamily: "'Cinzel', serif",
@@ -108,7 +108,7 @@ export default function CollabWallPage() {
               No {tab === "repday" ? "Rep Day" : "Campaign Support"} posts yet.
             </p>
             <p style={{ fontSize: "0.9rem", color: "rgba(245,237,216,0.18)" }}>
-              {tab === "repday" ? "Sisters — post your Rep Day collab photos through the portal and they'll appear here." : "Sisters — share your campaign support photos through the portal."}
+              {tab === "repday" ? "Sisters — post your Rep Day collab photos through the portal and they'll appear here." : tab === "receipts" ? "No donation receipts posted yet." : "Sisters — share your campaign support photos through the portal."}
             </p>
           </div>
         ) : (

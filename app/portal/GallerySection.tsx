@@ -12,7 +12,7 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const fmt = (d:string) => { const dt=new Date(d); return `${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}`; };
 const isFounderAdmin = (r:string) => ["Founder","Admin"].includes(r);
 
-type Tab = "public"|"private"|"repday";
+type Tab = "public"|"private"|"repday"|"receipts";
 
 export default function GallerySection({ member }: { member: Member }) {
   const [tab,       setTab]       = useState<Tab>("public");
@@ -39,6 +39,7 @@ export default function GallerySection({ member }: { member: Member }) {
     const r = await fetch(`/api/gallery?type=${t}`);
     const d = await r.json();
     if (t==="repday") { setIsAdmin(d.isAdmin); setPosts(d.posts||[]); }
+    else if (t==="receipts") { setPosts(d.posts||[]); }
     else setPosts(d || []);
     setLoading(false);
   }, []);
@@ -57,7 +58,7 @@ export default function GallerySection({ member }: { member: Member }) {
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true); setMsg("");
-    const folder = tab==="public"?"public":tab==="private"?"private":"repday";
+    const folder = tab==="public"?"public":tab==="private"?"private":tab==="receipts"?"receipts":"repday";
     const ext = file.name.split(".").pop();
     const path = `${folder}/${member.id}-${Date.now()}.${ext}`;
     const { error } = await sb.storage.from("gallery").upload(path, file, { upsert:true });
@@ -93,7 +94,8 @@ export default function GallerySection({ member }: { member: Member }) {
   const TAB_CONFIG = {
     public:  { label:"🌸 Public",       colour:"#ff6baa", desc:"Shared with all sisters" },
     private: { label:"🔒 Private",      colour:"#7BA7D4", desc:"Only you can see these" },
-    repday:  { label:"👑 Rep Day",       colour:"#D4AF37", desc:"Submit your rep day photo" },
+    repday:   { label:"👑 Rep Day",       colour:"#D4AF37", desc:"Submit your rep day photo" },
+    receipts: { label:"🧾 Receipts",      colour:"#75ffff", desc:"Charity donation receipts" },
   };
 
   // For non-admin repday: already submitted = posts array has items
@@ -109,7 +111,7 @@ export default function GallerySection({ member }: { member: Member }) {
 
       {/* Tabs */}
       <div style={{ display:"flex", gap:2, marginBottom:"1.6rem", borderBottom:"1px solid rgba(212,175,55,0.14)" }}>
-        {(["public","private","repday"] as Tab[]).map(t=>(
+        {(["public","private","repday",...(["Founder","Co-Founder","Admin"].includes(member.role)?["receipts"]:[])] as Tab[]).map(t=>(
           <button key={t} onClick={()=>{ setTab(t); setMsg(""); setFile(null); setPreview(null); }} style={{
             padding:"0.6rem 1.3rem", fontFamily:"'Cinzel',serif", fontSize:"0.55rem",
             letterSpacing:"0.15em", textTransform:"uppercase", cursor:"pointer",
@@ -259,6 +261,7 @@ export default function GallerySection({ member }: { member: Member }) {
           <p style={{ fontStyle:"italic", color:"rgba(245,237,216,0.3)" }}>
             {tab==="public" ? "No photos yet — be the first to share!" :
              tab==="private" ? "No private photos yet." :
+             tab==="receipts" ? "No receipts posted yet." :
              isAdmin ? "No rep day submissions yet — sisters haven't uploaded yet." : "You haven't submitted your rep day photo yet."}
           </p>
         </div>

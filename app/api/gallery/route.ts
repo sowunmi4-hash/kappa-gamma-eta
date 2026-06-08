@@ -30,7 +30,15 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(data || []);
   }
-  if (type === "private") {
+  if (type === "receipts") {
+    const { data } = await sb.rpc("get_private_gallery", { p_member_id: m.id });
+    // Fetch all receipts (not member-filtered — all Founders can see all receipts)
+    const { data: receipts } = await sb.schema("members").from("gallery_posts")
+      .select("id, member_name, frat_name, image_url, caption, created_at")
+      .eq("gallery_type", "receipts")
+      .order("created_at", { ascending: false });
+    return NextResponse.json(Array.isArray(receipts) ? receipts : []);
+  }
     const { data } = await sb.rpc("get_private_gallery", { p_member_id: m.id });
     return NextResponse.json(data || []);
   }
