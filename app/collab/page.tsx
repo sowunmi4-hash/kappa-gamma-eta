@@ -25,7 +25,9 @@ export default function CollabWallPage() {
 
   const load = useCallback(async (t: Tab) => {
     setLoading(true);
-    const r = await fetch(`/api/collab?type=${t}`);
+    // Campaign tab shows public gallery posts, same way Rep Day shows repday posts
+    const apiType = t === "campaign" ? "public" : t;
+    const r = await fetch(`/api/collab?type=${apiType}`);
     const d = await r.json();
     setPosts(d.posts || []);
     setLoading(false);
