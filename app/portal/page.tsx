@@ -131,8 +131,8 @@ export default function Portal() {
   );
 
   const isSafareehills = member?.sl_name === "safareehills";
-  const isRestricted   = isSafareehills && !member?.is_elevated;
-  const activePage     = isRestricted ? (page === "audit" ? "audit" : "voice") : page;
+  const isRestricted   = false;
+  const activePage     = page;
 
 
 
