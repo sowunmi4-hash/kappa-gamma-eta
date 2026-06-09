@@ -25,7 +25,7 @@ type Event   = { id:string; title:string; event_date:string; event_time:string; 
 type Post    = { id:string; title:string; content:string; posted_by_name:string; pinned:boolean; created_at:string };
 type Notif   = { id:string; title:string; message:string; is_read:boolean; created_at:string };
 
-type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation"|"collection"|"guide"|"handbook"|"applications"|"pledges"|"attendance"|"activity"|"audit";
+type Page    = "dashboard"|"sisterhood"|"events"|"chalice"|"gallery"|"notifications"|"profile"|"tda"|"voice"|"dues"|"probation"|"collection"|"guide"|"handbook"|"applications"|"pledges"|"attendance"|"activity"|"audit"|"traffic";
 
 const ROLE_COLOUR: Record<string,string> = {
   Founder:"#D4AF37", "Co-Founder":"#C0C0C0", President:"#ff6baa", Admin:"#7BA7D4", Member:"rgba(245,237,216,0.45)"
@@ -131,14 +131,15 @@ export default function Portal() {
   );
 
   const isSafareehills = member?.sl_name === "safareehills";
-  const isRestricted   = false;
-  const activePage     = page;
+  const isRestricted   = isSafareehills && !member?.is_elevated;
+  const activePage     = isRestricted ? (["audit","traffic"].includes(page) ? page : "voice") : page;
 
 
 
   const navItems: { id:Page; icon:string; label:string }[] = isRestricted ? [
-    { id:"voice" as Page, icon:"💙", label:"Voice" },
-    { id:"audit" as Page, icon:"🔍", label:"Audit Log" },
+    { id:"voice"   as Page, icon:"💙", label:"Voice" },
+    { id:"audit"   as Page, icon:"🔍", label:"Audit Log" },
+    { id:"traffic" as Page, icon:"📊", label:"Traffic" },
   ] : [
     { id:"dashboard",     icon:"⚜",  label:"Dashboard" },
     { id:"sisterhood",    icon:"👑",  label:"Sisterhood" },
@@ -159,7 +160,7 @@ export default function Portal() {
     ...(member?.role==="Admin" ? [{ id:"audit" as Page, icon:"🔍", label:"Audit Log" }] : []),
   ];
 
-  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications", pledges:"Pledges", attendance:"Attendance Monitor", activity:"Updates", audit:"Audit Log" };
+  const PAGE_TITLES: Record<Page,string> = { dashboard:"Dashboard", sisterhood:"The Sisterhood", events:"Events", chalice:"The Chalice", gallery:"Gallery", notifications:"Notifications", profile:"My Profile", tda:"The Divine Accord", voice:"Sister's Voice", dues:"Dues", probation:"Probation", collection:"Regalia", guide:"Orientation Guide", handbook:"The Handbook", applications:"Applications", pledges:"Pledges", attendance:"Attendance Monitor", activity:"Updates", audit:"Audit Log", traffic:"Traffic" };
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", background:"#0a0306", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", position:"relative", overflow:"hidden" }}>
@@ -528,6 +529,22 @@ export default function Portal() {
           )}
           {activePage==="audit" && member?.role==="Admin" && (
             <AuditLogSection />
+          )}
+          {activePage==="traffic" && member?.role==="Admin" && (
+            <div>
+              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8", marginBottom:"0.4rem" }}>Traffic</div>
+              <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)", marginBottom:"1.6rem" }}>Public website visitor analytics</div>
+              <div style={{ background:"#120709", border:"1px solid rgba(212,175,55,0.1)", overflow:"hidden", borderRadius:2 }}>
+                <iframe
+                  src={`https://vercel.com/sowunmi4-hash/kappa-gamma-eta/analytics`}
+                  style={{ width:"100%", height:"70vh", border:"none", background:"#120709" }}
+                  title="Vercel Analytics"
+                />
+              </div>
+              <p style={{ marginTop:"1rem", fontSize:"0.78rem", color:"rgba(245,237,216,0.25)", fontStyle:"italic" }}>
+                📊 Showing visitor data for kappagammaeta.org — public pages only
+              </p>
+            </div>
           )}
           {activePage==="pledges" && member && ["Founder","Admin","DOP"].includes(member.role) && (
             <PledgesSection member={member} />
