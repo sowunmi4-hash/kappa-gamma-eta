@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import PageTracker from "./components/PageTracker";
 
 export const metadata: Metadata = {
   title: "Kappa Gamma Eta — ΚΓΗ",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <Analytics />
+        <PageTracker />
       </body>
     </html>
   );

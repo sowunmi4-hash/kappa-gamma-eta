@@ -14,6 +14,7 @@ import PledgesSection from "./PledgesSection";
 import AttendanceMonitor from "./AttendanceMonitor";
 import ActivitySection from "./ActivitySection";
 import AuditLogSection from "./AuditLogSection";
+import TrafficSection from "./TrafficSection";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
@@ -531,20 +532,7 @@ export default function Portal() {
             <AuditLogSection />
           )}
           {activePage==="traffic" && member?.role==="Admin" && (
-            <div>
-              <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.5rem", color:"#F5EDD8", marginBottom:"0.4rem" }}>Traffic</div>
-              <div style={{ fontStyle:"italic", fontSize:"0.88rem", color:"rgba(245,237,216,0.4)", marginBottom:"1.6rem" }}>Public website visitor analytics</div>
-              <div style={{ background:"#120709", border:"1px solid rgba(212,175,55,0.1)", overflow:"hidden", borderRadius:2 }}>
-                <iframe
-                  src={`https://vercel.com/sowunmi4-hash/kappa-gamma-eta/analytics`}
-                  style={{ width:"100%", height:"70vh", border:"none", background:"#120709" }}
-                  title="Vercel Analytics"
-                />
-              </div>
-              <p style={{ marginTop:"1rem", fontSize:"0.78rem", color:"rgba(245,237,216,0.25)", fontStyle:"italic" }}>
-                📊 Showing visitor data for kappagammaeta.org — public pages only
-              </p>
-            </div>
+            <TrafficSection />
           )}
           {activePage==="pledges" && member && ["Founder","Admin","DOP"].includes(member.role) && (
             <PledgesSection member={member} />
