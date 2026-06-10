@@ -64,9 +64,15 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
   const handleReply = async () => {
     if (!replyText.trim()) return;
     setSending(true);
+    const msg = replyText.trim();
     await fetch("/api/voice", { method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ action:"reply", submission_id:submission.id, message:replyText.trim() }) });
+      body: JSON.stringify({ action:"reply", submission_id:submission.id, message:msg }) });
     setReplyText(""); loadMessages(); setSending(false);
+    // Refresh parent if keyword trigger may have changed status
+    const lower = msg.toLowerCase();
+    if (["completed","dismissed","under review"].some(k => lower.includes(k))) {
+      if (onStatusChange) onStatusChange();
+    }
   };
 
   const handleUpdateStatus = async () => {
