@@ -98,8 +98,8 @@ export default function GallerySection({ member }: { member: Member }) {
     receipts: { label:"🧾 Receipts",      colour:"#75ffff", desc:"Charity donation receipts" },
   };
 
-  // For non-admin repday: already submitted = posts array has items
-  const alreadySubmitted = tab==="repday" && !isAdmin && posts.length > 0;
+  // Sisters can submit multiple rep day photos
+  const alreadySubmitted = false;
 
   return (
     <div>
