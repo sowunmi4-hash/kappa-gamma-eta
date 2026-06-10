@@ -314,72 +314,78 @@ default {
 
             string duesStatus = llJsonGetValue(body, ["status"]);
 
-            // Multiple active periods — ask sister to pick one
-            if (duesStatus == "multiple_periods") {
-                list periods = llJson2List(llJsonGetValue(body, ["periods"]));
-                integer cnt  = llGetListLength(periods);
-                list buttons = [];
-                integer p;
-                for (p = 0; p < cnt && p < 9; p++)
-                    buttons += [llList2String(periods, p)];
-                buttons += ["Cancel"];
-                dlgSet(av, ex);
-                llDialog(av,
-                    "\n * KGE Divine Crystal *\n" +
-                    "Select the period you are paying:\n" +
-                    "────────────────────────",
-                    buttons, LISTEN_CH);
-                return;
-            }
-
-            if (duesStatus == "no_period") {
-                llRegionSayTo(av, 0, "There is no active dues period right now. Check back soon, Sister.");
-                return;
-            }
-
-            // Parse balance fields
-            string  name      = llJsonGetValue(body, ["frat_name"]);
-            string  period    = llJsonGetValue(body, ["period"]);
-            integer due       = (integer)llJsonGetValue(body, ["amount_due"]);
-            integer paid      = (integer)llJsonGetValue(body, ["total_paid"]);
-            integer remaining = (integer)llJsonGetValue(body, ["remaining"]);
-            integer daysLeft  = (integer)llJsonGetValue(body, ["days_until_due"]);
-            string  sep       = "────────────────────────";
-            string  warn      = deadlineWarning(daysLeft);
-
-            // Already paid in full
+            // All paid
             if (duesStatus == "paid") {
                 llRegionSayTo(av, 0,
-                    "* KGE Divine Crystal — " + period + " *\n" + sep +
-                    "\nSister:      " + name +
-                    "\nAmount Due:  L$" + (string)due +
-                    "\nTotal Paid:  L$" + (string)paid +
-                    "\nStatus:      PAID IN FULL\n" + sep +
-                    "\nShe is strong like whiskey, but soft like wine. *");
+                    "* KGE Divine Crystal *\n" +
+                    "────────────────────────\n" +
+                    "Sister:   " + llJsonGetValue(body, ["frat_name"]) + "\n" +
+                    "Status:   PAID IN FULL\n" +
+                    "────────────────────────\n" +
+                    "She is strong like whiskey, but soft like wine. *");
                 llSetPayPrice(PAY_HIDE, [PAY_HIDE, PAY_HIDE, PAY_HIDE, PAY_HIDE]);
                 return;
             }
 
-            // Outstanding balance — set pay price immediately
-            sesSet(av, ex, (string)av, remaining, period);
-            llSetPayPrice(PAY_DEFAULT, [remaining, PAY_HIDE, PAY_HIDE, PAY_HIDE]);
+            if (duesStatus == "no_period" || duesStatus == "") {
+                llRegionSayTo(av, 0, "There are no outstanding dues at this time. Check back soon, Sister.");
+                return;
+            }
 
-            llRegionSayTo(av, 0,
-                "* KGE Divine Crystal — " + period + " *\n" + sep +
-                "\nSister:     " + name +
-                "\nDue:        L$" + (string)due +
-                "\nPaid:       L$" + (string)paid +
-                "\nRemaining:  L$" + (string)remaining +
-                warn + "\n" + sep +
-                "\nThe pay button is set to L$" + (string)remaining + "." +
-                "\nOverpayments carry forward as credit.");
+            // Parse fields
+            string  name      = llJsonGetValue(body, ["frat_name"]);
+            integer totalOwed = (integer)llJsonGetValue(body, ["total_remaining"]);
+            string  oldest    = llJsonGetValue(body, ["oldest_period"]);
+            integer oldestRem = (integer)llJsonGetValue(body, ["oldest_remaining"]);
+            integer daysLeft  = (integer)llJsonGetValue(body, ["days_until_due"]);
+            string  sep       = "────────────────────────";
+            string  warn      = deadlineWarning(daysLeft);
 
-            // Compact dialog with re-check option
+            // Build periods breakdown from JSON array
+            string periodsJson = llJsonGetValue(body, ["periods"]);
+            list   periodsList = llJson2List(periodsJson);
+            integer pCount = llGetListLength(periodsList);
+            string  breakdown = "";
+            integer pi;
+            for (pi = 0; pi < pCount; pi++) {
+                string pObj = llList2String(periodsList, pi);
+                string pName = llJsonGetValue(pObj, ["period"]);
+                integer pRem = (integer)llJsonGetValue(pObj, ["remaining"]);
+                breakdown += "\n  " + pName + ": L$" + (string)pRem;
+            }
+
+            // Set pay button to oldest period's remaining amount
+            sesSet(av, ex, (string)av, oldestRem, oldest);
+            llSetPayPrice(PAY_DEFAULT, [oldestRem, PAY_HIDE, PAY_HIDE, PAY_HIDE]);
+
+            string chatMsg = "* KGE Divine Crystal *\n" + sep +
+                "\nSister:  " + name;
+
+            if (pCount > 1) {
+                chatMsg += "\n\nOutstanding across " + (string)pCount + " period(s):" +
+                    breakdown +
+                    "\n\nTotal Owed:  L$" + (string)totalOwed +
+                    warn + "\n" + sep +
+                    "\nPay button set to L$" + (string)oldestRem + " (" + oldest + " — oldest first)." +
+                    "\nEach payment clears the oldest period first.";
+            } else {
+                chatMsg += "\n\nPeriod:    " + oldest +
+                    "\nRemaining: L$" + (string)oldestRem +
+                    warn + "\n" + sep +
+                    "\nPay button set to L$" + (string)oldestRem + "." +
+                    "\nOverpayments carry forward as credit.";
+            }
+
+            llRegionSayTo(av, 0, chatMsg);
+
             dlgSet(av, ex);
             llDialog(av,
-                "\n* KGE Divine Crystal — " + period + " *" +
-                "\n\nRemaining: L$" + (string)remaining + warn +
-                "\n\nPress PAY on the Crystal to pay L$" + (string)remaining + "." +
+                "\n* KGE Divine Crystal *" +
+                (pCount > 1 ?
+                    "\n\nTotal owed: L$" + (string)totalOwed + " across " + (string)pCount + " period(s)." +
+                    "\nPaying L$" + (string)oldestRem + " clears " + oldest + " first." :
+                    "\n\n" + oldest + ": L$" + (string)oldestRem + " remaining." + warn) +
+                "\n\nPress PAY on the Crystal to pay L$" + (string)oldestRem + "." +
                 "\nTap Re-check after paying to confirm.",
                 ["Re-check", "Close"], LISTEN_CH);
             return;

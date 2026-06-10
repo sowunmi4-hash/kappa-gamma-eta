@@ -20,10 +20,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data || []);
   }
 
-  const { data } = await sb.rpc("get_dues_status", {
-    p_sl_name: sl_username,
+  const { data } = await sb.rpc("get_dues_balance", {
     p_sl_uuid: sl_uuid || null,
-    p_period:  period,
+    p_sl_name: sl_username || null,
   });
   return NextResponse.json(data || { found: "no" });
 }
