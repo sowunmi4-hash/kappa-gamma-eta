@@ -378,16 +378,18 @@ default {
 
             llRegionSayTo(av, 0, chatMsg);
 
+            string dialogMsg = "\n* KGE Divine Crystal *";
+            if (pCount > 1) {
+                dialogMsg += "\n\nTotal owed: L$" + (string)totalOwed + " across " + (string)pCount + " period(s)." +
+                    "\nPaying L$" + (string)oldestRem + " clears " + oldest + " first.";
+            } else {
+                dialogMsg += "\n\n" + oldest + ": L$" + (string)oldestRem + " remaining." + warn;
+            }
+            dialogMsg += "\n\nPress PAY on the Crystal to pay L$" + (string)oldestRem + "." +
+                "\nTap Re-check after paying to confirm.";
+
             dlgSet(av, ex);
-            llDialog(av,
-                "\n* KGE Divine Crystal *" +
-                (pCount > 1 ?
-                    "\n\nTotal owed: L$" + (string)totalOwed + " across " + (string)pCount + " period(s)." +
-                    "\nPaying L$" + (string)oldestRem + " clears " + oldest + " first." :
-                    "\n\n" + oldest + ": L$" + (string)oldestRem + " remaining." + warn) +
-                "\n\nPress PAY on the Crystal to pay L$" + (string)oldestRem + "." +
-                "\nTap Re-check after paying to confirm.",
-                ["Re-check", "Close"], LISTEN_CH);
+            llDialog(av, dialogMsg, ["Re-check", "Close"], LISTEN_CH);
             return;
         }
 
