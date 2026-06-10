@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (body.action === "update_status") {
-    if (!["Admin","Founder"].includes(m.role)) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    if (m.role !== "Admin") return NextResponse.json({ error: "Only Admin can update ticket status." }, { status: 403 });
     await sb.rpc("update_voice_status", {
       p_id: body.id, p_status: body.status,
       p_admin_notes: body.admin_notes || "",

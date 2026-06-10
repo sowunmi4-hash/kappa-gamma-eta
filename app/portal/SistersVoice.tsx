@@ -31,6 +31,7 @@ const STATUS_CFG: Record<string,{label:string;color:string;bg:string}> = {
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt = (d:string) => { if(!d) return "—"; const dt=new Date(d); return `${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,"0")}`; };
 const isAdmin = (r:string) => ["Admin","Founder"].includes(r);
+const canResolve = (r:string) => r === "Admin";
 
 const card:  React.CSSProperties = { background:"#221018", border:"1px solid rgba(212,175,55,0.14)", padding:"1.4rem 1.6rem", marginBottom:"1rem" };
 const input: React.CSSProperties = { width:"100%", padding:"0.65rem 0.9rem", background:"rgba(255,107,170,0.05)", border:"1px solid rgba(212,175,55,0.2)", color:"#F5EDD8", fontFamily:"'Cormorant Garamond',serif", fontSize:"0.95rem", outline:"none" };
@@ -196,7 +197,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
           )}
 
           {/* Admin: status update */}
-          {isAdmin(member.role) && (
+          {canResolve(member.role) && (
             <div style={{ marginTop:"0.8rem", borderTop:"1px solid rgba(212,175,55,0.1)", paddingTop:"0.8rem" }}>
               {!editId ? (
                 <button onClick={()=>setEditId(true)} style={{ fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.12em", textTransform:"uppercase", background:"rgba(212,175,55,0.06)", border:"1px solid rgba(212,175,55,0.2)", color:"rgba(212,175,55,0.55)", cursor:"pointer", padding:"0.35rem 0.8rem" }}>
