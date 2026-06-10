@@ -21,11 +21,10 @@ const CATEGORIES = [
 const PAGES = ["Dashboard","Sisterhood","Events","The Chalice","Gallery","Notifications","My Profile","The Divine Accord","Sister's Voice","Dues","Regalia","Other"];
 
 const STATUS_CFG: Record<string,{label:string;color:string;bg:string}> = {
-  received:     { label:"Received",     color:"#D4AF37",              bg:"rgba(212,175,55,0.1)" },
-  acknowledged: { label:"Acknowledged", color:"#7BA7D4",              bg:"rgba(123,167,212,0.1)" },
-  in_progress:  { label:"In Progress",  color:"#ff9ec8",              bg:"rgba(255,107,170,0.1)" },
-  resolved:     { label:"Resolved",     color:"#4DB87A",              bg:"rgba(77,184,122,0.1)" },
-  dismissed:    { label:"Dismissed",    color:"rgba(245,237,216,0.3)",bg:"rgba(245,237,216,0.05)" },
+  received:     { label:"Received",      color:"#D4AF37",               bg:"rgba(212,175,55,0.1)" },
+  under_review: { label:"Under Review",  color:"#7BA7D4",               bg:"rgba(123,167,212,0.1)" },
+  resolved:     { label:"Resolved",      color:"#4DB87A",               bg:"rgba(77,184,122,0.1)" },
+  dismissed:    { label:"Dismissed",     color:"rgba(245,237,216,0.3)", bg:"rgba(245,237,216,0.05)" },
 };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -109,7 +108,16 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
       </div>
 
       {/* Toggle thread */}
-      <button onClick={()=>setExpanded(!expanded)} style={{
+      <button onClick={async () => {
+        const opening = !expanded;
+        setExpanded(opening);
+        // Auto flip to Under Review when Admin opens a received ticket
+        if (opening && submission.status === "received" && member.role === "Admin") {
+          await fetch("/api/voice", { method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ action:"update_status", id:submission.id, status:"under_review", admin_notes:"" }) });
+          if (onStatusChange) onStatusChange();
+        }
+      }} style={{
         fontFamily:"'Cinzel',serif", fontSize:"0.5rem", letterSpacing:"0.12em",
         textTransform:"uppercase", background:"transparent", border:"none",
         color:"rgba(212,175,55,0.5)", cursor:"pointer", padding:"0.3rem 0", marginBottom:expanded?"0.8rem":"0",
@@ -197,8 +205,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
                     <label style={lbl}>Status</label>
                     <select id="field-28" name="field-28" value={editStatus} onChange={e=>setEditStatus(e.target.value)} style={input}>
                       <option value="received">Received</option>
-                      <option value="acknowledged">Acknowledged</option>
-                      <option value="in_progress">In Progress</option>
+                      <option value="under_review">Under Review</option>
                       <option value="resolved">Resolved</option>
                       <option value="dismissed">Dismissed</option>
                     </select>
