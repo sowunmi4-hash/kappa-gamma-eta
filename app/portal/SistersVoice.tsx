@@ -160,20 +160,8 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
           )}
 
           {/* Reply input */}
-          {isSafareeElevated && (
-        <div style={{ marginTop:"1rem", padding:"0.8rem 1rem", background:"rgba(255,107,170,0.06)", border:"1px solid rgba(255,107,170,0.2)", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.8rem" }}>
-          <span style={{ fontSize:"0.82rem", color:"rgba(245,237,216,0.5)", fontStyle:"italic" }}>Mark this ticket complete to revoke your elevated access.</span>
-          <button onClick={async()=>{
-            const r = await fetch("/api/voice", { method:"POST", headers:{"Content-Type":"application/json"},
-              body: JSON.stringify({ action:"complete", ticket_id: submission.id }) });
-            const d = await r.json();
-            if(d?.success && onElevate) onElevate();
-          }} style={{ padding:"0.45rem 1.2rem", fontFamily:"'Cinzel',serif", fontSize:"0.48rem", letterSpacing:"0.15em", textTransform:"uppercase", background:"rgba(255,107,170,0.12)", border:"1px solid rgba(255,107,170,0.35)", color:"#ff6baa", cursor:"pointer" }}>
-            ✓ Mark Complete & Revoke Access
-          </button>
-        </div>
-      )}
-      {canReply && (
+
+          {canReply && (
             <div style={{ display:"flex", gap:"0.6rem", alignItems:"flex-end" }}>
               <textarea id="field-27" name="field-27"
                 value={replyText}
