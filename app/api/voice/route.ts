@@ -18,6 +18,9 @@ export async function GET(req: NextRequest) {
   const type = url.searchParams.get("type");
   const submissionId = url.searchParams.get("submission_id");
 
+  // Auto-delete dismissed tickets older than 24hrs on every load
+  await sb.rpc("cleanup_dismissed_voice_tickets");
+
   // Get messages for a specific submission thread
   if (type === "messages" && submissionId) {
     const { data } = await sb.rpc("get_voice_messages", { p_submission_id: submissionId });
