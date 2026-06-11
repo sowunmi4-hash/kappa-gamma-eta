@@ -88,7 +88,11 @@ export default function Portal() {
       fetch("/api/news").then(r=>r.json()),
       fetch("/api/notifications").then(r=>r.json()),
     ]);
-    setSisters(s); setEvents(e); setNews(n); setNotifs(notif);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const upcomingEvents = (Array.isArray(e) ? e : []).filter((ev: Event) =>
+      ev.status !== "past" && new Date(ev.event_date) >= today
+    );
+    setSisters(s); setEvents(upcomingEvents); setNews(n); setNotifs(notif);
     setLoading(false);
   }, [router]);
 
