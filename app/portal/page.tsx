@@ -262,9 +262,9 @@ export default function Portal() {
               {/* Welcome */}
               <div className="welcome-enter" style={{ background:"linear-gradient(135deg, rgba(255,107,170,0.12), rgba(212,175,55,0.06))", border:"1px solid rgba(255,107,170,0.2)", padding:"1.8rem 2rem", marginBottom:"1.4rem", position:"relative", overflow:"hidden" }}>
                 <div style={{ position:"absolute", right:-10, top:"50%", transform:"translateY(-50%)", fontFamily:"'Cinzel Decorative',serif", fontSize:"5.5rem", color:"rgba(255,107,170,0.04)", lineHeight:1, pointerEvents:"none" }}>ΚΓΗ</div>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>Good day, Sister</div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.52rem", letterSpacing:"0.28em", textTransform:"uppercase", color:"rgba(212,175,55,0.5)", marginBottom:"0.4rem" }}>{member?.role === "Admin" ? "Good day, Admin" : "Good day, Sister"}</div>
                 <div style={{ fontFamily:"'Cinzel Decorative',serif", fontSize:"1.4rem", color:"#F5EDD8", marginBottom:"0.3rem" }}>Welcome back, <span style={{ color:"#ff6baa" }}>{member?.frat_name}</span></div>
-                <div style={{ fontStyle:"italic", fontSize:"0.9rem", color:"rgba(245,237,216,0.45)" }}>She is strong like whiskey, but soft like wine</div>
+                <div style={{ fontStyle:"italic", fontSize:"0.9rem", color:"rgba(245,237,216,0.45)" }}>{member?.role === "Admin" ? "The backbone of the sisterhood." : "She is strong like whiskey, but soft like wine"}</div>
               </div>
 
               {/* Stats */}
