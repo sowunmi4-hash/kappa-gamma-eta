@@ -24,7 +24,6 @@ const STATUS_CFG: Record<string,{label:string;color:string;bg:string}> = {
   received:     { label:"Received",      color:"#D4AF37",               bg:"rgba(212,175,55,0.1)" },
   under_review: { label:"Under Review",  color:"#7BA7D4",               bg:"rgba(123,167,212,0.1)" },
   resolved:     { label:"Resolved",      color:"#4DB87A",               bg:"rgba(77,184,122,0.1)" },
-  dismissed:    { label:"Dismissed",     color:"rgba(245,237,216,0.3)", bg:"rgba(245,237,216,0.05)" },
 };
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -70,7 +69,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
     setReplyText(""); loadMessages(); setSending(false);
     // Refresh parent if keyword trigger may have changed status
     const lower = msg.toLowerCase();
-    if (["completed","dismissed","under review"].some(k => lower.includes(k))) {
+    if (["completed","under review"].some(k => lower.includes(k))) {
       if (onStatusChange) onStatusChange();
     }
   };
@@ -86,7 +85,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
   };
 
   const cfg = STATUS_CFG[submission.status]||STATUS_CFG.received;
-  const canReply = !["resolved","dismissed"].includes(submission.status);
+  const canReply = !["resolved"].includes(submission.status);
   const isSafareeElevated = member.sl_name === "safareehills" && member.is_elevated;
 
   return (
@@ -213,7 +212,6 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
                       <option value="received">Received</option>
                       <option value="under_review">Under Review</option>
                       <option value="resolved">Resolved</option>
-                      <option value="dismissed">Dismissed</option>
                     </select>
                   </div>
                   <div>
