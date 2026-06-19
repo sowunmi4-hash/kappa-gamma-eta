@@ -69,7 +69,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
     setReplyText(""); loadMessages(); setSending(false);
     // Refresh parent if keyword trigger may have changed status
     const lower = msg.toLowerCase();
-    if (["completed","under review"].some(k => lower.includes(k))) {
+    if (["completed","dismissed","under review"].some(k => lower.includes(k))) {
       if (onStatusChange) onStatusChange();
     }
   };
@@ -85,7 +85,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
   };
 
   const cfg = STATUS_CFG[submission.status]||STATUS_CFG.received;
-  const canReply = !["resolved"].includes(submission.status);
+  const canReply = !["resolved","dismissed"].includes(submission.status);
   const isSafareeElevated = member.sl_name === "safareehills" && member.is_elevated;
 
   return (
@@ -211,6 +211,7 @@ function SubmissionThread({ submission, member, onStatusChange, onElevate }: {
                     <select id="field-28" name="field-28" value={editStatus} onChange={e=>setEditStatus(e.target.value)} style={input}>
                       <option value="received">Received</option>
                       <option value="under_review">Under Review</option>
+                      <option value="dismissed">Dismissed</option>
                       <option value="resolved">Resolved</option>
                     </select>
                   </div>
