@@ -131,13 +131,17 @@ export async function POST(req: NextRequest) {
   }
 
   if (body.action === "update_status") {
-    if (m.role !== "Admin") return NextResponse.json({ error: "Only Admin can update ticket status." }, { status: 403 });
+    if (!["Admin","Founder"].includes(m.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     await sb.rpc("update_voice_status", {
       p_id: body.id, p_status: body.status,
       p_admin_notes: body.admin_notes || "",
       p_reviewer_id: m.id, p_reviewer_name: m.display_name,
     });
     await audit(req, `Voice ticket marked ${body.status}`, "Voice", body.ticket_title || body.id, { status: body.status, ticket_id: body.id });
+    // If resolved/dismissed, check if all tickets done → auto-revoke Safareehills
+    if (["resolved","dismissed"].includes(body.status)) {
+      await sb.rpc("check_and_revoke_safaree_if_all_resolved");
+    }
     return NextResponse.json({ success: true });
   }
 
