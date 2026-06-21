@@ -58,21 +58,29 @@ export default function DuesSection({ member }: { member: Member }) {
 
   const load = useCallback(async () => {
     if (isAdmin(member.role)) {
-      const r = await fetch("/api/dues?type=report");
-      const d = await r.json();
-      setReport(d.report||[]); setPeriod(d.period||null);
-      if (d.allPeriods?.length) {
-        setPeriods(d.allPeriods);
-        const active = d.allPeriods.find((p: any) => p.is_active);
-        const first = d.allPeriods[0];
-        const def = active?.period || first?.period || "";
-        setSelPeriod(def);
-        if (def) {
-          const r2 = await fetch(`/api/dues?type=report&period=${encodeURIComponent(def)}`);
-          const d2 = await r2.json();
-          setReport(d2.report||[]);
+      try {
+        const r = await fetch("/api/dues?type=report");
+        const d = await r.json();
+        if (d.error) {
+          console.error("Dues report API error:", d.error);
+        } else {
+          // Set initial report (all periods)
+          setReport(d.report||[]);
+          setPeriod(d.period||null);
+          if (d.allPeriods?.length) {
+            setPeriods(d.allPeriods);
+            const active = d.allPeriods.find((p: any) => p.is_active);
+            const first  = d.allPeriods[0];
+            const def    = active?.period || first?.period || "";
+            setSelPeriod(def);
+            if (def) {
+              const r2 = await fetch(`/api/dues?type=report&period=${encodeURIComponent(def)}`);
+              const d2 = await r2.json();
+              if (!d2.error) setReport(d2.report||[]);
+            }
+          }
         }
-      }
+      } catch(e) { console.error("Dues load error:", e); }
     }
     const r2 = await fetch("/api/dues");
     const d2 = await r2.json();
